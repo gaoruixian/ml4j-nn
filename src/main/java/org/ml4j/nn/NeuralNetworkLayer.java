@@ -22,6 +22,9 @@ public class NeuralNetworkLayer implements Serializable {
 	public ActivationFunction getActivationFunction() {
 		return activationFunction;
 	}
+	
+	
+	
 
 	protected DoubleMatrix backPropagate(DoubleMatrix layerInputs, DoubleMatrix outerThetas, DoubleMatrix outerDeltas) {
 		DoubleMatrix sigable = layerInputs.mmul(thetas.transpose());

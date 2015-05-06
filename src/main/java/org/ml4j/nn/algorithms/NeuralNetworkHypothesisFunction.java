@@ -11,10 +11,15 @@ public class NeuralNetworkHypothesisFunction implements HypothesisFunction<doubl
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private NeuralNetwork neuralNetwork;
+	protected NeuralNetwork neuralNetwork;
 
 	public NeuralNetworkHypothesisFunction(NeuralNetwork neuralNetwork) {
 		this.neuralNetwork = neuralNetwork;
+	}
+	
+	public NeuralNetwork getNeuralNetwork()
+	{
+		return neuralNetwork;
 	}
 
 	@Override

@@ -92,7 +92,7 @@ public class NeuralNetwork implements Serializable {
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, CostFunction costFunction,
 			int max_iter) {
 
-		DoubleMatrix newThetas = getMinimisingThetas(inputs, desiredOutputs, getAllThetasVec(), lambdas, costFunction,
+		DoubleMatrix newThetas = getMinimisingThetas(inputs, desiredOutputs, getThetas(), lambdas, costFunction,
 				max_iter);
 
 		updateThetas(newThetas);
@@ -142,13 +142,21 @@ public class NeuralNetwork implements Serializable {
 		return CostFunctionMinimiser.fmincg(minimisableCostFunction, pInput, max_iter, true);
 	}
 
-	private Vector<DoubleMatrix> getAllThetasVec() {
+	public Vector<DoubleMatrix> getThetas() {
 		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();
 		for (NeuralNetworkLayer layer : layers) {
 			allThetasVec.add(layer.getThetas());
 		}
 		return allThetasVec;
 
+	}
+	
+	public void setThetas(Vector<DoubleMatrix> thetasVec)
+	{
+		int i = 0;
+		for (NeuralNetworkLayer layer : layers) {
+			layer.setThetas(thetasVec.get(i++));
+		}
 	}
 
 	private void updateThetas(DoubleMatrix newThetas) {
