@@ -36,9 +36,20 @@ public class NeuralNetwork implements Serializable {
 		int[] topology = new int[layers.size() + 1];
 		topology[0] = layers.get(0).getInputNeuronCount();
 		int ind = 1;
+		Integer previousOutputNeuronCount = null;
+		int layerNumber = 1;
 		for (NeuralNetworkLayer layer : layers)
 		{
+			if (previousOutputNeuronCount != null)
+			{
+				if (previousOutputNeuronCount.intValue() != layer.getInputNeuronCount())
+				{
+					throw new IllegalArgumentException("Input neuron count of layer " + layerNumber  + " is " + layer.getInputNeuronCount() + " but previous layer has " + previousOutputNeuronCount.intValue() + " output neurons");
+				}
+			}
 			topology[ind++] = layer.getOutputNeuronCount();
+			previousOutputNeuronCount = layer.getOutputNeuronCount();
+			layerNumber++;
 		}
 		return topology;
 	}
