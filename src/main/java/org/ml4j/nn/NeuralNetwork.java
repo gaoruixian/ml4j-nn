@@ -24,10 +24,23 @@ public class NeuralNetwork implements Serializable {
 	private List<NeuralNetworkLayer> layers;
 	private int[] topology;
 
-	public NeuralNetwork(int[] topology, NeuralNetworkLayer... layers) {
+	
+	public NeuralNetwork(NeuralNetworkLayer... layers) {
 		this.layers = new ArrayList<NeuralNetworkLayer>();
 		this.layers.addAll(Arrays.asList(layers));
-		this.topology = topology;
+		this.topology = getCalculatedTopology();
+	}
+	
+	private int[] getCalculatedTopology()
+	{
+		int[] topology = new int[layers.size() + 1];
+		topology[0] = layers.get(0).getInputNeuronCount();
+		int ind = 1;
+		for (NeuralNetworkLayer layer : layers)
+		{
+			topology[ind++] = layer.getOutputNeuronCount();
+		}
+		return topology;
 	}
 	
 	public ForwardPropagation forwardPropagate(double[][] inputs) 

@@ -16,7 +16,6 @@ public class NeuralNetworkLayer implements Serializable {
 
 	private int inputNeuronCount;
 	private int outputNeuronCount;
-	private int layerNum;
 	private ActivationFunction activationFunction;
 
 	public ActivationFunction getActivationFunction() {
@@ -66,19 +65,14 @@ public class NeuralNetworkLayer implements Serializable {
 		return outputNeuronCount;
 	}
 
-	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, int layerNum, boolean initialiseThetas,
+	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, boolean initialiseThetas,
 			ActivationFunction activationFunction) {
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
-		this.layerNum = layerNum;
 		this.activationFunction = activationFunction;
 		if (initialiseThetas) {
 			setThetas(generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + 1));
 		}
-	}
-
-	public int getLayerNum() {
-		return layerNum;
 	}
 
 	public void setThetas(DoubleMatrix thetas) {

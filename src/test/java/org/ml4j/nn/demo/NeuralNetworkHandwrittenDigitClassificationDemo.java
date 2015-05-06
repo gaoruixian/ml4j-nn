@@ -58,10 +58,10 @@ public class NeuralNetworkHandwrittenDigitClassificationDemo {
 		// and classification output neurons corresponding to the 10 numbers to
 		// be predicted.
 
-		NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, 1, true, new SigmoidActivationFunction());
-		NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, 2, true, new SoftmaxActivationFunction());
+		NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, true, new SigmoidActivationFunction());
+		NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, true, new SoftmaxActivationFunction());
 
-		NeuralNetwork neuralNetwork = new NeuralNetwork(new int[] { 784, 10, 10 }, firstLayer, secondLayer);
+		NeuralNetwork neuralNetwork = new NeuralNetwork(firstLayer, secondLayer);
 
 		NeuralNetworkAlgorithm alg = new NeuralNetworkAlgorithm(neuralNetwork);
 
