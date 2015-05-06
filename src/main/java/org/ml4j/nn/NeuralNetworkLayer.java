@@ -1,9 +1,16 @@
 package org.ml4j.nn;
 
+import java.io.Serializable;
+
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.ActivationFunction;
 
-public class NeuralNetworkLayer {
+public class NeuralNetworkLayer implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private DoubleMatrix thetas;
 

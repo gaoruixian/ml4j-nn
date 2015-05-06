@@ -1,5 +1,6 @@
 package org.ml4j.nn;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,8 +15,12 @@ import org.ml4j.nn.optimisation.NeuralNetworkUpdatingCostFunction;
 import org.ml4j.nn.optimisation.Tuple;
 import org.ml4j.nn.util.NeuralNetworkUtils;
 
-public class NeuralNetwork {
+public class NeuralNetwork implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<NeuralNetworkLayer> layers;
 	private int[] topology;
 

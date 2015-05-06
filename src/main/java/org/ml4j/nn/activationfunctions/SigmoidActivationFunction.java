@@ -7,6 +7,11 @@ import org.ml4j.nn.util.NeuralNetworkUtils;
 
 public class SigmoidActivationFunction implements ActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public DoubleMatrix activate(DoubleMatrix input) {
 		return NeuralNetworkUtils.sigmoid(input);
