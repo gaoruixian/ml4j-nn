@@ -1,21 +1,20 @@
 # ml4j-nn
 
-
-    // Create NeuralNetwork
+// Create NeuralNetwork
 	
-		NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, true, new SigmoidActivationFunction());
-		NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, true, new SoftmaxActivationFunction());
-		NeuralNetwork neuralNetwork = new NeuralNetwork(firstLayer, secondLayer);
+NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, true, new SigmoidActivationFunction());
+NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, true, new SoftmaxActivationFunction());	
+NeuralNetwork neuralNetwork = new NeuralNetwork(firstLayer, secondLayer);
 
-		// Train NeuralNetwork
-		
-		double regularisationLambda = 0.1;
-		int maxIterations = 500;
-		neuralNetwork.train(trainingDataMatrix, trainingLabelsMatrix, regularisationLambda, maxIterations);
+// Train NeuralNetwork
+	
+double regularisationLambda = 0.1;
+int maxIterations = 500;
+neuralNetwork.train(trainingDataMatrix, trainingLabelsMatrix, regularisationLambda, maxIterations);
 
-		// Training Set accuracy
-		System.out.println("Accuracy on training set:" + neuralNetwork.getAccuracy(trainingDataMatrix,trainingLabelsMatrix));
+// Training Set accuracy
+System.out.println("Accuracy on training set:" + neuralNetwork.getAccuracy(trainingDataMatrix,trainingLabelsMatrix));
 
-		// Test Set accuracy
-		System.out.println("Accuracy on test set:" + neuralNetwork.getAccuracy(testSetDataMatrix, 	testSetLabelsMatrix));
+// Test Set accuracy
+System.out.println("Accuracy on test set:" + neuralNetwork.getAccuracy(testSetDataMatrix, testSetLabelsMatrix));
 
