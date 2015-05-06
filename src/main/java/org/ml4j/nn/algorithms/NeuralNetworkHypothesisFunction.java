@@ -26,8 +26,6 @@ public class NeuralNetworkHypothesisFunction implements HypothesisFunction<doubl
 	public double[] predict(double[] arg0) {
 
 		DoubleMatrix inputs = new DoubleMatrix(arg0).transpose();
-		// inputs =
-		// DoubleMatrix.concatHorizontally(DoubleMatrix.ones(inputs.rows,1),inputs);
 		double[] predictions = neuralNetwork.forwardPropagate(inputs).getOutputs().toArray();
 
 		return predictions;
@@ -37,15 +35,17 @@ public class NeuralNetworkHypothesisFunction implements HypothesisFunction<doubl
 	 * Helper function to compute the accuracy of predictions give said
 	 * predictions and correct output matrix
 	 */
-	public static double computeAccuracy(DoubleMatrix predictions, DoubleMatrix Y) {
-		return ((predictions.mul(Y)).sum()) * 100 / Y.getRows();
-	}
+	
 
 	public String getAccuracy(double[][] trainingDataMatrix, double[][] trainingLabelsMatrix) {
 
-		DoubleMatrix Y = new DoubleMatrix(trainingLabelsMatrix);
-		DoubleMatrix predictions = neuralNetwork.forwardPropagate(new DoubleMatrix(trainingDataMatrix)).getOutputs();
-		return computeAccuracy(predictions, Y) + "";
+		return neuralNetwork.getAccuracy(new DoubleMatrix(trainingDataMatrix), new DoubleMatrix(trainingLabelsMatrix));
+
+	}
+	
+	public String getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
+
+		return neuralNetwork.getAccuracy(trainingDataMatrix, trainingLabelsMatrix);
 
 	}
 

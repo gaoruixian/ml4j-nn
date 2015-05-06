@@ -29,7 +29,17 @@ public class NeuralNetwork implements Serializable {
 		this.layers.addAll(Arrays.asList(layers));
 		this.topology = topology;
 	}
-
+	
+	public ForwardPropagation forwardPropagate(double[][] inputs) 
+	{
+		return forwardPropagate(new DoubleMatrix(inputs));
+	}
+	
+	public ForwardPropagation forwardPropagate(double[] inputs) 
+	{
+		return forwardPropagate(new DoubleMatrix(new double[][] {inputs}));
+	}
+		
 	public ForwardPropagation forwardPropagate(DoubleMatrix inputs) {
 		DoubleMatrix inputActivations = inputs;
 		List<NeuralNetworkLayerActivation> layerActivations = new ArrayList<NeuralNetworkLayerActivation>();
@@ -87,6 +97,24 @@ public class NeuralNetwork implements Serializable {
 		// This wrapper uses the data provided to calculate gradients which are
 		// used by optimisation algs
 		return new BackPropagation(forwardPropatation, deltasV, lambdas, desiredOutputs.getRows());
+	}
+	
+	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, 
+			int max_iter) {
+
+			train(inputs,desiredOutputs,lambdas,getDefaultCostFunction(),max_iter);
+	}
+	
+	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double lambda, 
+			int max_iter) {
+
+			train(inputs,desiredOutputs,createLayerRegularisations(lambda),getDefaultCostFunction(),max_iter);
+	}
+	
+	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double lambda, CostFunction costFunction,
+			int max_iter) {
+		train(inputs,desiredOutputs,createLayerRegularisations(lambda),costFunction,max_iter);
+
 	}
 
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, CostFunction costFunction,
@@ -166,6 +194,38 @@ public class NeuralNetwork implements Serializable {
 		for (NeuralNetworkLayer layer : layers) {
 			layer.setThetas(newThetasList.get(ind++));
 		}
+	}
+	
+	/**
+	 * Helper function to compute the accuracy of predictions give said
+	 * predictions and correct output matrix
+	 */
+	
+
+	public String getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
+
+		DoubleMatrix predictions = forwardPropagate(trainingDataMatrix).getOutputs();
+		return computeAccuracy(predictions, trainingLabelsMatrix) + "";
+
+	}
+	
+	protected double computeAccuracy(DoubleMatrix predictions, DoubleMatrix Y) {
+		return ((predictions.mul(Y)).sum()) * 100 / Y.getRows();
+	}
+	
+	
+	public CostFunction getDefaultCostFunction() {
+			List<NeuralNetworkLayer> layers = getLayers();
+			NeuralNetworkLayer outerLayer = layers.get(layers.size() - 1);
+			return outerLayer.getActivationFunction().getDefaultCostFunction();
+	}
+	
+	public double[] createLayerRegularisations(double regularisationLamdba) {
+		double[] layerRegularisations = new double[getLayers().size()];
+		for (int i = 0; i < layerRegularisations.length; i++) {
+			layerRegularisations[i] = regularisationLamdba;
+		}
+		return layerRegularisations;
 	}
 
 }
