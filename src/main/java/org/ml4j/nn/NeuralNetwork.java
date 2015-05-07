@@ -306,10 +306,13 @@ public class NeuralNetwork implements Serializable {
 
 	public String getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
 
-		DoubleMatrix predictions = forwardPropagate(trainingDataMatrix).getOutputs();
+		DoubleMatrix predictions = forwardPropagate(trainingDataMatrix).getPredictions();
 		return computeAccuracy(predictions, trainingLabelsMatrix) + "";
 
 	}
+	
+	
+	
 
 	protected double computeAccuracy(DoubleMatrix predictions, DoubleMatrix Y) {
 		return ((predictions.mul(Y)).sum()) * 100 / Y.getRows();

@@ -22,6 +22,24 @@ public class ForwardPropagation {
 	public DoubleMatrix getOutputs() {
 		return outputs;
 	}
+	
+	
+	public DoubleMatrix getPredictions()
+	{
+		DoubleMatrix hypothesis = outputs;
+		int [] maxIndicies= hypothesis.rowArgmaxs();
+		int rows = hypothesis.getRows();
+		int cols = hypothesis.getColumns();
+		DoubleMatrix prediction = DoubleMatrix.zeros(rows,cols);
+		for (int i = 0; i< rows; i++)
+		{
+			prediction.put(i,maxIndicies[i],1);
+		}
+		return prediction;
+		
+	}
+	
+	
 
 	public double getCostWithRetrainableLayerRegularisation(DoubleMatrix desiredOutputs, double[] lambda,
 			CostFunction cf) {
