@@ -95,5 +95,28 @@ public class NeuralNetworkLayer implements Serializable {
 		DoubleMatrix initial = DoubleMatrix.randn(r, c);
 		return initial;
 	}
+	
+	public double[] getNeuronActivationMaximisingInputFeatures(int hiddenUnitIndex) {
+		int jCount = thetas.getColumns() - 1;
+		double[] maximisingInputFeatures = new double[jCount];
+		for (int j = 0; j < jCount; j++) {
+			double wij = getWij(hiddenUnitIndex, j);
+			double sum = 0;
+
+			for (int j2 = 0; j2 < jCount; j2++) {
+				sum = sum + Math.pow(getWij(hiddenUnitIndex, j2), 2);
+			}
+			sum = Math.sqrt(sum);
+			maximisingInputFeatures[j] = wij / sum;
+		}
+		return maximisingInputFeatures;
+	}
+	
+	private double getWij(int i, int j) {
+		DoubleMatrix weights = thetas;
+		int jInd = j + 1;
+		return weights.get(i, jInd);
+	}
+	
 
 }
