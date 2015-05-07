@@ -8,7 +8,6 @@ public class NeuralNetworkUpdatingCostFunction implements MinimisableCostAndGrad
 
 	private DoubleMatrix X; // Training input matrix
 	private DoubleMatrix Y; // Training output matrix
-	private int[] topology; // Neural network topology
 	private double[] lambda; // Used for regularization
 	private NeuralNetwork neuralNetwork;
 	private CostFunction costFunction;
@@ -20,7 +19,6 @@ public class NeuralNetworkUpdatingCostFunction implements MinimisableCostAndGrad
 			double[] setLambda, NeuralNetwork neuralNetwork, CostFunction costFunction) {
 		X = new DoubleMatrix().copy(setX);
 		Y = new DoubleMatrix().copy(setY);
-		topology = setTopology;
 		lambda = setLambda;
 		this.neuralNetwork = neuralNetwork;
 		this.costFunction = costFunction;
@@ -31,7 +29,6 @@ public class NeuralNetworkUpdatingCostFunction implements MinimisableCostAndGrad
 
 		neuralNetwork.updateThetasForRetrainableLayers(thetas, true);
 		return neuralNetwork.calculateCostAndGradientsForRetrainableLayers(X, Y, lambda, costFunction);
-
 	}
 
 }

@@ -20,13 +20,18 @@ public class NeuralNetworkLayerErrorGradient {
 		this.thetas = thetas;
 		this.inputActivations = inputActivations;
 	}
+	
+	public NeuralNetworkLayer getLayer() {
+		return layer;
+	}
+
+
 
 	public DoubleMatrix getDELTA() {
 		return delta.mmul(inputActivations);
 	}
 
 	public DoubleMatrix getErrorGradient() {
-		// DoubleMatrix currentTheta = layer.getThetas();
 		DoubleMatrix currentTheta = thetas;
 		DoubleMatrix modTheta = new DoubleMatrix().copy(currentTheta);
 		modTheta.putColumn(0, DoubleMatrix.zeros(currentTheta.getRows(), 1));
