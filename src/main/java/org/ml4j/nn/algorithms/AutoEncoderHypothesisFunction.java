@@ -16,13 +16,11 @@ public class AutoEncoderHypothesisFunction extends NeuralNetworkHypothesisFuncti
 	public AutoEncoderHypothesisFunction(NeuralNetwork neuralNetwork) {
 		super(neuralNetwork);
 	}
-	
 
 	public double[][] encode(double[][] numericFeaturesMatrix) {
 		double[][] encodedDataSet = new double[numericFeaturesMatrix.length][];
 		int i = 0;
-		for (double[] numericFeatures : numericFeaturesMatrix )
-		{
+		for (double[] numericFeatures : numericFeaturesMatrix) {
 			encodedDataSet[i++] = encode(numericFeatures);
 		}
 		return encodedDataSet;
@@ -31,7 +29,7 @@ public class AutoEncoderHypothesisFunction extends NeuralNetworkHypothesisFuncti
 	public double[] decode(double[] encodedFeatures) {
 		double[][] d = new double[][] { encodedFeatures };
 		DoubleMatrix X = new DoubleMatrix(d);
-		Vector<DoubleMatrix> Theta = neuralNetwork.getThetas();
+		Vector<DoubleMatrix> Theta = neuralNetwork.getClonedThetas();
 		int m = X.getRows();
 		Vector<DoubleMatrix> activations = new Vector<DoubleMatrix>(Theta.size() + 1);
 		DoubleMatrix firstActivation = new DoubleMatrix(m, Theta.firstElement().getColumns());
@@ -44,11 +42,10 @@ public class AutoEncoderHypothesisFunction extends NeuralNetworkHypothesisFuncti
 		return hypothesis.toArray();
 	}
 
-	
 	public double[] encode(double[] numericFeatures) {
 		double[][] d = new double[][] { numericFeatures };
 		DoubleMatrix X = new DoubleMatrix(d);
-		Vector<DoubleMatrix> Theta = neuralNetwork.getThetas();
+		Vector<DoubleMatrix> Theta = neuralNetwork.getClonedThetas();
 		int m = X.getRows();
 		Vector<DoubleMatrix> activations = new Vector<DoubleMatrix>(Theta.size() + 1);
 		DoubleMatrix firstActivation = new DoubleMatrix(m, Theta.firstElement().getColumns());
@@ -62,7 +59,7 @@ public class AutoEncoderHypothesisFunction extends NeuralNetworkHypothesisFuncti
 	}
 
 	public double[] getHiddenNeuronActivationMaximisingInputFeatures(int hiddenUnitIndex) {
-		int jCount = neuralNetwork.getThetas().get(0).getColumns() - 1;
+		int jCount = neuralNetwork.getClonedThetas().get(0).getColumns() - 1;
 		double[] maximisingInputFeatures = new double[jCount];
 		for (int j = 0; j < jCount; j++) {
 			double wij = getWij(hiddenUnitIndex, j);
@@ -79,12 +76,9 @@ public class AutoEncoderHypothesisFunction extends NeuralNetworkHypothesisFuncti
 	}
 
 	private double getWij(int i, int j) {
-		DoubleMatrix weights = neuralNetwork.getThetas().get(0);
+		DoubleMatrix weights = neuralNetwork.getClonedThetas().get(0);
 		int jInd = j + 1;
 		return weights.get(i, jInd);
 	}
-	
-	
-	
 
 }

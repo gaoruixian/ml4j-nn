@@ -16,45 +16,41 @@ public class NeuralNetworkLayer implements Serializable {
 
 	private int inputNeuronCount;
 	private int outputNeuronCount;
+	private boolean retrainable;
+
 	private ActivationFunction activationFunction;
 
 	public ActivationFunction getActivationFunction() {
 		return activationFunction;
 	}
-	
-	
-	
 
-	protected DoubleMatrix backPropagate(DoubleMatrix layerInputs, DoubleMatrix outerThetas, DoubleMatrix outerDeltas) {
-		DoubleMatrix sigable = layerInputs.mmul(thetas.transpose());
-
-		sigable = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(sigable.getRows()), sigable);
-
-		DoubleMatrix previousD = outerThetas.transpose().mmul(outerDeltas)
-				.mul(activationFunction.activationGradient(sigable.transpose())).transpose();
-
-		int[] rows = new int[previousD.getRows()];
-		int[] cols = new int[previousD.getColumns() - 1];
-		for (int j = 0; j < previousD.getRows(); j++) {
-			rows[j] = j;
-		}
-		for (int j = 1; j < previousD.getColumns(); j++) {
-			cols[j - 1] = j;
-		}
-
-		previousD = previousD.get(rows, cols);
-
-		return previousD.transpose();
+	public boolean isRetrainable() {
+		return retrainable;
 	}
 
-	public DoubleMatrix forwardPropagate(DoubleMatrix layerInputs) {
-
-		return activationFunction.activate(layerInputs.mmul(thetas.transpose()));
-
+	public void setRetrainable(boolean retrainable) {
+		this.retrainable = retrainable;
 	}
 
-	public DoubleMatrix getThetas() {
-		return thetas;
+	public NeuralNetworkLayer dup(boolean retrainable) {
+		NeuralNetworkLayer dup = new NeuralNetworkLayer(inputNeuronCount, outputNeuronCount, this.getClonedThetas(),
+				activationFunction, retrainable);
+		return dup;
+	}
+
+	public NeuralNetworkLayerActivation forwardPropagate(DoubleMatrix layerInputs) {
+		DoubleMatrix Z = layerInputs.mmul(thetas.transpose());
+
+		DoubleMatrix acts = activationFunction.activate(Z);
+		NeuralNetworkLayerActivation activation = new NeuralNetworkLayerActivation(this, layerInputs, Z, acts);
+
+		return activation;
+	}
+
+	public DoubleMatrix getClonedThetas() {
+
+		DoubleMatrix ret = thetas.dup();
+		return ret;
 	}
 
 	public int getInputNeuronCount() {
@@ -65,19 +61,34 @@ public class NeuralNetworkLayer implements Serializable {
 		return outputNeuronCount;
 	}
 
-	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, boolean initialiseThetas,
-			ActivationFunction activationFunction) {
+	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, ActivationFunction activationFunction) {
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
-		if (initialiseThetas) {
-			setThetas(generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + 1));
-		}
+		this.thetas = generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + 1);
+		this.retrainable = true;
 	}
 
-	public void setThetas(DoubleMatrix thetas) {
-
+	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,
+			ActivationFunction activationFunction, boolean retrainable) {
+		this.inputNeuronCount = inputNeuronCount;
+		this.outputNeuronCount = outputNeuronCount;
+		this.activationFunction = activationFunction;
 		this.thetas = thetas;
+		this.retrainable = retrainable;
+
+	}
+
+	protected void updateThetas(DoubleMatrix thetas, int layerInNetwork, boolean permitFurtherRetrains) {
+
+		if (!retrainable) {
+			throw new IllegalStateException("Layer " + layerInNetwork
+					+ " has already been trained and has not been set to retrainable");
+		}
+		this.thetas = thetas;
+		if (!permitFurtherRetrains) {
+			this.retrainable = false;
+		}
 	}
 
 	public DoubleMatrix generateInitialThetas(int r, int c) {

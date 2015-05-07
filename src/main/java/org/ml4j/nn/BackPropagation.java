@@ -12,28 +12,33 @@ public class BackPropagation {
 
 	public BackPropagation(ForwardPropagation forwardPropagation, Vector<DoubleMatrix> deltas, double[] lambdas, int m) {
 
-		this.gradients = getLayerGradients(lambdas, forwardPropagation, deltas, m);
+		this.gradients = getRetrainableLayerGradients(lambdas, forwardPropagation, deltas, m);
 	}
 
-	public BackPropagation(List<NeuralNetworkLayerErrorGradient> gradients) {
-		this.gradients = gradients;
+	/*
+	 * public BackPropagation(List<NeuralNetworkLayerErrorGradient> gradients) {
+	 * this.gradients = gradients;
+	 * 
+	 * }
+	 */
 
-	}
-
-	public List<NeuralNetworkLayerErrorGradient> getGradients() {
+	public List<NeuralNetworkLayerErrorGradient> getGradientsForRetrainableLayers() {
 		return gradients;
 	}
 
-	private List<NeuralNetworkLayerErrorGradient> getLayerGradients(double[] lambdas,
-			ForwardPropagation forwardPropagation, Vector<DoubleMatrix> delta, int m) {
+	private List<NeuralNetworkLayerErrorGradient> getRetrainableLayerGradients(double[] lambdas,
+			ForwardPropagation forwardPropagation, Vector<DoubleMatrix> retrainableDeltas, int m) {
 
 		List<NeuralNetworkLayerErrorGradient> layerGrads = new ArrayList<NeuralNetworkLayerErrorGradient>();
 		// Calculate the gradients of each weight matrix
 		int i = 0;
 		for (NeuralNetworkLayerActivation layerActivation : forwardPropagation.getActivations()) {
-			DoubleMatrix D = delta.get(i);
-			double lambda = lambdas[i];
-			layerGrads.add(layerActivation.getErrorGradient(D, lambda, m));
+			if (layerActivation.getLayer().isRetrainable()) {
+				DoubleMatrix D = retrainableDeltas.get(i);
+				double lambda = lambdas[i];
+				layerGrads.add(layerActivation.getErrorGradient(D, lambda, m));
+
+			}
 			i++;
 
 		}

@@ -33,6 +33,30 @@ public class NeuralNetworkUtils {
 	}
 
 	/**
+	 * Using given column matrix and given topology, takes elements from column
+	 * matrix (possibly generated from reshapeToVector) and organizes them into
+	 * a List (in this case Vector) of weight matrices based on given topology.
+	 */
+	public static Vector<DoubleMatrix> reshapeToList(DoubleMatrix x, int[][] topologies) {
+		Vector<DoubleMatrix> result = new Vector<DoubleMatrix>();
+		int layers = topologies.length;
+		int rows, cols;
+		int offset = 0;
+		for (int i = 0; i < layers; i++) {
+			int[] topology = topologies[i];
+			rows = topology[0];
+			cols = topology[1];
+			DoubleMatrix Theta = new DoubleMatrix(rows, cols);
+			for (int j = 0; j < cols; j++) {
+				Theta.putColumn(j, x.getRowRange(offset, offset + rows, 0));
+				offset += rows;
+			}
+			result.add(Theta);
+		}
+		return result;
+	}
+
+	/**
 	 * Takes a List (in this case Vector) and takes each element of each
 	 * DoubleMatrix and places it into a column matrix. note: the reason it is
 	 * named reshapeToVector has to do with the resulting matrix, not the Java

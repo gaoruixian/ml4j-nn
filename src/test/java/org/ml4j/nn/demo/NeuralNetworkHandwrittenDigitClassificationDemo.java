@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+` * Copyright 2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,8 +58,8 @@ public class NeuralNetworkHandwrittenDigitClassificationDemo {
 		// and classification output neurons corresponding to the 10 numbers to
 		// be predicted.
 
-		NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, true, new SigmoidActivationFunction());
-		NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, true, new SoftmaxActivationFunction());
+		NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, new SigmoidActivationFunction());
+		NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, new SoftmaxActivationFunction());
 
 		NeuralNetwork neuralNetwork = new NeuralNetwork(firstLayer, secondLayer);
 
@@ -73,8 +73,6 @@ public class NeuralNetworkHandwrittenDigitClassificationDemo {
 		// we can predict output classes given training examples
 		NeuralNetworkHypothesisFunction hyp1 = alg.getHypothesisFunction(trainingDataMatrix, trainingLabelsMatrix,
 				context);
-
-		hyp1 = alg.getHypothesisFunction(trainingDataMatrix, trainingLabelsMatrix, context);
 
 		// Training Set accuracy
 		System.out.println("Accuracy on training set:" + hyp1.getAccuracy(trainingDataMatrix, trainingLabelsMatrix));

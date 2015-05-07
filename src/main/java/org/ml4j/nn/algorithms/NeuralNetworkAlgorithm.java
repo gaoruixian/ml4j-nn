@@ -12,24 +12,18 @@ public class NeuralNetworkAlgorithm {
 
 	}
 
-	
-
 	public NeuralNetworkHypothesisFunction getHypothesisFunction(double[][] inputs, double[][] outputs,
 			NeuralNetworkAlgorithmTrainingContext context) {
 
-		if (context.getCostFunction() != null)
-		{
+		if (context.getCostFunction() != null) {
 			neuralNetwork.train(new DoubleMatrix(inputs), new DoubleMatrix(outputs),
-					neuralNetwork.createLayerRegularisations(context.getRegularizationLambda()), context.getCostFunction(),
-					context.getMaxIterations());
-		}
-		else
-		{
+					neuralNetwork.createLayerRegularisations(context.getRegularizationLambda()),
+					context.getCostFunction(), context.getMaxIterations());
+		} else {
 			neuralNetwork.train(new DoubleMatrix(inputs), new DoubleMatrix(outputs),
 					neuralNetwork.createLayerRegularisations(context.getRegularizationLambda()),
 					context.getMaxIterations());
 		}
-		
 
 		return new NeuralNetworkHypothesisFunction(neuralNetwork);
 	}

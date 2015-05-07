@@ -23,7 +23,8 @@ public class ForwardPropagation {
 		return outputs;
 	}
 
-	public double getCost(DoubleMatrix desiredOutputs, double[] lambda, CostFunction cf) {
+	public double getCostWithRetrainableLayerRegularisation(DoubleMatrix desiredOutputs, double[] lambda,
+			CostFunction cf) {
 
 		DoubleMatrix X = activations.get(0).getInputActivations();
 
@@ -35,7 +36,9 @@ public class ForwardPropagation {
 		// Calculate regularization part of cost.
 		int i = 0;
 		for (NeuralNetworkLayerActivation layerActivation : getActivations()) {
-			J = J + layerActivation.getRegularisationCost(m, lambda[i]);
+			if (layerActivation.getLayer().isRetrainable()) {
+				J = J + layerActivation.getRegularisationCost(m, lambda[i]);
+			}
 			i++;
 		}
 

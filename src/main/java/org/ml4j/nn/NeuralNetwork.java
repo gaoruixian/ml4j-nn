@@ -24,27 +24,38 @@ public class NeuralNetwork implements Serializable {
 	private List<NeuralNetworkLayer> layers;
 	private int[] topology;
 
-	
 	public NeuralNetwork(NeuralNetworkLayer... layers) {
 		this.layers = new ArrayList<NeuralNetworkLayer>();
 		this.layers.addAll(Arrays.asList(layers));
 		this.topology = getCalculatedTopology();
 	}
-	
-	private int[] getCalculatedTopology()
-	{
+
+	public void setAllLayersRetrainable() {
+		for (NeuralNetworkLayer layer : layers) {
+			layer.setRetrainable(true);
+		}
+	}
+
+	public NeuralNetwork dup(boolean allLayersRetrainable) {
+		NeuralNetworkLayer[] dupLayers = new NeuralNetworkLayer[layers.size()];
+		for (int i = 0; i < dupLayers.length; i++) {
+			dupLayers[i] = layers.get(i).dup(allLayersRetrainable || layers.get(i).isRetrainable());
+		}
+		return new NeuralNetwork(dupLayers);
+	}
+
+	private int[] getCalculatedTopology() {
 		int[] topology = new int[layers.size() + 1];
 		topology[0] = layers.get(0).getInputNeuronCount();
 		int ind = 1;
 		Integer previousOutputNeuronCount = null;
 		int layerNumber = 1;
-		for (NeuralNetworkLayer layer : layers)
-		{
-			if (previousOutputNeuronCount != null)
-			{
-				if (previousOutputNeuronCount.intValue() != layer.getInputNeuronCount())
-				{
-					throw new IllegalArgumentException("Input neuron count of layer " + layerNumber  + " is " + layer.getInputNeuronCount() + " but previous layer has " + previousOutputNeuronCount.intValue() + " output neurons");
+		for (NeuralNetworkLayer layer : layers) {
+			if (previousOutputNeuronCount != null) {
+				if (previousOutputNeuronCount.intValue() != layer.getInputNeuronCount()) {
+					throw new IllegalArgumentException("Input neuron count of layer " + layerNumber + " is "
+							+ layer.getInputNeuronCount() + " but previous layer has "
+							+ previousOutputNeuronCount.intValue() + " output neurons");
 				}
 			}
 			topology[ind++] = layer.getOutputNeuronCount();
@@ -53,26 +64,25 @@ public class NeuralNetwork implements Serializable {
 		}
 		return topology;
 	}
-	
-	public ForwardPropagation forwardPropagate(double[][] inputs) 
-	{
+
+	public ForwardPropagation forwardPropagate(double[][] inputs) {
 		return forwardPropagate(new DoubleMatrix(inputs));
 	}
-	
-	public ForwardPropagation forwardPropagate(double[] inputs) 
-	{
-		return forwardPropagate(new DoubleMatrix(new double[][] {inputs}));
+
+	public ForwardPropagation forwardPropagate(double[] inputs) {
+		return forwardPropagate(new DoubleMatrix(new double[][] { inputs }));
 	}
-		
+
 	public ForwardPropagation forwardPropagate(DoubleMatrix inputs) {
 		DoubleMatrix inputActivations = inputs;
 		List<NeuralNetworkLayerActivation> layerActivations = new ArrayList<NeuralNetworkLayerActivation>();
 		for (NeuralNetworkLayer layer : layers) {
 			inputActivations = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(inputActivations.getRows(), 1),
 					inputActivations);
-			DoubleMatrix acts = layer.forwardPropagate(inputActivations);
-
-			NeuralNetworkLayerActivation activation = new NeuralNetworkLayerActivation(layer, inputActivations, acts);
+			// DoubleMatrix acts = layer.forwardPropagate(inputActivations);
+			NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputActivations);
+			// NeuralNetworkLayerActivation activation = new
+			// NeuralNetworkLayerActivation(layer, inputActivations, acts);
 			layerActivations.add(activation);
 			inputActivations = activation.getOutputActivations();
 		}
@@ -101,9 +111,12 @@ public class NeuralNetwork implements Serializable {
 			// deltas and thetas
 
 			if (previousActivation != null) {
-				DoubleMatrix inputActivations = activation.getInputActivations();
-				DoubleMatrix newDeltas = activation.getLayer().backPropagate(inputActivations,
-						previousActivation.getLayer().getThetas(), deltas);
+
+				DoubleMatrix newDeltas = activation.backPropagate(previousActivation, deltas);
+
+				// DoubleMatrix newDeltas =
+				// activation.getLayer().backPropagate(activation,
+				// previousActivation.getThetas(), deltas);
 				deltasV.add(newDeltas);
 				deltas = newDeltas;
 			} else {
@@ -122,40 +135,44 @@ public class NeuralNetwork implements Serializable {
 		// used by optimisation algs
 		return new BackPropagation(forwardPropatation, deltasV, lambdas, desiredOutputs.getRows());
 	}
-	
-	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, 
-			int max_iter) {
 
-			train(inputs,desiredOutputs,lambdas,getDefaultCostFunction(),max_iter);
-	}
-	
-	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double lambda, 
-			int max_iter) {
+	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, int max_iter) {
 
-			train(inputs,desiredOutputs,createLayerRegularisations(lambda),getDefaultCostFunction(),max_iter);
+		train(inputs, desiredOutputs, lambdas, getDefaultCostFunction(), max_iter);
 	}
-	
+
+	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double lambda, int max_iter) {
+
+		train(inputs, desiredOutputs, createLayerRegularisations(lambda), getDefaultCostFunction(), max_iter);
+	}
+
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double lambda, CostFunction costFunction,
 			int max_iter) {
-		train(inputs,desiredOutputs,createLayerRegularisations(lambda),costFunction,max_iter);
+		train(inputs, desiredOutputs, createLayerRegularisations(lambda), costFunction, max_iter);
 
 	}
 
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, CostFunction costFunction,
 			int max_iter) {
 
-		DoubleMatrix newThetas = getMinimisingThetas(inputs, desiredOutputs, getThetas(), lambdas, costFunction,
-				max_iter);
+		if (!isContainingRetrainableLayers()) {
+			throw new IllegalStateException(
+					"NeuralNetwork must contain at least one (re)trainable layer before calling train method");
+		}
 
-		updateThetas(newThetas);
+		// This clones the NeuralNetwork, minimises the thetas, and returns
+		// optimal thetas
+		DoubleMatrix newThetas = getMinimisingThetasForRetrainableLayers(inputs, desiredOutputs,
+				getClonedRetrainableThetas(), lambdas, costFunction, max_iter);
+		updateThetasForRetrainableLayers(newThetas, false);
 	}
 
 	public List<NeuralNetworkLayer> getLayers() {
 		return layers;
 	}
 
-	public Tuple<Double, DoubleMatrix> calculateCostAndGradients(DoubleMatrix X, DoubleMatrix Y, double[] lambda,
-			CostFunction costFunction) {
+	public Tuple<Double, DoubleMatrix> calculateCostAndGradientsForRetrainableLayers(DoubleMatrix X, DoubleMatrix Y,
+			double[] lambda, CostFunction costFunction) {
 
 		// ----------------|START FORWARD PROP AND FIND COST |-------------
 
@@ -168,10 +185,10 @@ public class NeuralNetwork implements Serializable {
 
 		// Get default cost function from outer-most activation function
 
-		double J = forwardPropagation.getCost(Y, lambda, costFunction);
+		double J = forwardPropagation.getCostWithRetrainableLayerRegularisation(Y, lambda, costFunction);
 
 		// Get the gradients from back prop
-		List<NeuralNetworkLayerErrorGradient> layerGradients = backPropagation.getGradients();
+		List<NeuralNetworkLayerErrorGradient> layerGradients = backPropagation.getGradientsForRetrainableLayers();
 
 		// Convert to deired format
 		Vector<DoubleMatrix> gradList = new Vector<DoubleMatrix>();
@@ -185,46 +202,107 @@ public class NeuralNetwork implements Serializable {
 		return new Tuple<Double, DoubleMatrix>(new Double(J), gradients);
 	}
 
-	private DoubleMatrix getMinimisingThetas(DoubleMatrix inputs, DoubleMatrix desiredOutputs,
-			Vector<DoubleMatrix> initialThetas, double[] lambdas, CostFunction costFunction, int max_iter) {
+	private DoubleMatrix getMinimisingThetasForRetrainableLayers(DoubleMatrix inputs, DoubleMatrix desiredOutputs,
+			Vector<DoubleMatrix> initialRetrainableThetas, double[] retrainableLambdas, CostFunction costFunction,
+			int max_iter) {
 
+		// Duplicate neural network
+		NeuralNetwork duplicateNeuralNetwork = dup(false);
 		MinimisableCostAndGradientFunction minimisableCostFunction = new NeuralNetworkUpdatingCostFunction(inputs,
-				desiredOutputs, topology, lambdas, this, costFunction);
-		DoubleMatrix pInput = NeuralNetworkUtils.reshapeToVector(initialThetas);
+				desiredOutputs, topology, retrainableLambdas, duplicateNeuralNetwork, costFunction);
+
+		DoubleMatrix pInput = NeuralNetworkUtils.reshapeToVector(initialRetrainableThetas);
 		return CostFunctionMinimiser.fmincg(minimisableCostFunction, pInput, max_iter, true);
 	}
 
-	public Vector<DoubleMatrix> getThetas() {
+	public Vector<DoubleMatrix> getClonedThetas() {
 		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();
 		for (NeuralNetworkLayer layer : layers) {
-			allThetasVec.add(layer.getThetas());
+			allThetasVec.add(layer.getClonedThetas());
 		}
 		return allThetasVec;
 
 	}
-	
-	public void setThetas(Vector<DoubleMatrix> thetasVec)
-	{
+
+	public Vector<DoubleMatrix> getClonedRetrainableThetas() {
+		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();
+		for (NeuralNetworkLayer layer : layers) {
+			if (layer.isRetrainable()) {
+				allThetasVec.add(layer.getClonedThetas());
+			}
+		}
+		return allThetasVec;
+
+	}
+
+	public boolean isContainingRetrainableLayers() {
+		for (NeuralNetworkLayer layer : layers) {
+			if (layer.isRetrainable()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void updateThetas(Vector<DoubleMatrix> thetas, boolean permitFurtherRetrains) {
+
 		int i = 0;
 		for (NeuralNetworkLayer layer : layers) {
-			layer.setThetas(thetasVec.get(i++));
+			int layerNumber = i + 1;
+			layer.updateThetas(thetas.get(i++), layerNumber, permitFurtherRetrains);
+
 		}
 	}
 
-	private void updateThetas(DoubleMatrix newThetas) {
+	public void updateThetasForRetrainableLayers(Vector<DoubleMatrix> retrainableThetas, boolean permitFurtherRetrains) {
 
-		Vector<DoubleMatrix> newThetasList = NeuralNetworkUtils.reshapeToList(newThetas, topology);
+		int i = 0;
+		for (NeuralNetworkLayer layer : layers) {
+			int layerNumber = i + 1;
+			if (layer.isRetrainable()) {
+				layer.updateThetas(retrainableThetas.get(i), layerNumber, permitFurtherRetrains);
+				i++;
+			}
+
+		}
+	}
+
+	public void updateThetasForRetrainableLayers(DoubleMatrix retrainableThetas, boolean permitFutherRetrains) {
+
+		Vector<DoubleMatrix> ts = NeuralNetworkUtils.reshapeToList(retrainableThetas, getRetrainableTopologies());
+
+		updateThetasForRetrainableLayers(ts, permitFutherRetrains);
+	}
+
+	private int[][] getRetrainableTopologies() {
+		int count = 0;
+		for (NeuralNetworkLayer layer : layers) {
+			if (layer.isRetrainable())
+				count++;
+		}
+		int[][] topologies = new int[count][2];
 		int ind = 0;
 		for (NeuralNetworkLayer layer : layers) {
-			layer.setThetas(newThetasList.get(ind++));
+			if (layer.isRetrainable()) {
+				topologies[ind] = new int[] { layer.getOutputNeuronCount(), layer.getInputNeuronCount() + 1 };
+				ind++;
+
+			}
+
 		}
+
+		return topologies;
 	}
-	
+
+	public void updateThetasForAllLayers(DoubleMatrix thetas, boolean permitFutherRetrains) {
+
+		updateThetas(NeuralNetworkUtils.reshapeToList(thetas, topology), permitFutherRetrains);
+	}
+
 	/**
 	 * Helper function to compute the accuracy of predictions give said
 	 * predictions and correct output matrix
 	 */
-	
 
 	public String getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
 
@@ -232,18 +310,17 @@ public class NeuralNetwork implements Serializable {
 		return computeAccuracy(predictions, trainingLabelsMatrix) + "";
 
 	}
-	
+
 	protected double computeAccuracy(DoubleMatrix predictions, DoubleMatrix Y) {
 		return ((predictions.mul(Y)).sum()) * 100 / Y.getRows();
 	}
-	
-	
+
 	public CostFunction getDefaultCostFunction() {
-			List<NeuralNetworkLayer> layers = getLayers();
-			NeuralNetworkLayer outerLayer = layers.get(layers.size() - 1);
-			return outerLayer.getActivationFunction().getDefaultCostFunction();
+		List<NeuralNetworkLayer> layers = getLayers();
+		NeuralNetworkLayer outerLayer = layers.get(layers.size() - 1);
+		return outerLayer.getActivationFunction().getDefaultCostFunction();
 	}
-	
+
 	public double[] createLayerRegularisations(double regularisationLamdba) {
 		double[] layerRegularisations = new double[getLayers().size()];
 		for (int i = 0; i < layerRegularisations.length; i++) {
