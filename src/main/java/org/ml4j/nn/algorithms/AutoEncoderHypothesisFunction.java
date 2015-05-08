@@ -15,16 +15,18 @@ public class AutoEncoderHypothesisFunction implements HypothesisFunction<double[
 	private static final long serialVersionUID = 1L;
 	
 	private AutoEncoder autoEncoder;
+	private Vector<DoubleMatrix> Theta;
 
 	public AutoEncoderHypothesisFunction(AutoEncoder autoEncoder) {
 		this.autoEncoder = autoEncoder;
+		this.Theta = autoEncoder.getClonedThetas();
 	}
 
-	public double[][] encode(double[][] numericFeaturesMatrix) {
+	public double[][] encodeFirstLayer(double[][] numericFeaturesMatrix) {
 		double[][] encodedDataSet = new double[numericFeaturesMatrix.length][];
 		int i = 0;
 		for (double[] numericFeatures : numericFeaturesMatrix) {
-			encodedDataSet[i++] = encode(numericFeatures);
+			encodedDataSet[i++] = encodeFirstLayer(numericFeatures);
 		}
 		return encodedDataSet;
 	}
@@ -39,10 +41,9 @@ public class AutoEncoderHypothesisFunction implements HypothesisFunction<double[
 		return predictions;
 	}
 
-	public double[] decode(double[] encodedFeatures) {
+	public double[] decodeFirstLayer(double[] encodedFeatures) {
 		double[][] d = new double[][] { encodedFeatures };
 		DoubleMatrix X = new DoubleMatrix(d);
-		Vector<DoubleMatrix> Theta = autoEncoder.getClonedThetas();
 		int m = X.getRows();
 		Vector<DoubleMatrix> activations = new Vector<DoubleMatrix>(Theta.size() + 1);
 		DoubleMatrix firstActivation = new DoubleMatrix(m, Theta.firstElement().getColumns());
@@ -55,10 +56,9 @@ public class AutoEncoderHypothesisFunction implements HypothesisFunction<double[
 		return hypothesis.toArray();
 	}
 
-	public double[] encode(double[] numericFeatures) {
+	public double[] encodeFirstLayer(double[] numericFeatures) {
 		double[][] d = new double[][] { numericFeatures };
 		DoubleMatrix X = new DoubleMatrix(d);
-		Vector<DoubleMatrix> Theta = autoEncoder.getClonedThetas();
 		int m = X.getRows();
 		Vector<DoubleMatrix> activations = new Vector<DoubleMatrix>(Theta.size() + 1);
 		DoubleMatrix firstActivation = new DoubleMatrix(m, Theta.firstElement().getColumns());
@@ -72,7 +72,7 @@ public class AutoEncoderHypothesisFunction implements HypothesisFunction<double[
 	}
 
 	public double[] getHiddenNeuronActivationMaximisingInputFeatures(int hiddenUnitIndex) {
-		int jCount = autoEncoder.getClonedThetas().get(0).getColumns() - 1;
+		int jCount = Theta.get(0).getColumns() - 1;
 		double[] maximisingInputFeatures = new double[jCount];
 		for (int j = 0; j < jCount; j++) {
 			double wij = getWij(hiddenUnitIndex, j);
@@ -89,7 +89,7 @@ public class AutoEncoderHypothesisFunction implements HypothesisFunction<double[
 	}
 
 	private double getWij(int i, int j) {
-		DoubleMatrix weights = autoEncoder.getClonedThetas().get(0);
+		DoubleMatrix weights = Theta.get(0);
 		int jInd = j + 1;
 		return weights.get(i, jInd);
 	}

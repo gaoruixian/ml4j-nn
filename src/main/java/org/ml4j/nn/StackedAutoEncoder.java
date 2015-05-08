@@ -6,12 +6,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jblas.DoubleMatrix;
-import org.ml4j.algorithms.HypothesisFunction;
-import org.ml4j.nn.activationfunctions.ActivationFunction;
 import org.ml4j.nn.algorithms.AutoEncoderAlgorithm;
 import org.ml4j.nn.algorithms.AutoEncoderHypothesisFunction;
 import org.ml4j.nn.algorithms.NeuralNetworkAlgorithmTrainingContext;
-import org.ml4j.nn.algorithms.NeuralNetworkHypothesisFunction;
 import org.ml4j.nn.costfunctions.CostFunction;
 
 public class StackedAutoEncoder extends AutoEncoder {
@@ -89,7 +86,7 @@ public class StackedAutoEncoder extends AutoEncoder {
 			NeuralNetworkAlgorithmTrainingContext context = new NeuralNetworkAlgorithmTrainingContext(max_iter);
 			context.setRegularizationLambda(lambda);
 			AutoEncoderHypothesisFunction hyp = alg.getHypothesisFunction(currentInputs.toArray2(), context);
-			currentInputs= new DoubleMatrix(hyp.encode(currentInputs.toArray2()));
+			currentInputs= new DoubleMatrix(hyp.encodeFirstLayer(currentInputs.toArray2()));
 		}	
 	}
 
