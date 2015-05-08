@@ -4,8 +4,8 @@
 
 // Create NeuralNetwork
 	
-NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, true, new SigmoidActivationFunction());
-NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, true, new SoftmaxActivationFunction());	
+NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, new SigmoidActivationFunction());
+NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, new SoftmaxActivationFunction());	
 NeuralNetwork neuralNetwork = new NeuralNetwork(firstLayer, secondLayer);
 
 // Train NeuralNetwork
