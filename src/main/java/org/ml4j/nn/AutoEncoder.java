@@ -68,6 +68,9 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 			encoder.getLayers().add(encoder.getLayers().size() -1,layer);
 		}
 		encoder.getLayers().remove(encoder.getLayers().size() -1);
+		
+		// Checks that resulting nn is an autoencoder
+		encoder.dup(false);
 		return encoder;
 	}
 	

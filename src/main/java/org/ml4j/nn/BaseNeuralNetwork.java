@@ -259,6 +259,7 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 		for (NeuralNetworkLayer layer : layers) {
 			int layerNumber = i + 1;
 			layer.updateThetas(thetas.get(i++), layerNumber, permitFurtherRetrains);
+			System.out.println("Updated layer:" + layerNumber +  ":" + this.toString());
 
 		}
 	}
@@ -266,8 +267,9 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 	public void updateThetasForRetrainableLayers(Vector<DoubleMatrix> retrainableThetas, boolean permitFurtherRetrains) {
 
 		int i = 0;
+		int layerNumber = 0;
 		for (NeuralNetworkLayer layer : layers) {
-			int layerNumber = i + 1;
+			layerNumber++;
 			if (layer.isRetrainable()) {
 				layer.updateThetas(retrainableThetas.get(i), layerNumber, permitFurtherRetrains);
 				i++;
