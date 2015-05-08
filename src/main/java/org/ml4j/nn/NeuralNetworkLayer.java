@@ -37,18 +37,32 @@ public class NeuralNetworkLayer implements Serializable {
 				activationFunction, retrainable);
 		return dup;
 	}
+	
+	public DoubleMatrix activate(double[][] layerInputsArrays)
+	{
+		DoubleMatrix layerInputs= new DoubleMatrix(layerInputsArrays);
+		DoubleMatrix layerInputsWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
+		return forwardPropagate(layerInputsWithIntercept).getOutputActivations();
+	}
 
-	public NeuralNetworkLayerActivation forwardPropagate(DoubleMatrix layerInputs) {
+	public DoubleMatrix activate(DoubleMatrix layerInputs)
+	{
+		DoubleMatrix layerInputsWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
+		return forwardPropagate(layerInputsWithIntercept).getOutputActivations();
+	}
+	
+	
+	protected NeuralNetworkLayerActivation forwardPropagate(DoubleMatrix layerInputsWithIntercept) {
 		
-		if (layerInputs.getColumns() != getInputNeuronCount() + 1)
+		if (layerInputsWithIntercept.getColumns() != getInputNeuronCount() + 1)
 		{
 			throw new RuntimeException("Layer forward propogation requires inputs matrix with intercepts with number of columns = " + (getInputNeuronCount() + 1));
 		}
 		
-		DoubleMatrix Z = layerInputs.mmul(thetas.transpose());
+		DoubleMatrix Z = layerInputsWithIntercept.mmul(thetas.transpose());
 
 		DoubleMatrix acts = activationFunction.activate(Z);
-		NeuralNetworkLayerActivation activation = new NeuralNetworkLayerActivation(this, layerInputs, Z, acts);
+		NeuralNetworkLayerActivation activation = new NeuralNetworkLayerActivation(this, layerInputsWithIntercept, Z, acts);
 
 		return activation;
 	}

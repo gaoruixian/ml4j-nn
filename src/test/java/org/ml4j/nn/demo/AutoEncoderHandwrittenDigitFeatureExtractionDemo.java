@@ -72,7 +72,7 @@ public class AutoEncoderHandwrittenDigitFeatureExtractionDemo {
 		
 		
 		//DoubleMatrix activations = AutoEncoder.forwardPropPredictFirstActivationOnly(hyp1.getAutoEncoder().getTheta(), new DoubleMatrix(trainingDataMatrix));
-		DoubleMatrix activations = firstLayer.forwardPropagate(DoubleMatrix.concatHorizontally(DoubleMatrix.ones(trainingDataMatrix.length,1),new DoubleMatrix(trainingDataMatrix))).getOutputActivations();
+		DoubleMatrix activations = firstLayer.activate(trainingDataMatrix);
 		double totalFeatureActivation = 0d;
 		for (int j = 0; j < activations.getColumns(); j++)
 		{
