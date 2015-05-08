@@ -62,15 +62,20 @@ public class NeuralNetworkLayer implements Serializable {
 	}
 
 	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, ActivationFunction activationFunction) {
+		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
 		this.thetas = generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + 1);
 		this.retrainable = true;
 	}
+	
 
 	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,
 			ActivationFunction activationFunction, boolean retrainable) {
+		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
+		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
+		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + 1)) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
