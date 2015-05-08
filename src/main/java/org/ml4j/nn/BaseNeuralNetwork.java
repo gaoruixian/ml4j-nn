@@ -83,17 +83,36 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 	}
 
 	public ForwardPropagation forwardPropagate(DoubleMatrix inputs) {
+		return forwardPropagateFromTo(inputs,0,getLayers().size() -1);
+	}
+	
+	public ForwardPropagation forwardPropagateFromTo(double[][] inputs,int fromLayerIndex,int toLayerIndex) {
+		return forwardPropagateFromTo(new DoubleMatrix(inputs),fromLayerIndex,toLayerIndex);
+	}
+	
+	public ForwardPropagation forwardPropagateFromTo(double[] inputs,int fromLayerIndex,int toLayerIndex) {
+		return forwardPropagateFromTo(new DoubleMatrix(new double[][] {inputs}),fromLayerIndex,toLayerIndex);
+	}
+	public ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex) {
 		DoubleMatrix inputActivations = inputs;
 		List<NeuralNetworkLayerActivation> layerActivations = new ArrayList<NeuralNetworkLayerActivation>();
+		boolean start = false;
+		boolean end = false;
+		int index =0;
 		for (NeuralNetworkLayer layer : layers) {
+			start = start || index == fromLayerIndex;
+
+			if (start && !end)
+			{
 			inputActivations = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(inputActivations.getRows(), 1),
 					inputActivations);
-			// DoubleMatrix acts = layer.forwardPropagate(inputActivations);
 			NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputActivations);
-			// NeuralNetworkLayerActivation activation = new
-			// NeuralNetworkLayerActivation(layer, inputActivations, acts);
 			layerActivations.add(activation);
 			inputActivations = activation.getOutputActivations();
+			}
+			end = end || index == toLayerIndex;
+
+			index++;
 		}
 		return new ForwardPropagation(inputActivations, layerActivations);
 	}

@@ -96,7 +96,7 @@ public class StackedAutoEncoder extends AutoEncoder {
 			NeuralNetworkAlgorithmTrainingContext context = new NeuralNetworkAlgorithmTrainingContext(max_iter);
 			context.setRegularizationLambda(lambda);
 			AutoEncoderHypothesisFunction hyp = alg.getHypothesisFunction(currentInputs.toArray2(), context);
-			currentInputs= new DoubleMatrix(hyp.encodeFirstLayer(currentInputs.toArray2()));
+			currentInputs= new DoubleMatrix(hyp.encodeToLayer(currentInputs.toArray2(),0));
 		}	
 	}
 

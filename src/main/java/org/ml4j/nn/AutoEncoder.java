@@ -112,7 +112,21 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 	}
 	
 	
+	public double[][] encodeToLayer(double[][] numericFeaturesMatrix,int toLayerIndex) {
+		return forwardPropagateFromTo(numericFeaturesMatrix, 0, toLayerIndex).getOutputs().toArray2();
+	}
 	
+	public double[][] decodeFromLayer(double[][] numericFeaturesMatrix,int fromLayerIndex) {
+		return forwardPropagateFromTo(numericFeaturesMatrix, fromLayerIndex, getLayers().size() - 1).getOutputs().toArray2();
+	}
+	
+	public double[] decodeFromLayer(double[] encodedFeatures,int fromLayerIndex) {
+		return forwardPropagateFromTo(encodedFeatures, fromLayerIndex, getLayers().size() - 1).getOutputs().toArray();
+
+	}
+	public double[] encodeToLayer(double[] numericFeatures,int toLayer) {
+		return forwardPropagateFromTo(numericFeatures, 0, toLayer).getOutputs().toArray();
+	}
 	
 	
 	

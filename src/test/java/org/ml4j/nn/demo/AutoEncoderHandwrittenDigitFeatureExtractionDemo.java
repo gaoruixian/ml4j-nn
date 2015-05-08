@@ -112,10 +112,10 @@ public class AutoEncoderHandwrittenDigitFeatureExtractionDemo {
 		for (int i = 0; i < 100; i++) {
 			
 			// For each element in our test set, obtain the compressed encoded features
-			double[] encodedFeatures = hyp1.encodeFirstLayer(testSetDataMatrix[i]);
+			double[] encodedFeatures = hyp1.encodeToLayer(testSetDataMatrix[i],0);
 			
 			// Now reconstruct the features again 
-			double[] reconstructedFeatures = hyp1.decodeFirstLayer(encodedFeatures);
+			double[] reconstructedFeatures = hyp1.decodeFromLayer(encodedFeatures,1);
 			
 			// Display the reconstructed input image
 			MnistUtils.draw(reconstructedFeatures,display);
