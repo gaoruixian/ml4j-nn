@@ -19,6 +19,7 @@ public class NeuralNetwork extends BaseNeuralNetwork<NeuralNetwork> {
 	{
 		super(layers);
 	}
+	
 
 	public String getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
 

@@ -30,6 +30,16 @@ public class StackedAutoEncoder extends AutoEncoder {
 		this.autoEncoderStack = Arrays.asList(autoEncoders);
 	}
 	
+	public NeuralNetwork cloneAndRemoveOuterLayer()
+	{
+		NeuralNetworkLayer[] layers = new NeuralNetworkLayer[this.getLayers().size() -2];
+		for (int i = 0; i < layers.length;i++)
+		{
+			layers[i] = this.getLayers().get(i);
+		}
+		return new NeuralNetwork(layers);
+	}
+	
 	private static NeuralNetworkLayer[] getStackedLayers(AutoEncoder...autoEncoders)
 	{
 		List<NeuralNetworkLayer> encoders = new ArrayList<NeuralNetworkLayer>();

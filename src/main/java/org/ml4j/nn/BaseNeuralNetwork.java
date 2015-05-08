@@ -35,6 +35,13 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 			layer.setRetrainable(true);
 		}
 	}
+	
+	public NeuralNetwork cloneAndAddLayers(NeuralNetworkLayer... layers) {
+		List<NeuralNetworkLayer> clonedLayers = new ArrayList<NeuralNetworkLayer>();
+		clonedLayers.addAll(this.getLayers());
+		clonedLayers.addAll(Arrays.asList(layers));
+		return new NeuralNetwork(clonedLayers.toArray(new NeuralNetworkLayer[clonedLayers.size()]));
+	}	
 
 	public N dup(boolean allLayersRetrainable) {
 		NeuralNetworkLayer[] dupLayers = new NeuralNetworkLayer[layers.size()];

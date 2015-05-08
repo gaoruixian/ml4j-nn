@@ -25,6 +25,8 @@ public class BackPropagation {
 	public List<NeuralNetworkLayerErrorGradient> getGradientsForRetrainableLayers() {
 		return gradients;
 	}
+	
+	
 
 	private List<NeuralNetworkLayerErrorGradient> getRetrainableLayerGradients(double[] lambdas,
 			ForwardPropagation forwardPropagation, Vector<DoubleMatrix> retrainableDeltas, int m) {

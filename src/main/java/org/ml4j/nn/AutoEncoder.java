@@ -111,4 +111,6 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 	
 	
 	
+	
+	
 }
