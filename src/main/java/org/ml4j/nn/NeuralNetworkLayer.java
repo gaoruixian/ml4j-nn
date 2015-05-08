@@ -39,6 +39,12 @@ public class NeuralNetworkLayer implements Serializable {
 	}
 
 	public NeuralNetworkLayerActivation forwardPropagate(DoubleMatrix layerInputs) {
+		
+		if (layerInputs.getColumns() != getInputNeuronCount() + 1)
+		{
+			throw new RuntimeException("Layer forward propogation requires inputs matrix with intercepts with number of columns = " + (getInputNeuronCount() + 1));
+		}
+		
 		DoubleMatrix Z = layerInputs.mmul(thetas.transpose());
 
 		DoubleMatrix acts = activationFunction.activate(Z);
@@ -90,13 +96,15 @@ public class NeuralNetworkLayer implements Serializable {
 			throw new IllegalStateException("Layer " + layerInNetwork
 					+ " has already been trained and has not been set to retrainable");
 		}
+		
+		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + 1)) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
 		this.thetas = thetas;
 		if (!permitFurtherRetrains) {
 			this.retrainable = false;
 		}
 	}
 
-	public DoubleMatrix generateInitialThetas(int r, int c) {
+	private DoubleMatrix generateInitialThetas(int r, int c) {
 		DoubleMatrix initial = DoubleMatrix.randn(r, c);
 		return initial;
 	}
