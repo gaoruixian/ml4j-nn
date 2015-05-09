@@ -29,6 +29,17 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 		this.layers.addAll(Arrays.asList(layers));
 		this.topology = getCalculatedTopology();
 	}
+	
+	public BaseNeuralNetwork(List<NeuralNetworkLayer> layers) {
+		this.layers.addAll(layers);
+		this.topology = getCalculatedTopology();
+	}
+	
+	public BaseNeuralNetwork(BaseNeuralNetwork<?> nn)
+	{
+		this.layers = nn.layers;
+		this.topology = getCalculatedTopology();
+	}
 
 	public void setAllLayersRetrainable() {
 		for (NeuralNetworkLayer layer : layers) {
@@ -38,10 +49,28 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 	
 	public NeuralNetwork cloneAndAddLayers(NeuralNetworkLayer... layers) {
 		List<NeuralNetworkLayer> clonedLayers = new ArrayList<NeuralNetworkLayer>();
-		clonedLayers.addAll(this.getLayers());
+		clonedLayers.addAll(this.layers);
 		clonedLayers.addAll(Arrays.asList(layers));
 		return new NeuralNetwork(clonedLayers.toArray(new NeuralNetworkLayer[clonedLayers.size()]));
 	}	
+	
+	public boolean isSymmetricTopology()
+	{
+		if (getNumberOfLayers() % 2 != 0)
+		{
+			return false;
+		}
+		int half = getNumberOfLayers() /2;
+		for (int i = 0; i < half; i++)
+		{
+			if ((layers.get(i).getInputNeuronCount() != layers.get(half * 2 - i - 1).getOutputNeuronCount())
+				|| (layers.get(i).getOutputNeuronCount() != layers.get(half *2- i - 1).getInputNeuronCount()))
+				{
+					return false;
+				}
+		}
+		return true;
+	}
 
 	public N dup(boolean allLayersRetrainable) {
 		NeuralNetworkLayer[] dupLayers = new NeuralNetworkLayer[layers.size()];
@@ -83,7 +112,7 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 	}
 
 	public ForwardPropagation forwardPropagate(DoubleMatrix inputs) {
-		return forwardPropagateFromTo(inputs,0,getLayers().size() -1);
+		return forwardPropagateFromTo(inputs,0,getNumberOfLayers() -1);
 	}
 	
 	public ForwardPropagation forwardPropagateFromTo(double[][] inputs,int fromLayerIndex,int toLayerIndex) {
@@ -197,6 +226,22 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 
 	public List<NeuralNetworkLayer> getLayers() {
 		return layers;
+	}
+
+	
+	public int getNumberOfLayers()
+	{
+		return layers.size();
+	}
+	
+	public NeuralNetworkLayer getOuterLayer()
+	{
+		return layers.get(getNumberOfLayers() -1);
+	}
+	
+	public NeuralNetworkLayer getFirstLayer()
+	{
+		return layers.get(0);
 	}
 
 	public Tuple<Double, DoubleMatrix> calculateCostAndGradientsForRetrainableLayers(DoubleMatrix X, DoubleMatrix Y,
@@ -332,13 +377,12 @@ public abstract class BaseNeuralNetwork<N extends BaseNeuralNetwork<N>> implemen
 	
 
 	public CostFunction getDefaultCostFunction() {
-		List<NeuralNetworkLayer> layers = getLayers();
-		NeuralNetworkLayer outerLayer = layers.get(layers.size() - 1);
+		NeuralNetworkLayer outerLayer = getOuterLayer();
 		return outerLayer.getActivationFunction().getDefaultCostFunction();
 	}
 
 	public double[] createLayerRegularisations(double regularisationLamdba) {
-		double[] layerRegularisations = new double[getLayers().size()];
+		double[] layerRegularisations = new double[getNumberOfLayers()];
 		for (int i = 0; i < layerRegularisations.length; i++) {
 			layerRegularisations[i] = regularisationLamdba;
 		}

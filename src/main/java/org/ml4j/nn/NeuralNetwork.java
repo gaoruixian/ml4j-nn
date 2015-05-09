@@ -1,5 +1,7 @@
 package org.ml4j.nn;
 
+import java.util.List;
+
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.costfunctions.CostFunction;
 
@@ -16,6 +18,16 @@ public class NeuralNetwork extends BaseNeuralNetwork<NeuralNetwork> {
 	 */
 	
 	public NeuralNetwork(NeuralNetworkLayer... layers)
+	{
+		super(layers);
+	}
+	
+	public NeuralNetwork(BaseNeuralNetwork<?> n)
+	{
+		super(n);
+	}
+	
+	public NeuralNetwork(List<NeuralNetworkLayer> layers)
 	{
 		super(layers);
 	}

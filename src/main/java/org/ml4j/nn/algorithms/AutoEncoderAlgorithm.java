@@ -1,7 +1,5 @@
 package org.ml4j.nn.algorithms;
 
-import java.util.List;
-
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.AutoEncoder;
 import org.ml4j.nn.NeuralNetworkLayer;
@@ -32,8 +30,7 @@ public class AutoEncoderAlgorithm {
 
 	private CostFunction getCostFunction(NeuralNetworkAlgorithmTrainingContext context) {
 		if (context.getCostFunction() == null) {
-			List<NeuralNetworkLayer> layers = autoEncoder.getLayers();
-			NeuralNetworkLayer outerLayer = layers.get(layers.size() - 1);
+			NeuralNetworkLayer outerLayer = autoEncoder.getOuterLayer();
 			return outerLayer.getActivationFunction().getDefaultCostFunction();
 		} else {
 			return context.getCostFunction();
@@ -41,7 +38,7 @@ public class AutoEncoderAlgorithm {
 	}
 
 	private double[] createLayerRegularisations(double regularisationLamdba) {
-		double[] layerRegularisations = new double[autoEncoder.getLayers().size()];
+		double[] layerRegularisations = new double[autoEncoder.getNumberOfLayers()];
 		for (int i = 0; i < layerRegularisations.length; i++) {
 			layerRegularisations[i] = regularisationLamdba;
 		}

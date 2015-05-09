@@ -1,5 +1,7 @@
 package org.ml4j.nn;
 
+import java.util.List;
+
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.ActivationFunction;
 import org.ml4j.nn.costfunctions.CostFunction;
@@ -15,6 +17,9 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 	{
 		this(new NeuralNetworkLayer(inputNeuronCount,hiddenNeuronCount,encodingActivationFunction),new NeuralNetworkLayer(hiddenNeuronCount,inputNeuronCount,decodingActivationFunction));
 	}
+	
+	
+	
 	public AutoEncoder(NeuralNetworkLayer... layers)
 	{
 		super(layers);
@@ -26,53 +31,28 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 		}
 	}  
 	
-	public boolean isSymmetricTopology()
+	public AutoEncoder(List<NeuralNetworkLayer> layers)
 	{
-		if (this.getLayers().size() % 2 != 0)
+		super(layers);
+		NeuralNetworkLayer firstLayer = getFirstLayer();
+		NeuralNetworkLayer lastLayer = getOuterLayer();
+		if (firstLayer.getInputNeuronCount() != lastLayer.getOutputNeuronCount())
 		{
-			return false;
+			throw new IllegalArgumentException("Input layer neuron count must be the same as output activations");
 		}
-		int half = this.getLayers().size()/2;
-		for (int i = 0; i < half; i++)
-		{
-			if ((this.getLayers().get(i).getInputNeuronCount() != this.getLayers().get(half * 2 - i - 1).getOutputNeuronCount())
-				|| (this.getLayers().get(i).getOutputNeuronCount() != this.getLayers().get(half *2- i - 1).getInputNeuronCount()))
-				{
-					return false;
-				}
-		}
-		return true;
-	}
+	}  
 	
-	
-	public AutoEncoder appendHiddenLayers(boolean createNewAutoEncoder,int[] topology,ActivationFunction[] activationFunctions)
+	public AutoEncoder(AutoEncoder encoder)
 	{
-		AutoEncoder encoder = createNewAutoEncoder ? new AutoEncoder(this.getLayers().toArray(new NeuralNetworkLayer[this.getLayers().size()])) : this ;
-		NeuralNetworkLayer finalLayer = getLayers().get(getLayers().size() -1);
-		int inputNeuronCount = finalLayer.getInputNeuronCount();
-		NeuralNetworkLayer[] appendedLayers = new NeuralNetworkLayer[topology.length + 1];
-		for (int i = 0; i < topology.length; i++)
+		super(encoder);
+		NeuralNetworkLayer firstLayer = getFirstLayer();
+		NeuralNetworkLayer lastLayer = getOuterLayer();
+		if (firstLayer.getInputNeuronCount() != lastLayer.getOutputNeuronCount())
 		{
-			appendedLayers[i] = new NeuralNetworkLayer(inputNeuronCount,topology[i],activationFunctions[i]);
-			inputNeuronCount = topology[i];
+			throw new IllegalArgumentException("Input layer neuron count must be the same as output activations");
 		}
-		appendedLayers[topology.length] = new NeuralNetworkLayer(inputNeuronCount,finalLayer.getOutputNeuronCount(),activationFunctions[appendedLayers.length - 1]);
-		return encoder.replaceFinalLayer(createNewAutoEncoder,appendedLayers);
 	}
-	
-	public AutoEncoder replaceFinalLayer(boolean createNewAutoEncoder,NeuralNetworkLayer... layers)
-	{
-		AutoEncoder encoder = createNewAutoEncoder ? new AutoEncoder(this.getLayers().toArray(new NeuralNetworkLayer[this.getLayers().size()])) : this ;
-		for (NeuralNetworkLayer layer : layers)
-		{	
-			encoder.getLayers().add(encoder.getLayers().size() -1,layer);
-		}
-		encoder.getLayers().remove(encoder.getLayers().size() -1);
-		
-		// Checks that resulting nn is an autoencoder
-		encoder.dup(false);
-		return encoder;
-	}
+
 	
 	public void train(DoubleMatrix inputs, double[] lambdas, int max_iter) {
 		super.train(inputs, inputs, lambdas, max_iter);
@@ -111,17 +91,37 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 		return new StackedAutoEncoder(autoEncoders);
 	}
 	
+	public NeuralNetwork cloneAndRemoveOuterLayer()
+	{
+		NeuralNetworkLayer[] layers = new NeuralNetworkLayer[getNumberOfLayers() -2];
+		for (int i = 0; i < layers.length;i++)
+		{
+			layers[i] = this.getLayers().get(i);
+		}
+		return new NeuralNetwork(layers);
+	}
+	
+	public NeuralNetwork cloneAndReplaceOuterLayer(NeuralNetworkLayer layer)
+	{
+		NeuralNetworkLayer[] layers = new NeuralNetworkLayer[getNumberOfLayers() -1];
+		for (int i = 0; i < layers.length;i++)
+		{
+			layers[i] = this.getLayers().get(i);
+		}
+		layers[layers.length -1] = layer;
+		return new NeuralNetwork(layers);
+	}
 	
 	public double[][] encodeToLayer(double[][] numericFeaturesMatrix,int toLayerIndex) {
 		return forwardPropagateFromTo(numericFeaturesMatrix, 0, toLayerIndex).getOutputs().toArray2();
 	}
 	
 	public double[][] decodeFromLayer(double[][] numericFeaturesMatrix,int fromLayerIndex) {
-		return forwardPropagateFromTo(numericFeaturesMatrix, fromLayerIndex, getLayers().size() - 1).getOutputs().toArray2();
+		return forwardPropagateFromTo(numericFeaturesMatrix, fromLayerIndex, getNumberOfLayers() - 1).getOutputs().toArray2();
 	}
 	
 	public double[] decodeFromLayer(double[] encodedFeatures,int fromLayerIndex) {
-		return forwardPropagateFromTo(encodedFeatures, fromLayerIndex, getLayers().size() - 1).getOutputs().toArray();
+		return forwardPropagateFromTo(encodedFeatures, fromLayerIndex, getNumberOfLayers() - 1).getOutputs().toArray();
 
 	}
 	public double[] encodeToLayer(double[] numericFeatures,int toLayer) {
