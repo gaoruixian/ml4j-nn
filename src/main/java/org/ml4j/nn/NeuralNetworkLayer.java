@@ -56,7 +56,7 @@ public class NeuralNetworkLayer implements Serializable {
 		
 		if (layerInputsWithIntercept.getColumns() != getInputNeuronCount() + 1)
 		{
-			throw new RuntimeException("Layer forward propogation requires inputs matrix with intercepts with number of columns = " + (getInputNeuronCount() + 1));
+			throw new IllegalArgumentException("Layer forward propogation requires inputs matrix with intercepts with number of columns = " + (getInputNeuronCount() + 1));
 		}
 		
 		DoubleMatrix Z = layerInputsWithIntercept.mmul(thetas.transpose());
@@ -104,11 +104,15 @@ public class NeuralNetworkLayer implements Serializable {
 
 	}
 
-	protected void updateThetas(DoubleMatrix thetas, int layerInNetwork, boolean permitFurtherRetrains) {
+	protected void updateThetas(DoubleMatrix thetas, int layerIndex, boolean permitFurtherRetrains) {
 
 		if (!retrainable) {
-			throw new IllegalStateException("Layer " + layerInNetwork
+			throw new IllegalStateException("Layer " + (layerIndex + 1)
 					+ " has already been trained and has not been set to retrainable");
+		}
+		if (layerIndex < 0)
+		{
+			throw new IllegalArgumentException("Neural network layer index must be zero or above");
 		}
 		
 		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + 1)) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
