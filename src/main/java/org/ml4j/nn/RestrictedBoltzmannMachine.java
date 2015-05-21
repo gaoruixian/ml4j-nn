@@ -3,8 +3,6 @@ package org.ml4j.nn;
 import java.io.Serializable;
 
 import org.jblas.DoubleMatrix;
-import org.ml4j.imaging.targets.ImageDisplay;
-import org.ml4j.nn.util.MnistUtils;
 
 public class RestrictedBoltzmannMachine implements Serializable {
 
