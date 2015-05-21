@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.ActivationFunction;
 
-public class NeuralNetworkLayer implements Serializable {
+public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements Serializable {
 
 	/**
 	 * 
@@ -16,7 +16,6 @@ public class NeuralNetworkLayer implements Serializable {
 
 	private int inputNeuronCount;
 	private int outputNeuronCount;
-	private boolean retrainable;
 
 	private ActivationFunction activationFunction;
 
@@ -24,13 +23,6 @@ public class NeuralNetworkLayer implements Serializable {
 		return activationFunction;
 	}
 
-	public boolean isRetrainable() {
-		return retrainable;
-	}
-
-	public void setRetrainable(boolean retrainable) {
-		this.retrainable = retrainable;
-	}
 
 	public NeuralNetworkLayer dup(boolean retrainable) {
 		NeuralNetworkLayer dup = new NeuralNetworkLayer(inputNeuronCount, outputNeuronCount, this.getClonedThetas(),
@@ -82,17 +74,18 @@ public class NeuralNetworkLayer implements Serializable {
 	}
 
 	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, ActivationFunction activationFunction) {
+		super(true);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
 		this.thetas = generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + 1);
-		this.retrainable = true;
 	}
 	
 
 	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,
 			ActivationFunction activationFunction, boolean retrainable) {
+		super(retrainable);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
 		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + 1)) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
@@ -100,13 +93,12 @@ public class NeuralNetworkLayer implements Serializable {
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
 		this.thetas = thetas;
-		this.retrainable = retrainable;
 
 	}
 
 	protected void updateThetas(DoubleMatrix thetas, int layerIndex, boolean permitFurtherRetrains) {
 
-		if (!retrainable) {
+		if (!isRetrainable()) {
 			throw new IllegalStateException("Layer " + (layerIndex + 1)
 					+ " has already been trained and has not been set to retrainable");
 		}
@@ -118,7 +110,7 @@ public class NeuralNetworkLayer implements Serializable {
 		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + 1)) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
 		this.thetas = thetas;
 		if (!permitFurtherRetrains) {
-			this.retrainable = false;
+			this.setRetrainable(false);
 		}
 	}
 
