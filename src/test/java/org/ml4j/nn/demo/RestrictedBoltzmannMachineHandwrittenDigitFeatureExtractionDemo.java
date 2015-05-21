@@ -76,13 +76,13 @@ public class RestrictedBoltzmannMachineHandwrittenDigitFeatureExtractionDemo {
 
 		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 		
-		RestrictedBoltzmannMachine rbm = new RestrictedBoltzmannMachine(firstLayer,display);
+		RestrictedBoltzmannMachine rbm = new RestrictedBoltzmannMachine(firstLayer);
 
 		RestrictedBoltzmannMachineAlgorithm alg = new RestrictedBoltzmannMachineAlgorithm(rbm);
 
 		// Obtain an encoding hypothesis function from the RestrictedBoltzmannMachine, so we
 		// can extract features
-		System.out.println("Training and displaying reconstructed probability image maps");
+		System.out.println("Training");
 
 		RestrictedBoltzmannMachineHypothesisFunction hyp1 = alg.getHypothesisFunction(trainingDataMatrix, context);
 

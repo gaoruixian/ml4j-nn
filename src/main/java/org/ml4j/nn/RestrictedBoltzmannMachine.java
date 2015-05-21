@@ -17,15 +17,8 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	private DoubleMatrix currentHiddenStates;
 	private DoubleMatrix currentVisibleStates;
 
-	private ImageDisplay<Long> display;
-
 	public RestrictedBoltzmannMachine(RestrictedBoltzmannLayer layer) {
 		this.layer = layer;
-	}
-
-	public RestrictedBoltzmannMachine(RestrictedBoltzmannLayer layer, ImageDisplay<Long> display) {
-		this.layer = layer;
-		this.display = display;
 	}
 
 	public double[] encodeToProbabilities(double[] visibleUnits) {
@@ -94,10 +87,6 @@ public class RestrictedBoltzmannMachine implements Serializable {
 				DoubleMatrix delta = (positiveStatistics.sub(negativeStatistics)).mul(learningRate);
 
 				layer.updateWithDelta(delta);
-				if (display != null) {
-					MnistUtils.draw(layer.getVisibleUnitProbabilities(layer.getHiddenUnitSample(doubleMatrix.getRow(i)
-							.toArray())), display);
-				}
 			}
 		}
 
