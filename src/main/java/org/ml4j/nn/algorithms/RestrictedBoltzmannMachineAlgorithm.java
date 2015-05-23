@@ -6,16 +6,18 @@ import org.ml4j.nn.RestrictedBoltzmannMachine;
 public class RestrictedBoltzmannMachineAlgorithm {
 
 	private RestrictedBoltzmannMachine rbm;
+	private int miniBatchSize;
 	
-	public RestrictedBoltzmannMachineAlgorithm(RestrictedBoltzmannMachine rbm) {
+	public RestrictedBoltzmannMachineAlgorithm(RestrictedBoltzmannMachine rbm,int miniBatchSize) {
 		this.rbm = rbm;
+		this.miniBatchSize = miniBatchSize;
 	}
 	
 	public RestrictedBoltzmannMachineHypothesisFunction getHypothesisFunction(double[][] trainingDataMatrix,
-			NeuralNetworkAlgorithmTrainingContext context) {
+			RestrictedBoltzmannMachineAlgorithmTrainingContext context) {
 
 		rbm.train(new DoubleMatrix(trainingDataMatrix),
-				context.getMaxIterations());
+				context.getMaxIterations(),miniBatchSize);
 		
 		
 		return new RestrictedBoltzmannMachineHypothesisFunction(rbm);

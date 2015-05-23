@@ -24,8 +24,8 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.imaging.targets.ImageDisplay;
 import org.ml4j.nn.RestrictedBoltzmannLayer;
 import org.ml4j.nn.RestrictedBoltzmannMachine;
-import org.ml4j.nn.algorithms.NeuralNetworkAlgorithmTrainingContext;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithm;
+import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithmTrainingContext;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineHypothesisFunction;
 import org.ml4j.nn.util.MnistUtils;
 import org.ml4j.nn.util.PixelFeaturesMatrixCsvDataExtractor;
@@ -65,20 +65,22 @@ public class RestrictedBoltzmannMachineHandwrittenDigitFeatureExtractionDemo {
 
 		// Hidden Neuron Topology
 		int hiddenNeuronsCount = 50;
+		
 
 		// Training Context
-		NeuralNetworkAlgorithmTrainingContext context = new NeuralNetworkAlgorithmTrainingContext(20);
-	
+		int batchSize = 10;
+		int iterations = 100;
 		double learningRate = 0.01;
 
-		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, 50,
-				RestrictedBoltzmannLayer.generateInitialThetas(trainingDataMatrix, hiddenNeuronsCount,learningRate), true);
+		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate);
+	
+		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, hiddenNeuronsCount,
+				RestrictedBoltzmannLayer.generateInitialThetas(trainingDataMatrix, hiddenNeuronsCount,context.getLearningRate()), true);
 
 		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 		
 		RestrictedBoltzmannMachine rbm = new RestrictedBoltzmannMachine(firstLayer);
-
-		RestrictedBoltzmannMachineAlgorithm alg = new RestrictedBoltzmannMachineAlgorithm(rbm);
+		RestrictedBoltzmannMachineAlgorithm alg = new RestrictedBoltzmannMachineAlgorithm(rbm,batchSize);
 
 		// Obtain an encoding hypothesis function from the RestrictedBoltzmannMachine, so we
 		// can extract features

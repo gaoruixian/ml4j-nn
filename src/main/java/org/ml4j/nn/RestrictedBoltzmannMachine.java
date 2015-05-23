@@ -1,6 +1,9 @@
 package org.ml4j.nn;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.jblas.DoubleMatrix;
 
@@ -69,22 +72,43 @@ public class RestrictedBoltzmannMachine implements Serializable {
 		}
 		return probs;
 	}
-
-	public void train(DoubleMatrix doubleMatrix, int maxIterations) {
+	
+	private List<DoubleMatrix> getBatches(DoubleMatrix doubleMatrix,int batchSize)
+	{
+		List<DoubleMatrix> batches = new ArrayList<DoubleMatrix>();
+		int rowNum = 0;
+		int numCompleteBatches = doubleMatrix.getRows()/batchSize;
+		while (rowNum < doubleMatrix.getRows())
+		{
+			int batchCount = batches.size() <  numCompleteBatches ? batchSize : (doubleMatrix.getRows() - rowNum);
+			
+			int[] rows = new int[batchSize]; 
+			for (int i = 0; i < batchCount; i++)
+			{
+				rows[i] = rowNum++;
+			}
+			batches.add(doubleMatrix.getRows(rows));
+		}
+		Collections.shuffle(batches);
+		return batches;
+	}
+	
+	
+	public void train(DoubleMatrix matrix, int maxIterations,int miniBatchSize) {
 
 		double learningRate = 0.01;
 		for (int l = 0; l < maxIterations; l++) {
-			for (int i = 0; i < doubleMatrix.getRows(); i++) {
-
-				DoubleMatrix reconstructionWithIntercept = pushData(doubleMatrix.getRow(i));
-				DoubleMatrix positiveStatistics = getPairwiseVectorProduct(currentVisibleStates, currentHiddenStates);
-
-				pushReconstruction(reconstructionWithIntercept);
-				DoubleMatrix negativeStatistics = getPairwiseVectorProduct(currentVisibleStates, currentHiddenStates);
-
-				DoubleMatrix delta = (positiveStatistics.sub(negativeStatistics)).mul(learningRate);
-
-				layer.updateWithDelta(delta);
+			for (DoubleMatrix doubleMatrix : getBatches(matrix,miniBatchSize))
+			{
+					DoubleMatrix reconstructionWithIntercept = pushData(doubleMatrix);
+					DoubleMatrix positiveStatistics = getAveragePairwiseRowProducts(currentVisibleStates, currentHiddenStates);
+	
+					pushReconstruction(reconstructionWithIntercept);
+					DoubleMatrix negativeStatistics = getAveragePairwiseRowProducts(currentVisibleStates, currentHiddenStates);
+	
+					DoubleMatrix delta = (positiveStatistics.sub(negativeStatistics)).mul(learningRate);
+	
+					layer.updateWithDelta(delta);
 			}
 		}
 
@@ -107,6 +131,20 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	protected void pushReconstruction(DoubleMatrix reconstructionWithIntercept) {
 		this.currentVisibleStates = reconstructionWithIntercept;
 		this.currentHiddenStates = layer.getProbHGivenV(reconstructionWithIntercept);
+	}
+	
+	public DoubleMatrix getAveragePairwiseRowProducts(DoubleMatrix matrix1, DoubleMatrix matrix2) {
+		DoubleMatrix result = new DoubleMatrix(matrix1.getColumns(), matrix2.getColumns());
+		
+		for (int i = 0; i < matrix1.getRows(); i++)
+		{
+			DoubleMatrix vector1 = matrix1.getRow(i);
+			DoubleMatrix vector2 = matrix2.getRow(i);
+
+			result.addi(getPairwiseVectorProduct(vector1,vector2));
+		}
+		return result.div(matrix1.getRows());
+		
 	}
 
 	public DoubleMatrix getPairwiseVectorProduct(DoubleMatrix vector1, DoubleMatrix vector2) {
