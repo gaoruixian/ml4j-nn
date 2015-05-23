@@ -69,8 +69,8 @@ public class RestrictedBoltzmannMachineHandwrittenDigitFeatureExtractionDemo {
 
 		// Training Context
 		int batchSize = 10;
-		int iterations = 100;
-		double learningRate = 0.01;
+		int iterations = 500;
+		double learningRate = 0.05;
 
 		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate);
 	

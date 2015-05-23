@@ -17,7 +17,7 @@ public class RestrictedBoltzmannMachineAlgorithm {
 			RestrictedBoltzmannMachineAlgorithmTrainingContext context) {
 
 		rbm.train(new DoubleMatrix(trainingDataMatrix),
-				context.getMaxIterations(),miniBatchSize);
+				context.getMaxIterations(),miniBatchSize,context.getLearningRate());
 		
 		
 		return new RestrictedBoltzmannMachineHypothesisFunction(rbm);
