@@ -29,6 +29,13 @@ public class NeuralNetworkHypothesisFunction implements HypothesisFunction<doubl
 
 		return predictions;
 	}
+	
+	public double[][] predict(double[][] arg0)
+	{
+		DoubleMatrix inputs = new DoubleMatrix(arg0).transpose();
+		double[][] predictions = neuralNetwork.forwardPropagate(inputs).getOutputs().toArray2();
+		return predictions;
+	}
 
 	/**
 	 * Helper function to compute the accuracy of predictions give said
