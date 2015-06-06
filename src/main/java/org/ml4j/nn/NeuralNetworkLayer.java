@@ -3,7 +3,7 @@ package org.ml4j.nn;
 import java.io.Serializable;
 
 import org.jblas.DoubleMatrix;
-import org.ml4j.nn.activationfunctions.ActivationFunction;
+import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 
 public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements Serializable {
 
@@ -17,9 +17,9 @@ public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements
 	private int inputNeuronCount;
 	private int outputNeuronCount;
 
-	private ActivationFunction activationFunction;
+	private DifferentiableActivationFunction activationFunction;
 
-	public ActivationFunction getActivationFunction() {
+	public DifferentiableActivationFunction getActivationFunction() {
 		return activationFunction;
 	}
 
@@ -73,7 +73,7 @@ public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements
 		return outputNeuronCount;
 	}
 
-	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, ActivationFunction activationFunction) {
+	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction) {
 		super(true);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		this.inputNeuronCount = inputNeuronCount;
@@ -84,7 +84,7 @@ public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements
 	
 
 	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,
-			ActivationFunction activationFunction, boolean retrainable) {
+			DifferentiableActivationFunction activationFunction, boolean retrainable) {
 		super(retrainable);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");

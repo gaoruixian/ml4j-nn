@@ -8,7 +8,7 @@ import org.hamcrest.CoreMatchers;
 import org.jblas.DoubleMatrix;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ml4j.nn.activationfunctions.ActivationFunction;
+import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -18,7 +18,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testUntrainedLayerConstructor_whenValidArguments()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		assertThat(layer, is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(notNullValue()));
@@ -35,7 +35,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testUpdateRetrainableLayerThetas_whenValidArguments_whenPermitFurtherRetrainsFalse()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
@@ -55,7 +55,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testUpdateRetrainableLayerThetas_whenValidArguments_whenPermitFurtherRetrainsTrue()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
@@ -74,7 +74,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testDup_settingNotRetrainable()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		assertThat(layer.isRetrainable(),is(true));
 
@@ -93,7 +93,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testActivate_DoubleMatrix()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		DoubleMatrix activations = layer.activate(inputs);
@@ -104,7 +104,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testForwardPropagate()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 101);
 		NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputs);
@@ -116,7 +116,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testActivate_IncorrectColumns()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 101);
 		layer.activate(inputs);
@@ -125,7 +125,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testForwardPropagate_IncorrectColumns()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		layer.forwardPropagate(inputs);
@@ -134,7 +134,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testActivate_Arrays()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		double[][] inputArrays = inputs.toArray2();
@@ -147,7 +147,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testGetClonedThetas()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 
@@ -162,7 +162,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testDup_settingRetrainable()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		assertThat(layer.isRetrainable(),is(true));
 
@@ -180,7 +180,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test(expected=IllegalStateException.class)
 	public void testUpdateNotRetrainableLayerThetas_whenValidArguments()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		layer.setRetrainable(false);
@@ -196,7 +196,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testUpdateRetrainableLayerThetas_whenThetasIncorrectRows()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix thetas = new DoubleMatrix(11,101);
@@ -208,7 +208,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testUpdateRetrainableLayerThetas_whenThetasIncorrectColumns()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix thetas = new DoubleMatrix(10,100);
 		layer.updateThetas(thetas, 0, true);
@@ -218,7 +218,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testUpdateRetrainableLayerThetas_whenLayerNumberBelowZero()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,activationFunction);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 		layer.updateThetas(thetas, -1, true);
@@ -235,7 +235,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testPretrainedRetrainableLayerConstructor_whenValidArguments()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,thetas,activationFunction,true);
 		assertThat(layer, is(notNullValue()));
@@ -282,7 +282,7 @@ public class NeuralNetworkLayerUnitTest {
 	@Test
 	public void testPretrainedUnretrainableLayerConstructor_whenValidArguments()
 	{
-		ActivationFunction activationFunction = new SigmoidActivationFunction();
+		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 		NeuralNetworkLayer layer = new NeuralNetworkLayer(100,10,thetas,activationFunction,false);
 		assertThat(layer, is(notNullValue()));

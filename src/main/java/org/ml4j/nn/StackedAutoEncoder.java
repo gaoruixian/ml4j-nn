@@ -9,7 +9,6 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.nn.algorithms.AutoEncoderAlgorithm;
 import org.ml4j.nn.algorithms.AutoEncoderHypothesisFunction;
 import org.ml4j.nn.algorithms.NeuralNetworkAlgorithmTrainingContext;
-import org.ml4j.nn.costfunctions.CostFunction;
 
 public class StackedAutoEncoder extends AutoEncoder {
 
@@ -73,13 +72,6 @@ public class StackedAutoEncoder extends AutoEncoder {
 		super(layers);
 	}
 	
-	
-	public void trainGreedilyLayerwise(DoubleMatrix inputs, double[] lambdas, int max_iter) {
-		for (AutoEncoder encoder : getAutoEncoderStack())
-		{
-			encoder.train(inputs, lambdas,max_iter);
-		}		}
-
 	public void trainGreedilyLayerwise(DoubleMatrix inputs, double lambda, int max_iter) {
 		DoubleMatrix currentInputs = inputs;
 		for (AutoEncoder encoder : getAutoEncoderStack())
@@ -92,24 +84,4 @@ public class StackedAutoEncoder extends AutoEncoder {
 		}	
 	}
 
-	public void trainGreedilyLayerwise(DoubleMatrix inputs, double lambda, CostFunction costFunction,
-			int max_iter) {
-		for (AutoEncoder encoder : getAutoEncoderStack())
-		{
-			encoder.train(inputs, lambda, costFunction,max_iter);
-		}
-	}
-
-	public void trainGreedilyLayerwise(DoubleMatrix inputs, double[] lambdas, CostFunction costFunction,
-			int max_iter) {
-		
-		for (AutoEncoder encoder : getAutoEncoderStack())
-		{
-			encoder.train(inputs, lambdas, costFunction,max_iter);
-		}
-		
-	}
-
-	
-	
 }

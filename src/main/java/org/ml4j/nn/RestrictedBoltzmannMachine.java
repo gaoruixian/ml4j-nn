@@ -18,6 +18,21 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	private DoubleMatrix currentHiddenStates;
 	private DoubleMatrix currentVisibleStates;
 
+	
+	
+	
+	protected DoubleMatrix getCurrentVisibleStates() {
+		return currentVisibleStates;
+	}
+
+	protected DoubleMatrix getCurrentHiddenStates() {
+		return currentHiddenStates;
+	}
+
+	public RestrictedBoltzmannLayer getLayer() {
+		return layer;
+	}
+
 	public RestrictedBoltzmannMachine(RestrictedBoltzmannLayer layer) {
 		this.layer = layer;
 	}
@@ -67,8 +82,7 @@ public class RestrictedBoltzmannMachine implements Serializable {
 		for (int i = 0; i < cdn; i++) {
 			DoubleMatrix recWithIntercept = pushData(visibleUnitsMatrix);
 			pushReconstruction(recWithIntercept);
-			visibleUnitsMatrix = layer.removeInterceptColumn(currentVisibleStates);
-			probs = layer.getVisibleUnitProbabilities(layer.removeInterceptColumn(currentHiddenStates).toArray());
+			probs = layer.getVisibleUnitProbabilities(RestrictedBoltzmannLayer.removeInterceptColumn(currentHiddenStates).toArray());
 		}
 		return probs;
 	}
@@ -111,6 +125,7 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	
 	public void train(DoubleMatrix matrix, int maxIterations,int miniBatchSize,double learningRate) {
 
+		layer.setThetas(RestrictedBoltzmannLayer.generateInitialThetas(new double[matrix.getRows()][layer.getVisibleNeuronCount()], layer.getHiddenNeuronCount(),learningRate));
 		for (int l = 0; l < maxIterations; l++) {
 			for (DoubleMatrix doubleMatrix : getBatches(matrix,miniBatchSize))
 			{
@@ -141,6 +156,10 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	public double[] encodeToBinary(double[] visibleUnits) {
 		return layer.getHiddenUnitSample(visibleUnits);
 	}
+	
+	public double[][] encodeToBinary(double[][] visibleUnits) {
+		return layer.getHiddenUnitSample(visibleUnits);
+	}
 
 	public double[] decodeToBinary(double[] hiddenUnits) {
 		return layer.getVisibleUnitSample(hiddenUnits);
@@ -156,7 +175,7 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	protected DoubleMatrix getReconstruction(DoubleMatrix data) {
 		DoubleMatrix currentVisibleStates = layer.addInterceptColumn(data);
 		DoubleMatrix currentHiddenStates = layer.getHSampleGivenV(currentVisibleStates);
-		return layer.removeInterceptColumn(layer.getProbVGivenH(currentHiddenStates));
+		return RestrictedBoltzmannLayer.removeInterceptColumn(layer.getProbVGivenH(currentHiddenStates));
 	}
 
 	protected void pushReconstruction(DoubleMatrix reconstructionWithIntercept) {

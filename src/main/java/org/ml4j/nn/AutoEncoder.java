@@ -3,7 +3,7 @@ package org.ml4j.nn;
 import java.util.List;
 
 import org.jblas.DoubleMatrix;
-import org.ml4j.nn.activationfunctions.ActivationFunction;
+import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.costfunctions.CostFunction;
 
 public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
@@ -13,7 +13,7 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public AutoEncoder(int inputNeuronCount,int hiddenNeuronCount,ActivationFunction encodingActivationFunction,ActivationFunction decodingActivationFunction)
+	public AutoEncoder(int inputNeuronCount,int hiddenNeuronCount,DifferentiableActivationFunction encodingActivationFunction,DifferentiableActivationFunction decodingActivationFunction)
 	{
 		this(new NeuralNetworkLayer(inputNeuronCount,hiddenNeuronCount,encodingActivationFunction),new NeuralNetworkLayer(hiddenNeuronCount,inputNeuronCount,decodingActivationFunction));
 	}

@@ -1,7 +1,8 @@
 package org.ml4j.nn;
 
 import org.jblas.DoubleMatrix;
-import org.ml4j.nn.util.NeuralNetworkUtils;
+import org.ml4j.nn.activationfunctions.ActivationFunction;
+import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 
 public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer> {
 
@@ -9,6 +10,9 @@ public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer
 	private int hiddenNeuronCount;
 
 	private DoubleMatrix thetas;
+	
+	private ActivationFunction visibleActivationFunction;
+	private ActivationFunction hiddenActivationFunction;
 
 	/**
 	 * 
@@ -21,6 +25,16 @@ public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer
 
 	public int getHiddenNeuronCount() {
 		return hiddenNeuronCount;
+	}
+	
+	private boolean isLabeled;
+
+	public boolean isLabeled() {
+		return isLabeled;
+	}
+
+	public void setLabeled(boolean isLabeled) {
+		this.isLabeled = isLabeled;
 	}
 
 	/**
@@ -50,18 +64,37 @@ public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer
 		thetas.put(0, 0, 0);
 		return thetas;
 	}
+	
+	
 
-	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount, DoubleMatrix thetas,
+	public void setThetas(DoubleMatrix thetas) {
+		this.thetas = thetas;
+	}
+
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction visibleActivationFunction,ActivationFunction hiddenActivationFunction, DoubleMatrix thetas,
 			boolean retrainable) {
 		super(retrainable);
 		this.visibleNeuronCount = visibleNeuronCount;
 		this.hiddenNeuronCount = hiddenNeuronCount;
+		this.visibleActivationFunction = visibleActivationFunction;
+		this.hiddenActivationFunction = hiddenActivationFunction;
 		this.thetas = thetas;
+	}
+	
+	
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction activationFunction, DoubleMatrix thetas,
+			boolean retrainable) {
+		this(visibleNeuronCount,hiddenNeuronCount,activationFunction,activationFunction,thetas,retrainable);
+	}
+	
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount, DoubleMatrix thetas,
+			boolean retrainable) {
+		this(visibleNeuronCount,hiddenNeuronCount,new SigmoidActivationFunction(),new SigmoidActivationFunction(),thetas,retrainable);
 	}
 
 	@Override
 	public RestrictedBoltzmannLayer dup(boolean retrainable) {
-		return new RestrictedBoltzmannLayer(visibleNeuronCount, hiddenNeuronCount, getClonedThetas(), retrainable);
+		return new RestrictedBoltzmannLayer(visibleNeuronCount, hiddenNeuronCount, visibleActivationFunction,hiddenActivationFunction,getClonedThetas(), retrainable);
 	}
 
 	public DoubleMatrix getClonedThetas() {
@@ -107,6 +140,11 @@ public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer
 		double[] probs = getHiddenUnitProbabilities(visibleUnits);
 		return getBinarySample(probs);
 	}
+	
+	public double[][] getHiddenUnitSample(double[][] visibleUnits) {
+		DoubleMatrix probs = getHiddenUnitProbabilities(visibleUnits);
+		return getBinarySample(probs).toArray2();
+	}
 
 	private double[] getBinarySample(double[] probs) {
 		DoubleMatrix rand = DoubleMatrix.rand(1, probs.length);
@@ -129,11 +167,10 @@ public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer
 	protected DoubleMatrix getProbHGivenV(DoubleMatrix v) {
 
 		DoubleMatrix result = v.mmul(thetas);
-		result = NeuralNetworkUtils.sigmoid(result);
+		result = hiddenActivationFunction.activate(result);
 		for (int i = 0; i < v.getRows(); i++) {
 			result.put(i, 0, 1);
 		}
-
 		return result;
 	}
 
@@ -162,15 +199,19 @@ public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer
 	}
 
 	protected DoubleMatrix getProbVGivenH(DoubleMatrix h) {
+		
+		
 		DoubleMatrix result = h.mmul(thetas.transpose());
-		result = NeuralNetworkUtils.sigmoid(result);
+		result = visibleActivationFunction.activate(result);
+	
+		
 		for (int i = 0; i < h.getRows(); i++) {
 			result.put(i, 0, 1);
 		}
 		return result;
 	}
 
-	protected DoubleMatrix removeInterceptColumn(DoubleMatrix in) {
+	protected static DoubleMatrix removeInterceptColumn(DoubleMatrix in) {
 		DoubleMatrix result = new DoubleMatrix(in.getRows(), in.getColumns() - 1);
 		for (int i = 0; i < result.getRows(); i++) {
 			for (int j = 0; j < result.getColumns() - 1; j++) {

@@ -5,7 +5,7 @@ import org.ml4j.nn.costfunctions.CostFunction;
 import org.ml4j.nn.costfunctions.CrossEntropyCostFunction;
 import org.ml4j.nn.util.NeuralNetworkUtils;
 
-public class SigmoidActivationFunction implements ActivationFunction {
+public class SigmoidActivationFunction implements DifferentiableActivationFunction {
 
 	/**
 	 * 

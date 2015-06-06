@@ -19,6 +19,10 @@ public class RestrictedBoltzmannMachineHypothesisFunction implements HypothesisF
 	public double[] sampleHiddenFromVisible(double[] visibleUnits) {
 		return rbm.encodeToBinary(visibleUnits);
 	}
+	
+	public double[][] sampleHiddenFromVisible(double[][] visibleUnits) {
+		return rbm.encodeToBinary(visibleUnits);
+	}
 
 	public double[] sampleVisibleUnitsFromHidden(double[] hiddenUnits) {
 		return rbm.decodeToBinary(hiddenUnits);

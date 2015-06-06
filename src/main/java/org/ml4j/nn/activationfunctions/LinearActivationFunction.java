@@ -4,7 +4,7 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.nn.costfunctions.CostFunction;
 import org.ml4j.nn.costfunctions.SSECostFunction;
 
-public class LinearActivationFunction implements ActivationFunction {
+public class LinearActivationFunction implements DifferentiableActivationFunction {
 
 	/**
 	 * 
