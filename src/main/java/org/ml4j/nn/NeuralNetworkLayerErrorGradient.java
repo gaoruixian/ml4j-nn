@@ -4,14 +4,14 @@ import org.jblas.DoubleMatrix;
 
 public class NeuralNetworkLayerErrorGradient {
 
-	private NeuralNetworkLayer layer;
+	private FeedForwardLayer layer;
 	private DoubleMatrix delta;
 	private int m;
 	private double lambda;
 	private DoubleMatrix inputActivations;
 	private DoubleMatrix thetas;
 
-	public NeuralNetworkLayerErrorGradient(NeuralNetworkLayer layer, DoubleMatrix thetas, DoubleMatrix delta, int m,
+	public NeuralNetworkLayerErrorGradient(FeedForwardLayer layer, DoubleMatrix thetas, DoubleMatrix delta, int m,
 			double lambda, DoubleMatrix inputActivations) {
 		this.layer = layer;
 		this.m = m;
@@ -21,7 +21,7 @@ public class NeuralNetworkLayerErrorGradient {
 		this.inputActivations = inputActivations;
 	}
 	
-	public NeuralNetworkLayer getLayer() {
+	public FeedForwardLayer getLayer() {
 		return layer;
 	}
 

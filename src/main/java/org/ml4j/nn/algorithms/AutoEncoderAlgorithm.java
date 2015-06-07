@@ -2,7 +2,7 @@ package org.ml4j.nn.algorithms;
 
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.AutoEncoder;
-import org.ml4j.nn.NeuralNetworkLayer;
+import org.ml4j.nn.FeedForwardLayer;
 import org.ml4j.nn.StackedAutoEncoder;
 import org.ml4j.nn.costfunctions.CostFunction;
 
@@ -30,7 +30,7 @@ public class AutoEncoderAlgorithm {
 
 	private CostFunction getCostFunction(NeuralNetworkAlgorithmTrainingContext context) {
 		if (context.getCostFunction() == null) {
-			NeuralNetworkLayer outerLayer = autoEncoder.getOuterLayer();
+			FeedForwardLayer outerLayer = autoEncoder.getOuterLayer();
 			return outerLayer.getActivationFunction().getDefaultCostFunction();
 		} else {
 			return context.getCostFunction();

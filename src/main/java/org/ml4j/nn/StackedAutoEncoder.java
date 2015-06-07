@@ -31,10 +31,10 @@ public class StackedAutoEncoder extends AutoEncoder {
 	
 	
 	
-	private static NeuralNetworkLayer[] getStackedLayers(AutoEncoder...autoEncoders)
+	private static FeedForwardLayer[] getStackedLayers(AutoEncoder...autoEncoders)
 	{
-		List<NeuralNetworkLayer> encoders = new ArrayList<NeuralNetworkLayer>();
-		List<NeuralNetworkLayer> decoders = new ArrayList<NeuralNetworkLayer>();
+		List<FeedForwardLayer> encoders = new ArrayList<FeedForwardLayer>();
+		List<FeedForwardLayer> decoders = new ArrayList<FeedForwardLayer>();
 
 		for (AutoEncoder autoEncoder : autoEncoders)
 		{
@@ -42,7 +42,7 @@ public class StackedAutoEncoder extends AutoEncoder {
 			{
 				throw new IllegalArgumentException("Can only stack symmetric autoencoders at this time");
 			}
-			List<NeuralNetworkLayer> allLayers = autoEncoder.getLayers();
+			List<FeedForwardLayer> allLayers = autoEncoder.getLayers();
 			int encoderCount = allLayers.size() /2;
 			int ind = 0;
 			for (int i = 0; i < encoderCount;i++)
@@ -55,7 +55,7 @@ public class StackedAutoEncoder extends AutoEncoder {
 			}
 		}
 		Collections.reverse(decoders);
-		NeuralNetworkLayer[] stackedLayers = new NeuralNetworkLayer[encoders.size() + decoders.size()];
+		FeedForwardLayer[] stackedLayers = new FeedForwardLayer[encoders.size() + decoders.size()];
 		int ind = 0;
 		for (int i = 0; i < encoders.size(); i++)
 		{
@@ -68,7 +68,7 @@ public class StackedAutoEncoder extends AutoEncoder {
 		return stackedLayers;
 	}
 
-	public StackedAutoEncoder(NeuralNetworkLayer... layers) {
+	public StackedAutoEncoder(FeedForwardLayer... layers) {
 		super(layers);
 	}
 	

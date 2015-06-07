@@ -2,7 +2,7 @@ package org.ml4j.nn.algorithms;
 
 import org.jblas.DoubleMatrix;
 import org.ml4j.algorithms.HypothesisFunction;
-import org.ml4j.nn.NeuralNetwork;
+import org.ml4j.nn.FeedForwardNeuralNetwork;
 
 public class NeuralNetworkHypothesisFunction implements HypothesisFunction<double[], double[]> {
 
@@ -11,13 +11,13 @@ public class NeuralNetworkHypothesisFunction implements HypothesisFunction<doubl
 	 */
 	private static final long serialVersionUID = 1L;
 
-	protected NeuralNetwork neuralNetwork;
+	protected FeedForwardNeuralNetwork neuralNetwork;
 
-	public NeuralNetworkHypothesisFunction(NeuralNetwork neuralNetwork) {
+	public NeuralNetworkHypothesisFunction(FeedForwardNeuralNetwork neuralNetwork) {
 		this.neuralNetwork = neuralNetwork;
 	}
 
-	public NeuralNetwork getNeuralNetwork() {
+	public FeedForwardNeuralNetwork getNeuralNetwork() {
 		return neuralNetwork;
 	}
 

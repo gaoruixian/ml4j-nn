@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.jblas.DoubleMatrix;
 import org.ml4j.imaging.targets.ImageDisplay;
 import org.ml4j.nn.AutoEncoder;
-import org.ml4j.nn.NeuralNetworkLayer;
+import org.ml4j.nn.FeedForwardLayer;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 import org.ml4j.nn.algorithms.AutoEncoderAlgorithm;
 import org.ml4j.nn.algorithms.AutoEncoderHypothesisFunction;
@@ -58,8 +58,8 @@ public class AutoEncoderHandwrittenDigitFeatureExtractionDemo {
 		//context.setSparsityBeta(0.01);
 		//context.setSparsityParameter(0.004);
 
-		NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 100, new SigmoidActivationFunction());
-		NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(100, 784, new SigmoidActivationFunction());
+		FeedForwardLayer firstLayer = new FeedForwardLayer(784, 100, new SigmoidActivationFunction());
+		FeedForwardLayer secondLayer = new FeedForwardLayer(100, 784, new SigmoidActivationFunction());
 
 		AutoEncoder autoEncoder = new AutoEncoder(firstLayer, secondLayer);
 		

@@ -11,7 +11,7 @@ import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithm;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithmTrainingContext;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineHypothesisFunction;
 
-public class DeepBeliefNetwork implements Serializable  {
+public class DeepBeliefNetwork extends BaseNeuralNetwork<RestrictedBoltzmannLayer,DeepBeliefNetwork> implements Serializable  {
 
 	/**
 	 * 
@@ -26,7 +26,19 @@ public class DeepBeliefNetwork implements Serializable  {
 	}
 	
 	public DeepBeliefNetwork(RestrictedBoltzmannMachine...rbms) {
+		super(getLayers(rbms));
 		this.rbmStack = Arrays.asList(rbms);
+	}
+	
+	private static RestrictedBoltzmannLayer[] getLayers(RestrictedBoltzmannMachine...rbms)
+	{
+		RestrictedBoltzmannLayer[] layers = new RestrictedBoltzmannLayer[rbms.length];
+		int i = 0;
+		for (RestrictedBoltzmannMachine rbm : rbms)
+		{
+			layers[i++] = rbm.getLayer();
+		}
+		return layers;
 	}
 	
 	public double[] generateVisibleProbabilities(double[] visibleUnits,double[] labels) {

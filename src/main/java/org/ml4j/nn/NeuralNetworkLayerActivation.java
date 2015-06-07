@@ -7,7 +7,7 @@ public class NeuralNetworkLayerActivation {
 
 	private DoubleMatrix inputActivations;
 	private DoubleMatrix outputActivations;
-	private NeuralNetworkLayer layer;
+	private FeedForwardLayer layer;
 	private DoubleMatrix Z;
 	private DoubleMatrix thetas;
 
@@ -68,7 +68,7 @@ public class NeuralNetworkLayerActivation {
 		return grad;
 	}
 
-	public NeuralNetworkLayerActivation(NeuralNetworkLayer layer, DoubleMatrix inputActivations, DoubleMatrix Z,
+	public NeuralNetworkLayerActivation(FeedForwardLayer layer, DoubleMatrix inputActivations, DoubleMatrix Z,
 			DoubleMatrix outputActivations) {
 		this.inputActivations = inputActivations;
 		this.Z = Z;
@@ -89,7 +89,7 @@ public class NeuralNetworkLayerActivation {
 		return outputActivations;
 	}
 
-	public NeuralNetworkLayer getLayer() {
+	public FeedForwardLayer getLayer() {
 		return layer;
 	}
 

@@ -4,38 +4,31 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.ActivationFunction;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 
-public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer> {
-
-	private int visibleNeuronCount;
-	private int hiddenNeuronCount;
-
-	private DoubleMatrix thetas;
-	
-	private ActivationFunction visibleActivationFunction;
-	private ActivationFunction hiddenActivationFunction;
+public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<RestrictedBoltzmannLayer> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public int getVisibleNeuronCount() {
-		return visibleNeuronCount;
-	}
 
-	public int getHiddenNeuronCount() {
-		return hiddenNeuronCount;
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction activationFunction, DoubleMatrix thetas,
+			boolean retrainable) {
+		this(visibleNeuronCount,hiddenNeuronCount,activationFunction,activationFunction,thetas,retrainable);
 	}
 	
-	private boolean isLabeled;
-
-	public boolean isLabeled() {
-		return isLabeled;
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount, DoubleMatrix thetas,
+			boolean retrainable) {
+		this(visibleNeuronCount,hiddenNeuronCount,new SigmoidActivationFunction(),new SigmoidActivationFunction(),thetas,retrainable);
 	}
-
-	public void setLabeled(boolean isLabeled) {
-		this.isLabeled = isLabeled;
+	
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction visibleActivationFunction,ActivationFunction hiddenActivationFunction, DoubleMatrix thetas,
+			boolean retrainable) {
+		super(visibleNeuronCount,hiddenNeuronCount,thetas,visibleActivationFunction,hiddenActivationFunction,retrainable);
 	}
+	
+
+
 
 	/**
 	 * 
@@ -65,42 +58,10 @@ public class RestrictedBoltzmannLayer extends BaseLayer<RestrictedBoltzmannLayer
 		return thetas;
 	}
 	
-	
-
-	public void setThetas(DoubleMatrix thetas) {
-		this.thetas = thetas;
-	}
-
-	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction visibleActivationFunction,ActivationFunction hiddenActivationFunction, DoubleMatrix thetas,
-			boolean retrainable) {
-		super(retrainable);
-		this.visibleNeuronCount = visibleNeuronCount;
-		this.hiddenNeuronCount = hiddenNeuronCount;
-		this.visibleActivationFunction = visibleActivationFunction;
-		this.hiddenActivationFunction = hiddenActivationFunction;
-		this.thetas = thetas;
-	}
-	
-	
-	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction activationFunction, DoubleMatrix thetas,
-			boolean retrainable) {
-		this(visibleNeuronCount,hiddenNeuronCount,activationFunction,activationFunction,thetas,retrainable);
-	}
-	
-	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount, DoubleMatrix thetas,
-			boolean retrainable) {
-		this(visibleNeuronCount,hiddenNeuronCount,new SigmoidActivationFunction(),new SigmoidActivationFunction(),thetas,retrainable);
-	}
 
 	@Override
 	public RestrictedBoltzmannLayer dup(boolean retrainable) {
 		return new RestrictedBoltzmannLayer(visibleNeuronCount, hiddenNeuronCount, visibleActivationFunction,hiddenActivationFunction,getClonedThetas(), retrainable);
-	}
-
-	public DoubleMatrix getClonedThetas() {
-
-		DoubleMatrix ret = thetas.dup();
-		return ret;
 	}
 
 	public double[] getNeuronActivationProbabilitiesForHiddenUnit(int j) {

@@ -1,7 +1,7 @@
 package org.ml4j.nn.optimisation;
 
 import org.jblas.DoubleMatrix;
-import org.ml4j.nn.BaseNeuralNetwork;
+import org.ml4j.nn.BaseFeedForwardNeuralNetwork;
 import org.ml4j.nn.costfunctions.CostFunction;
 
 public class NeuralNetworkUpdatingCostFunction implements MinimisableCostAndGradientFunction {
@@ -9,14 +9,14 @@ public class NeuralNetworkUpdatingCostFunction implements MinimisableCostAndGrad
 	private DoubleMatrix X; // Training input matrix
 	private DoubleMatrix Y; // Training output matrix
 	private double[] lambda; // Used for regularization
-	private BaseNeuralNetwork<?> neuralNetwork;
+	private BaseFeedForwardNeuralNetwork<?> neuralNetwork;
 	private CostFunction costFunction;
 
 	/**
 	 * Constructs a cost function with given neural network variables.
 	 */
 	public NeuralNetworkUpdatingCostFunction(DoubleMatrix setX, DoubleMatrix setY, int[] setTopology,
-			double[] setLambda, BaseNeuralNetwork<?> neuralNetwork, CostFunction costFunction) {
+			double[] setLambda, BaseFeedForwardNeuralNetwork<?> neuralNetwork, CostFunction costFunction) {
 		X = new DoubleMatrix().copy(setX);
 		Y = new DoubleMatrix().copy(setY);
 		lambda = setLambda;

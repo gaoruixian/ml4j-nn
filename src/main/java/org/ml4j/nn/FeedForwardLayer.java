@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 
-public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements Serializable {
+public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements Serializable {
 
 	/**
 	 * 
@@ -14,18 +14,11 @@ public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements
 
 	private DoubleMatrix thetas;
 
-	private int inputNeuronCount;
-	private int outputNeuronCount;
-
-	private DifferentiableActivationFunction activationFunction;
-
-	public DifferentiableActivationFunction getActivationFunction() {
-		return activationFunction;
-	}
 
 
-	public NeuralNetworkLayer dup(boolean retrainable) {
-		NeuralNetworkLayer dup = new NeuralNetworkLayer(inputNeuronCount, outputNeuronCount, this.getClonedThetas(),
+
+	public FeedForwardLayer dup(boolean retrainable) {
+		FeedForwardLayer dup = new FeedForwardLayer(inputNeuronCount, outputNeuronCount, this.getClonedThetas(),
 				activationFunction, retrainable);
 		return dup;
 	}
@@ -65,15 +58,7 @@ public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements
 		return ret;
 	}
 
-	public int getInputNeuronCount() {
-		return inputNeuronCount;
-	}
-
-	public int getOutputNeuronCount() {
-		return outputNeuronCount;
-	}
-
-	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction) {
+	public FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction) {
 		super(true);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		this.inputNeuronCount = inputNeuronCount;
@@ -83,7 +68,7 @@ public class NeuralNetworkLayer extends BaseLayer<NeuralNetworkLayer> implements
 	}
 	
 
-	public NeuralNetworkLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,
+	public FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,
 			DifferentiableActivationFunction activationFunction, boolean retrainable) {
 		super(retrainable);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");

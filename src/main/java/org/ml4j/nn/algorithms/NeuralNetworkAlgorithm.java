@@ -1,13 +1,13 @@
 package org.ml4j.nn.algorithms;
 
 import org.jblas.DoubleMatrix;
-import org.ml4j.nn.NeuralNetwork;
+import org.ml4j.nn.FeedForwardNeuralNetwork;
 
 public class NeuralNetworkAlgorithm {
 
-	private NeuralNetwork neuralNetwork;
+	private FeedForwardNeuralNetwork neuralNetwork;
 
-	public NeuralNetworkAlgorithm(NeuralNetwork neuralNetwork) {
+	public NeuralNetworkAlgorithm(FeedForwardNeuralNetwork neuralNetwork) {
 		this.neuralNetwork = neuralNetwork;
 
 	}

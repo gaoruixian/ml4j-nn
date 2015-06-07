@@ -7,19 +7,15 @@ import java.util.List;
 
 import org.jblas.DoubleMatrix;
 
-public class RestrictedBoltzmannMachine implements Serializable {
+public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetwork<RestrictedBoltzmannLayer,RestrictedBoltzmannMachine> implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private RestrictedBoltzmannLayer layer;
 
 	private DoubleMatrix currentHiddenStates;
 	private DoubleMatrix currentVisibleStates;
-
-	
-	
 	
 	protected DoubleMatrix getCurrentVisibleStates() {
 		return currentVisibleStates;
@@ -30,27 +26,27 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	}
 
 	public RestrictedBoltzmannLayer getLayer() {
-		return layer;
+		return getLayers().get(0);
 	}
 
 	public RestrictedBoltzmannMachine(RestrictedBoltzmannLayer layer) {
-		this.layer = layer;
+		super(new RestrictedBoltzmannLayer[] {layer});
 	}
 
 	public double[] encodeToProbabilities(double[] visibleUnits) {
-		return layer.getHiddenUnitProbabilities(visibleUnits);
+		return getLayer().getHiddenUnitProbabilities(visibleUnits);
 	}
 
 	public double[] decode(double[] hiddenUnits) {
-		return layer.getVisibleUnitProbabilities(hiddenUnits);
+		return getLayer().getVisibleUnitProbabilities(hiddenUnits);
 	}
 
 	public DoubleMatrix encodeToProbabilities(DoubleMatrix visibleUnits) {
-		return layer.getHiddenUnitProbabilities(visibleUnits);
+		return getLayer().getHiddenUnitProbabilities(visibleUnits);
 	}
 
 	public DoubleMatrix decodeToProbabilities(DoubleMatrix hiddenUnits) {
-		return layer.getVisibleUnitProbabilities(hiddenUnits);
+		return getLayer().getVisibleUnitProbabilities(hiddenUnits);
 	}
 
 	public double[] generateVisibleBinaries() {
@@ -70,7 +66,7 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	}
 
 	public double[] generateVisibleProbabilities() {
-		double[] randomVisibleUnits = new double[layer.getVisibleNeuronCount()];
+		double[] randomVisibleUnits = new double[getLayer().getVisibleNeuronCount()];
 		double[] probs = null;
 		int cdn = 20;
 		for (int i = 0; i < randomVisibleUnits.length; i++) {
@@ -82,7 +78,7 @@ public class RestrictedBoltzmannMachine implements Serializable {
 		for (int i = 0; i < cdn; i++) {
 			DoubleMatrix recWithIntercept = pushData(visibleUnitsMatrix);
 			pushReconstruction(recWithIntercept);
-			probs = layer.getVisibleUnitProbabilities(RestrictedBoltzmannLayer.removeInterceptColumn(currentHiddenStates).toArray());
+			probs = getLayer().getVisibleUnitProbabilities(RestrictedBoltzmannLayer.removeInterceptColumn(currentHiddenStates).toArray());
 		}
 		return probs;
 	}
@@ -94,11 +90,7 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	
 	public double getAverageEnergy(DoubleMatrix vs,DoubleMatrix hs)
 	{
-
-		//vs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(vs.getRows()), vs);
-		//hs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(vs.getRows()), hs);
-
-		return -vs.mmul(layer.getClonedThetas()).mmul(hs.transpose()).sum()/vs.getRows();
+		return -vs.mmul(getLayer().getClonedThetas()).mmul(hs.transpose()).sum()/vs.getRows();
 
 	}
 	
@@ -125,7 +117,7 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	
 	public void train(DoubleMatrix matrix, int maxIterations,int miniBatchSize,double learningRate) {
 
-		layer.setThetas(RestrictedBoltzmannLayer.generateInitialThetas(new double[matrix.getRows()][layer.getVisibleNeuronCount()], layer.getHiddenNeuronCount(),learningRate));
+		getLayer().setThetas(RestrictedBoltzmannLayer.generateInitialThetas(new double[matrix.getRows()][getLayer().getVisibleNeuronCount()], getLayer().getHiddenNeuronCount(),learningRate));
 		for (int l = 0; l < maxIterations; l++) {
 			for (DoubleMatrix doubleMatrix : getBatches(matrix,miniBatchSize))
 			{
@@ -137,7 +129,7 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	
 					DoubleMatrix delta = (positiveStatistics.sub(negativeStatistics)).mul(learningRate);
 
-					layer.updateWithDelta(delta);
+					getLayer().updateWithDelta(delta);
 			}
 			DoubleMatrix reconstructions = getReconstruction(matrix);
 			System.out.println(getAverageReconstructionError(matrix,reconstructions));
@@ -154,33 +146,33 @@ public class RestrictedBoltzmannMachine implements Serializable {
 	}
 
 	public double[] encodeToBinary(double[] visibleUnits) {
-		return layer.getHiddenUnitSample(visibleUnits);
+		return getLayer().getHiddenUnitSample(visibleUnits);
 	}
 	
 	public double[][] encodeToBinary(double[][] visibleUnits) {
-		return layer.getHiddenUnitSample(visibleUnits);
+		return getLayer().getHiddenUnitSample(visibleUnits);
 	}
 
 	public double[] decodeToBinary(double[] hiddenUnits) {
-		return layer.getVisibleUnitSample(hiddenUnits);
+		return getLayer().getVisibleUnitSample(hiddenUnits);
 	}
 
 	protected DoubleMatrix pushData(DoubleMatrix data) {
-		this.currentVisibleStates = layer.addInterceptColumn(data);
-		this.currentHiddenStates = layer.getHSampleGivenV(currentVisibleStates);
-		return layer.getProbVGivenH(currentHiddenStates);
+		this.currentVisibleStates = getLayer().addInterceptColumn(data);
+		this.currentHiddenStates = getLayer().getHSampleGivenV(currentVisibleStates);
+		return getLayer().getProbVGivenH(currentHiddenStates);
 	}
 	
 	
 	protected DoubleMatrix getReconstruction(DoubleMatrix data) {
-		DoubleMatrix currentVisibleStates = layer.addInterceptColumn(data);
-		DoubleMatrix currentHiddenStates = layer.getHSampleGivenV(currentVisibleStates);
-		return RestrictedBoltzmannLayer.removeInterceptColumn(layer.getProbVGivenH(currentHiddenStates));
+		DoubleMatrix currentVisibleStates = getLayer().addInterceptColumn(data);
+		DoubleMatrix currentHiddenStates = getLayer().getHSampleGivenV(currentVisibleStates);
+		return RestrictedBoltzmannLayer.removeInterceptColumn(getLayer().getProbVGivenH(currentHiddenStates));
 	}
 
 	protected void pushReconstruction(DoubleMatrix reconstructionWithIntercept) {
 		this.currentVisibleStates = reconstructionWithIntercept;
-		this.currentHiddenStates = layer.getProbHGivenV(reconstructionWithIntercept);
+		this.currentHiddenStates = getLayer().getProbHGivenV(reconstructionWithIntercept);
 	}
 	
 	public DoubleMatrix getAveragePairwiseRowProducts(DoubleMatrix matrix1, DoubleMatrix matrix2) {

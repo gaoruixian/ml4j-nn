@@ -2,7 +2,7 @@ package org.ml4j.nn;
 
 import java.io.Serializable;
 
-public abstract class BaseLayer<L extends BaseLayer<L>> implements Serializable {
+public abstract class BaseLayer<L extends BaseLayer<?>> implements Serializable {
 
 
 	

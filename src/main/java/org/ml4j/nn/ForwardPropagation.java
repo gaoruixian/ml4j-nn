@@ -22,7 +22,7 @@ public class ForwardPropagation {
 	public DoubleMatrix getOutputs() {
 		return outputs;
 	}
-	public BackPropagation backPropagate(NeuralNetwork neuralNetwork,DoubleMatrix desiredOutputs,
+	public BackPropagation backPropagate(FeedForwardNeuralNetwork neuralNetwork,DoubleMatrix desiredOutputs,
 			double[] lambdas)
 	{
 		return neuralNetwork.backPropagate(this, desiredOutputs,lambdas);

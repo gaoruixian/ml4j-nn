@@ -6,7 +6,7 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.costfunctions.CostFunction;
 
-public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
+public class AutoEncoder extends BaseFeedForwardNeuralNetwork<AutoEncoder> {
 
 	/**
 	 * 
@@ -15,27 +15,27 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 
 	public AutoEncoder(int inputNeuronCount,int hiddenNeuronCount,DifferentiableActivationFunction encodingActivationFunction,DifferentiableActivationFunction decodingActivationFunction)
 	{
-		this(new NeuralNetworkLayer(inputNeuronCount,hiddenNeuronCount,encodingActivationFunction),new NeuralNetworkLayer(hiddenNeuronCount,inputNeuronCount,decodingActivationFunction));
+		this(new FeedForwardLayer(inputNeuronCount,hiddenNeuronCount,encodingActivationFunction),new FeedForwardLayer(hiddenNeuronCount,inputNeuronCount,decodingActivationFunction));
 	}
 	
 	
 	
-	public AutoEncoder(NeuralNetworkLayer... layers)
+	public AutoEncoder(FeedForwardLayer... layers)
 	{
 		super(layers);
-		NeuralNetworkLayer firstLayer = layers[0];
-		NeuralNetworkLayer lastLayer = layers[layers.length - 1];
+		FeedForwardLayer firstLayer = layers[0];
+		FeedForwardLayer lastLayer = layers[layers.length - 1];
 		if (firstLayer.getInputNeuronCount() != lastLayer.getOutputNeuronCount())
 		{
 			throw new IllegalArgumentException("Input layer neuron count must be the same as output activations");
 		}
 	}  
 	
-	public AutoEncoder(List<NeuralNetworkLayer> layers)
+	public AutoEncoder(List<FeedForwardLayer> layers)
 	{
 		super(layers);
-		NeuralNetworkLayer firstLayer = getFirstLayer();
-		NeuralNetworkLayer lastLayer = getOuterLayer();
+		FeedForwardLayer firstLayer = getFirstLayer();
+		FeedForwardLayer lastLayer = getOuterLayer();
 		if (firstLayer.getInputNeuronCount() != lastLayer.getOutputNeuronCount())
 		{
 			throw new IllegalArgumentException("Input layer neuron count must be the same as output activations");
@@ -45,8 +45,8 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 	public AutoEncoder(AutoEncoder encoder)
 	{
 		super(encoder);
-		NeuralNetworkLayer firstLayer = getFirstLayer();
-		NeuralNetworkLayer lastLayer = getOuterLayer();
+		FeedForwardLayer firstLayer = getFirstLayer();
+		FeedForwardLayer lastLayer = getOuterLayer();
 		if (firstLayer.getInputNeuronCount() != lastLayer.getOutputNeuronCount())
 		{
 			throw new IllegalArgumentException("Input layer neuron count must be the same as output activations");
@@ -72,7 +72,7 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 		super.train(inputs, inputs, lambdas, costFunction, max_iter);
 	}
 	@Override
-	protected AutoEncoder createFromLayers(NeuralNetworkLayer[] layers) {
+	protected AutoEncoder createFromLayers(FeedForwardLayer[] layers) {
 		return new AutoEncoder(layers);
 	}
 	
@@ -91,25 +91,25 @@ public class AutoEncoder extends BaseNeuralNetwork<AutoEncoder> {
 		return new StackedAutoEncoder(autoEncoders);
 	}
 	
-	public NeuralNetwork cloneAndRemoveOuterLayer()
+	public FeedForwardNeuralNetwork cloneAndRemoveOuterLayer()
 	{
-		NeuralNetworkLayer[] layers = new NeuralNetworkLayer[getNumberOfLayers() -2];
+		FeedForwardLayer[] layers = new FeedForwardLayer[getNumberOfLayers() -2];
 		for (int i = 0; i < layers.length;i++)
 		{
 			layers[i] = this.getLayers().get(i);
 		}
-		return new NeuralNetwork(layers);
+		return new FeedForwardNeuralNetwork(layers);
 	}
 	
-	public NeuralNetwork cloneAndReplaceOuterLayer(NeuralNetworkLayer layer)
+	public FeedForwardNeuralNetwork cloneAndReplaceOuterLayer(FeedForwardLayer layer)
 	{
-		NeuralNetworkLayer[] layers = new NeuralNetworkLayer[getNumberOfLayers() -1];
+		FeedForwardLayer[] layers = new FeedForwardLayer[getNumberOfLayers() -1];
 		for (int i = 0; i < layers.length;i++)
 		{
 			layers[i] = this.getLayers().get(i);
 		}
 		layers[layers.length -1] = layer;
-		return new NeuralNetwork(layers);
+		return new FeedForwardNeuralNetwork(layers);
 	}
 	
 	public double[][] encodeToLayer(double[][] numericFeaturesMatrix,int toLayerIndex) {

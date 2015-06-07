@@ -5,7 +5,7 @@ import java.util.List;
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.costfunctions.CostFunction;
 
-public class NeuralNetwork extends BaseNeuralNetwork<NeuralNetwork> {
+public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedForwardNeuralNetwork> {
 
 	/**
 	 * 
@@ -17,17 +17,17 @@ public class NeuralNetwork extends BaseNeuralNetwork<NeuralNetwork> {
 	 * predictions and correct output matrix
 	 */
 	
-	public NeuralNetwork(NeuralNetworkLayer... layers)
+	public FeedForwardNeuralNetwork(FeedForwardLayer... layers)
 	{
 		super(layers);
 	}
 	
-	public NeuralNetwork(BaseNeuralNetwork<?> n)
+	public FeedForwardNeuralNetwork(BaseFeedForwardNeuralNetwork<?> n)
 	{
 		super(n);
 	}
 	
-	public NeuralNetwork(List<NeuralNetworkLayer> layers)
+	public FeedForwardNeuralNetwork(List<FeedForwardLayer> layers)
 	{
 		super(layers);
 	}
@@ -71,8 +71,8 @@ public class NeuralNetwork extends BaseNeuralNetwork<NeuralNetwork> {
 	}
 
 	@Override
-	protected NeuralNetwork createFromLayers(NeuralNetworkLayer[] layers) {
-		return new NeuralNetwork(layers);
+	protected FeedForwardNeuralNetwork createFromLayers(FeedForwardLayer[] layers) {
+		return new FeedForwardNeuralNetwork(layers);
 	}
 	
 	

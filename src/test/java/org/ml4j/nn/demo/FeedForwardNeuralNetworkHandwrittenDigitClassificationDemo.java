@@ -18,8 +18,8 @@ package org.ml4j.nn.demo;
 import java.io.IOException;
 
 import org.ml4j.imaging.targets.ImageDisplay;
-import org.ml4j.nn.NeuralNetwork;
-import org.ml4j.nn.NeuralNetworkLayer;
+import org.ml4j.nn.FeedForwardLayer;
+import org.ml4j.nn.FeedForwardNeuralNetwork;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 import org.ml4j.nn.activationfunctions.SoftmaxActivationFunction;
 import org.ml4j.nn.algorithms.NeuralNetworkAlgorithm;
@@ -36,14 +36,14 @@ import org.ml4j.util.DoubleArrayMatrixLoader;
  * @author Michael Lavelle
  *
  */
-public class NeuralNetworkHandwrittenDigitClassificationDemo {
+public class FeedForwardNeuralNetworkHandwrittenDigitClassificationDemo {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 
 		// Load Mnist data into double[][] matrices
 
 		DoubleArrayMatrixLoader loader = new DoubleArrayMatrixLoader(
-				NeuralNetworkHandwrittenDigitClassificationDemo.class.getClassLoader());
+				FeedForwardNeuralNetworkHandwrittenDigitClassificationDemo.class.getClassLoader());
 
 		double[][] trainingDataMatrix = loader.loadDoubleMatrixFromCsv("mnist2500_X_custom.csv",
 				new PixelFeaturesMatrixCsvDataExtractor(), 0, 100);
@@ -58,10 +58,10 @@ public class NeuralNetworkHandwrittenDigitClassificationDemo {
 		// and classification output neurons corresponding to the 10 numbers to
 		// be predicted.
 
-		NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, new SigmoidActivationFunction());
-		NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, new SoftmaxActivationFunction());
+		FeedForwardLayer firstLayer = new FeedForwardLayer(784, 10, new SigmoidActivationFunction());
+		FeedForwardLayer secondLayer = new FeedForwardLayer(10, 10, new SoftmaxActivationFunction());
 
-		NeuralNetwork neuralNetwork = new NeuralNetwork(firstLayer, secondLayer);
+		FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(firstLayer, secondLayer);
 
 		NeuralNetworkAlgorithm alg = new NeuralNetworkAlgorithm(neuralNetwork);
 
