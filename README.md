@@ -4,8 +4,9 @@
 
 // Create NeuralNetwork
 	
-FeedForwardLayer firstLayer = new FeedForwardLayer(784, 10, new SigmoidActivationFunction());
-FeedForwardLayer secondLayer = new FeedForwardLayer(10, 10, new SoftmaxActivationFunction());	
+// Layers configured with input units, hidden units, an activation function and whether a bias unit is required	
+FeedForwardLayer firstLayer = new FeedForwardLayer(784, 10, new SigmoidActivationFunction(),true);
+FeedForwardLayer secondLayer = new FeedForwardLayer(10, 10, new SoftmaxActivationFunction(),true);	
 FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(firstLayer, secondLayer);
 
 // Train NeuralNetwork
