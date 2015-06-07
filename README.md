@@ -4,9 +4,9 @@
 
 // Create NeuralNetwork
 	
-NeuralNetworkLayer firstLayer = new NeuralNetworkLayer(784, 10, new SigmoidActivationFunction());
-NeuralNetworkLayer secondLayer = new NeuralNetworkLayer(10, 10, new SoftmaxActivationFunction());	
-NeuralNetwork neuralNetwork = new NeuralNetwork(firstLayer, secondLayer);
+FeedForwardLayer firstLayer = new FeedForwardLayer(784, 10, new SigmoidActivationFunction());
+FeedForwardLayer secondLayer = new FeedForwardLayer(10, 10, new SoftmaxActivationFunction());	
+FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(firstLayer, secondLayer);
 
 // Train NeuralNetwork
 	
