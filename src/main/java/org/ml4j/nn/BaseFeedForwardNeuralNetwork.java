@@ -101,49 +101,6 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		return topology;
 	}
 
-	public ForwardPropagation forwardPropagate(double[][] inputs) {
-		return forwardPropagate(new DoubleMatrix(inputs));
-	}
-
-	public ForwardPropagation forwardPropagate(double[] inputs) {
-		return forwardPropagate(new DoubleMatrix(new double[][] { inputs }));
-	}
-
-	public ForwardPropagation forwardPropagate(DoubleMatrix inputs) {
-		return forwardPropagateFromTo(inputs,0,getNumberOfLayers() -1);
-	}
-	
-	public ForwardPropagation forwardPropagateFromTo(double[][] inputs,int fromLayerIndex,int toLayerIndex) {
-		return forwardPropagateFromTo(new DoubleMatrix(inputs),fromLayerIndex,toLayerIndex);
-	}
-	
-	public ForwardPropagation forwardPropagateFromTo(double[] inputs,int fromLayerIndex,int toLayerIndex) {
-		return forwardPropagateFromTo(new DoubleMatrix(new double[][] {inputs}),fromLayerIndex,toLayerIndex);
-	}
-	public ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex) {
-		DoubleMatrix inputActivations = inputs;
-		List<NeuralNetworkLayerActivation> layerActivations = new ArrayList<NeuralNetworkLayerActivation>();
-		boolean start = false;
-		boolean end = false;
-		int index =0;
-		for (FeedForwardLayer layer : layers) {
-			start = start || index == fromLayerIndex;
-
-			if (start && !end)
-			{
-			inputActivations = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(inputActivations.getRows(), 1),
-					inputActivations);
-			NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputActivations);
-			layerActivations.add(activation);
-			inputActivations = activation.getOutputActivations();
-			}
-			end = end || index == toLayerIndex;
-
-			index++;
-		}
-		return new ForwardPropagation(inputActivations, layerActivations);
-	}
-
 	public BackPropagation backPropagate(ForwardPropagation forwardPropatation, DoubleMatrix desiredOutputs,
 			double[] lambdas) {
 		// Back propagate the deltas
@@ -356,7 +313,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		int ind = 0;
 		for (FeedForwardLayer layer : layers) {
 			if (layer.isRetrainable()) {
-				topologies[ind] = new int[] { layer.getOutputNeuronCount(), layer.getInputNeuronCount() + 1 };
+				topologies[ind] = new int[] { layer.getOutputNeuronCount(), layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0) };
 				ind++;
 
 			}

@@ -58,8 +58,8 @@ public class AutoEncoderHandwrittenDigitFeatureExtractionDemo {
 		//context.setSparsityBeta(0.01);
 		//context.setSparsityParameter(0.004);
 
-		FeedForwardLayer firstLayer = new FeedForwardLayer(784, 100, new SigmoidActivationFunction());
-		FeedForwardLayer secondLayer = new FeedForwardLayer(100, 784, new SigmoidActivationFunction());
+		FeedForwardLayer firstLayer = new FeedForwardLayer(784, 100, new SigmoidActivationFunction(),true);
+		FeedForwardLayer secondLayer = new FeedForwardLayer(100, 784, new SigmoidActivationFunction(),true);
 
 		AutoEncoder autoEncoder = new AutoEncoder(firstLayer, secondLayer);
 		

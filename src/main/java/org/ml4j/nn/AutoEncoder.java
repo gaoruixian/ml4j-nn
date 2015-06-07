@@ -15,7 +15,7 @@ public class AutoEncoder extends BaseFeedForwardNeuralNetwork<AutoEncoder> {
 
 	public AutoEncoder(int inputNeuronCount,int hiddenNeuronCount,DifferentiableActivationFunction encodingActivationFunction,DifferentiableActivationFunction decodingActivationFunction)
 	{
-		this(new FeedForwardLayer(inputNeuronCount,hiddenNeuronCount,encodingActivationFunction),new FeedForwardLayer(hiddenNeuronCount,inputNeuronCount,decodingActivationFunction));
+		this(new FeedForwardLayer(inputNeuronCount,hiddenNeuronCount,encodingActivationFunction,true),new FeedForwardLayer(hiddenNeuronCount,inputNeuronCount,decodingActivationFunction,true));
 	}
 	
 	

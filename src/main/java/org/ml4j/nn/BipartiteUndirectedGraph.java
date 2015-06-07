@@ -27,6 +27,7 @@ public abstract class BipartiteUndirectedGraph<L extends BipartiteUndirectedGrap
 		this.hiddenNeuronCount = hiddenNeuronCount;
 		this.visibleActivationFunction = visibleActivationFunction;
 		this.hiddenActivationFunction = hiddenActivationFunction;
+		this.thetas = thetas;
 
 	}
 	

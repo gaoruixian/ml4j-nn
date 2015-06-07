@@ -34,8 +34,10 @@ public class NeuralNetworkLayerErrorGradient {
 	public DoubleMatrix getErrorGradient() {
 		DoubleMatrix currentTheta = thetas;
 		DoubleMatrix modTheta = new DoubleMatrix().copy(currentTheta);
+		if (layer.hasBiasUnit)
+		{
 		modTheta.putColumn(0, DoubleMatrix.zeros(currentTheta.getRows(), 1));
-
+		}
 		return getDELTA().div(m).add(modTheta.mul(lambda / m));
 	}
 }

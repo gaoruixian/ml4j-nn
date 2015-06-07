@@ -19,7 +19,7 @@ public class FeedForwardLayerUnitTest {
 	public void testUntrainedLayerConstructor_whenValidArguments()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		assertThat(layer, is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(activationFunction));
@@ -37,7 +37,7 @@ public class FeedForwardLayerUnitTest {
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 
 		assertThat(layer.isRetrainable(),is(true));
@@ -57,7 +57,7 @@ public class FeedForwardLayerUnitTest {
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 
 		assertThat(layer.isRetrainable(),is(true));
@@ -75,7 +75,7 @@ public class FeedForwardLayerUnitTest {
 	public void testDup_settingNotRetrainable()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		assertThat(layer.isRetrainable(),is(true));
 
 		FeedForwardLayer dupLayer = layer.dup(false);
@@ -94,7 +94,7 @@ public class FeedForwardLayerUnitTest {
 	public void testActivate_DoubleMatrix()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		DoubleMatrix activations = layer.activate(inputs);
 		DoubleMatrix inputsWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(10),inputs);
@@ -105,7 +105,7 @@ public class FeedForwardLayerUnitTest {
 	public void testForwardPropagate()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 101);
 		NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputs);
 		assertThat(activation.getOutputActivations(),is(activationFunction.activate(inputs.mmul(layer.getClonedThetas().transpose()))));
@@ -117,7 +117,7 @@ public class FeedForwardLayerUnitTest {
 	public void testActivate_IncorrectColumns()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 101);
 		layer.activate(inputs);
 	}
@@ -126,7 +126,7 @@ public class FeedForwardLayerUnitTest {
 	public void testForwardPropagate_IncorrectColumns()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		layer.forwardPropagate(inputs);
 	}
@@ -135,7 +135,7 @@ public class FeedForwardLayerUnitTest {
 	public void testActivate_Arrays()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		double[][] inputArrays = inputs.toArray2();
 		DoubleMatrix activations = layer.activate(inputArrays);
@@ -148,7 +148,7 @@ public class FeedForwardLayerUnitTest {
 	public void testGetClonedThetas()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 
 		layer.updateThetas(thetas, 0, true);
@@ -163,7 +163,7 @@ public class FeedForwardLayerUnitTest {
 	public void testDup_settingRetrainable()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		assertThat(layer.isRetrainable(),is(true));
 
 		FeedForwardLayer dupLayer = layer.dup(true);
@@ -182,7 +182,7 @@ public class FeedForwardLayerUnitTest {
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		layer.setRetrainable(false);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 
@@ -198,7 +198,7 @@ public class FeedForwardLayerUnitTest {
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix thetas = new DoubleMatrix(11,101);
 
 		layer.updateThetas(thetas, 0, true);
@@ -209,7 +209,7 @@ public class FeedForwardLayerUnitTest {
 	public void testUpdateRetrainableLayerThetas_whenThetasIncorrectColumns()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix thetas = new DoubleMatrix(10,100);
 		layer.updateThetas(thetas, 0, true);
 		
@@ -219,7 +219,7 @@ public class FeedForwardLayerUnitTest {
 	public void testUpdateRetrainableLayerThetas_whenLayerNumberBelowZero()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
 		layer.updateThetas(thetas, -1, true);
 		
@@ -229,7 +229,7 @@ public class FeedForwardLayerUnitTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testUntrainedLayerConstructor_whenActivationFunctionIsNull()
 	{
-			new FeedForwardLayer(100,10,null);
+			new FeedForwardLayer(100,10,null,true);
 	}
 	
 	@Test
@@ -237,7 +237,7 @@ public class FeedForwardLayerUnitTest {
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,thetas,activationFunction,true);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,thetas,activationFunction,true,true);
 		assertThat(layer, is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(activationFunction));
@@ -255,28 +255,28 @@ public class FeedForwardLayerUnitTest {
 	public void testPretrainedLayerConstructor_whenActivationFunctionIsNull()
 	{
 		
-			new FeedForwardLayer(100,10,new DoubleMatrix(100,10),null,true);
+			new FeedForwardLayer(100,10,new DoubleMatrix(100,10),null,true,true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testPretrainedLayerConstructor_whenThetasIsNull()
 	{
 		
-			new FeedForwardLayer(100,10,null,new SigmoidActivationFunction(),true);
+			new FeedForwardLayer(100,10,null,new SigmoidActivationFunction(),true,true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testPretrainedLayerConstructor_whenThetasRowSizeIsIncorrect()
 	{
 		
-			new FeedForwardLayer(100,10,new DoubleMatrix(9,101),new SigmoidActivationFunction(),true);
+			new FeedForwardLayer(100,10,new DoubleMatrix(9,101),new SigmoidActivationFunction(),true,true);
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testPretrainedLayerConstructor_whenThetasColumnSizeIsIncorrect()
 	{
 		
-			new FeedForwardLayer(100,10,new DoubleMatrix(10,102),new SigmoidActivationFunction(),true);
+			new FeedForwardLayer(100,10,new DoubleMatrix(10,102),new SigmoidActivationFunction(),true,true);
 	}
 	
 	@Test
@@ -284,7 +284,7 @@ public class FeedForwardLayerUnitTest {
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		DoubleMatrix thetas = new DoubleMatrix(10,101);
-		FeedForwardLayer layer = new FeedForwardLayer(100,10,thetas,activationFunction,false);
+		FeedForwardLayer layer = new FeedForwardLayer(100,10,thetas,activationFunction,true,false);
 		assertThat(layer, is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(activationFunction));

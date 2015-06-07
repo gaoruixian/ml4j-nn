@@ -12,10 +12,7 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Helper function to compute the accuracy of predictions give said
-	 * predictions and correct output matrix
-	 */
+	
 	
 	public FeedForwardNeuralNetwork(FeedForwardLayer... layers)
 	{
@@ -33,6 +30,10 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 	}
 	
 
+	/**
+	 * Helper function to compute the accuracy of predictions give said
+	 * predictions and correct output matrix
+	 */
 	public String getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
 
 		DoubleMatrix predictions = forwardPropagate(trainingDataMatrix).getPredictions();
@@ -46,27 +47,23 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 
 	@Override
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, int max_iter) {
-		// TODO Auto-generated method stub
 		super.train(inputs, desiredOutputs, lambdas, max_iter);
 	}
 
 	@Override
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double lambda, int max_iter) {
-		// TODO Auto-generated method stub
 		super.train(inputs, desiredOutputs, lambda, max_iter);
 	}
 
 	@Override
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double lambda, CostFunction costFunction,
 			int max_iter) {
-		// TODO Auto-generated method stub
 		super.train(inputs, desiredOutputs, lambda, costFunction, max_iter);
 	}
 
 	@Override
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, CostFunction costFunction,
 			int max_iter) {
-		// TODO Auto-generated method stub
 		super.train(inputs, desiredOutputs, lambdas, costFunction, max_iter);
 	}
 

@@ -16,30 +16,35 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 
 
 
-
 	public FeedForwardLayer dup(boolean retrainable) {
 		FeedForwardLayer dup = new FeedForwardLayer(inputNeuronCount, outputNeuronCount, this.getClonedThetas(),
-				activationFunction, retrainable);
+				activationFunction, hasBiasUnit(),retrainable);
 		return dup;
 	}
 	
 	public DoubleMatrix activate(double[][] layerInputsArrays)
 	{
 		DoubleMatrix layerInputs= new DoubleMatrix(layerInputsArrays);
-		DoubleMatrix layerInputsWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
-		return forwardPropagate(layerInputsWithIntercept).getOutputActivations();
+		if (hasBiasUnit())
+		{
+			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
+		}
+		return forwardPropagate(layerInputs).getOutputActivations();
 	}
 
 	public DoubleMatrix activate(DoubleMatrix layerInputs)
 	{
-		DoubleMatrix layerInputsWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
-		return forwardPropagate(layerInputsWithIntercept).getOutputActivations();
+		if (hasBiasUnit())
+		{
+			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
+		}
+		return forwardPropagate(layerInputs).getOutputActivations();
 	}
 	
 	
 	protected NeuralNetworkLayerActivation forwardPropagate(DoubleMatrix layerInputsWithIntercept) {
 		
-		if (layerInputsWithIntercept.getColumns() != getInputNeuronCount() + 1)
+		if (layerInputsWithIntercept.getColumns() != getInputNeuronCount() + (hasBiasUnit() ? 1 : 0))
 		{
 			throw new IllegalArgumentException("Layer forward propogation requires inputs matrix with intercepts with number of columns = " + (getInputNeuronCount() + 1));
 		}
@@ -58,22 +63,22 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		return ret;
 	}
 
-	public FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction) {
-		super(true);
+	public FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction,boolean biasUnit) {
+		super(biasUnit,true);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
-		this.thetas = generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + 1);
+		this.thetas = generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + (biasUnit ? 1 : 0));
 	}
 	
 
 	public FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,
-			DifferentiableActivationFunction activationFunction, boolean retrainable) {
-		super(retrainable);
+			DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable) {
+		super(biasUnit,retrainable);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + 1)) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
+		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
@@ -92,7 +97,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 			throw new IllegalArgumentException("Neural network layer index must be zero or above");
 		}
 		
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + 1)) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
+		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + (hasBiasUnit ? 1 : 0 ))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + (hasBiasUnit ? 1 : 0 )));
 		this.thetas = thetas;
 		if (!permitFurtherRetrains) {
 			this.setRetrainable(false);

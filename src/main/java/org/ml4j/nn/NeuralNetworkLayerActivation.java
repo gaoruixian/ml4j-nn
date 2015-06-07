@@ -37,8 +37,10 @@ public class NeuralNetworkLayerActivation {
 
 		DoubleMatrix sigable = getZ();
 
+		if (outerActivation.layer.hasBiasUnit)
+		{
 		sigable = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(sigable.getRows()), sigable);
-
+		}
 		DoubleMatrix deltas = outerActivation.getThetas().transpose().mmul(outerDeltas)
 				.mul(this.getLayer().getActivationFunction().activationGradient(sigable.transpose())).transpose();
 
@@ -50,9 +52,10 @@ public class NeuralNetworkLayerActivation {
 		for (int j = 1; j < deltas.getColumns(); j++) {
 			cols[j - 1] = j;
 		}
-
+		if (outerActivation.layer.hasBiasUnit)
+		{
 		deltas = deltas.get(rows, cols);
-
+		}
 		return deltas.transpose();
 	}
 

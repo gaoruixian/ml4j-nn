@@ -31,10 +31,10 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 		return forwardPropagateFromTo(new DoubleMatrix(inputs),fromLayerIndex,toLayerIndex);
 	}
 	
-	public ForwardPropagation forwardPropagateFromTo(double[] inputs,int fromLayerIndex,int toLayerIndex) {
+	protected ForwardPropagation forwardPropagateFromTo(double[] inputs,int fromLayerIndex,int toLayerIndex) {
 		return forwardPropagateFromTo(new DoubleMatrix(new double[][] {inputs}),fromLayerIndex,toLayerIndex);
 	}
-	public ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex) {
+	protected ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex) {
 		DoubleMatrix inputActivations = inputs;
 		List<NeuralNetworkLayerActivation> layerActivations = new ArrayList<NeuralNetworkLayerActivation>();
 		boolean start = false;
@@ -45,8 +45,11 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 
 			if (start && !end)
 			{
-			inputActivations = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(inputActivations.getRows(), 1),
-					inputActivations);
+				if (layer.hasBiasUnit)
+				{
+					inputActivations = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(inputActivations.getRows(), 1),
+							inputActivations);
+				}
 			NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputActivations);
 			layerActivations.add(activation);
 			inputActivations = activation.getOutputActivations();

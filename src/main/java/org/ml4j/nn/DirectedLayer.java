@@ -9,10 +9,21 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	public DirectedLayer(boolean retrainable) {
+	
+	protected final boolean hasBiasUnit;
+	
+	public DirectedLayer(boolean hasBiasUnit,boolean retrainable) {
 		super(retrainable);
+		this.hasBiasUnit = hasBiasUnit;
+		
 	}
+	
+
+
+	public boolean hasBiasUnit() {
+		return hasBiasUnit;
+	}
+
 
 	protected abstract NeuralNetworkLayerActivation forwardPropagate(
 			DoubleMatrix inputActivations);
@@ -20,12 +31,13 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	protected int inputNeuronCount;
 	protected int outputNeuronCount;
 	
-	public DirectedLayer(int inputNeuronCount,int outputNeuronCount,DifferentiableActivationFunction activationFunction)
+	public DirectedLayer(int inputNeuronCount,int outputNeuronCount,DifferentiableActivationFunction activationFunction,boolean biasUnit)
 	{
 		super(true);
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
+		this.hasBiasUnit = biasUnit;
 	}
 	
 	
