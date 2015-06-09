@@ -2,17 +2,17 @@ package org.ml4j.nn.algorithms;
 
 import org.ml4j.algorithms.HypothesisFunction;
 import org.ml4j.mapping.LabeledData;
-import org.ml4j.nn.DeepBeliefNetwork;
+import org.ml4j.nn.SupervisedDeepBeliefNetwork;
 
-public class DeepBeliefNetworkHypothesisFunction implements HypothesisFunction<LabeledData<double[],double[]>,double[]> {
+public class SupervisedDeepBeliefNetworkHypothesisFunction implements HypothesisFunction<LabeledData<double[],double[]>,double[]> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private DeepBeliefNetwork dbn;
+	private SupervisedDeepBeliefNetwork dbn;
 	
-	public DeepBeliefNetworkHypothesisFunction(DeepBeliefNetwork dbn) {
+	public SupervisedDeepBeliefNetworkHypothesisFunction(SupervisedDeepBeliefNetwork dbn) {
 		this.dbn = dbn;
 	}
 

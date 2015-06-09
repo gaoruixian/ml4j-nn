@@ -14,7 +14,7 @@ public class NeuralNetworkAlgorithm {
 
 	public NeuralNetworkHypothesisFunction getHypothesisFunction(double[][] inputs, double[][] outputs,
 			NeuralNetworkAlgorithmTrainingContext context) {
-
+		
 		if (context.getCostFunction() != null) {
 			neuralNetwork.train(new DoubleMatrix(inputs), new DoubleMatrix(outputs),
 					neuralNetwork.createLayerRegularisations(context.getRegularizationLambda()),

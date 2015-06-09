@@ -72,6 +72,5 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 		return new FeedForwardNeuralNetwork(layers);
 	}
 	
-	
-	
+
 }

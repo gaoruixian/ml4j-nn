@@ -2,6 +2,7 @@ package org.ml4j.nn;
 
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.ActivationFunction;
+import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 
 public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<RestrictedBoltzmannLayer> {
@@ -11,6 +12,24 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 	 */
 	private static final long serialVersionUID = 1L;
 
+	
+	
+	public AutoEncoder createAutoEncoder()
+	{	
+		return new AutoEncoder(createVisibleToHiddenFeedForwardLayer(),createHiddenToVisibleFeedForwardLayer());
+	}
+	
+	public FeedForwardLayer createVisibleToHiddenFeedForwardLayer()
+	{
+		return new FeedForwardLayer(this.getVisibleNeuronCount(), this.getHiddenNeuronCount(), RestrictedBoltzmannLayer.removeInterceptColumn(getClonedThetas()).transpose(),(DifferentiableActivationFunction) this.hiddenActivationFunction,true,true);
+	}
+	
+	public FeedForwardLayer createHiddenToVisibleFeedForwardLayer()
+	{
+		DoubleMatrix secondThetas = RestrictedBoltzmannLayer.removeInterceptColumn(getClonedThetas().transpose()).transpose();
+
+		return new FeedForwardLayer(this.getHiddenNeuronCount(), this.getVisibleNeuronCount(),secondThetas, (DifferentiableActivationFunction) this.visibleActivationFunction,true,true);
+	}
 
 	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction activationFunction, DoubleMatrix thetas,
 			boolean retrainable) {
@@ -172,7 +191,7 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 		return result;
 	}
 
-	protected static DoubleMatrix removeInterceptColumn(DoubleMatrix in) {
+	public static DoubleMatrix removeInterceptColumn(DoubleMatrix in) {
 		DoubleMatrix result = new DoubleMatrix(in.getRows(), in.getColumns() - 1);
 		for (int i = 0; i < result.getRows(); i++) {
 			for (int j = 0; j < result.getColumns() - 1; j++) {

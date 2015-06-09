@@ -22,16 +22,21 @@ import java.util.List;
 
 import org.ml4j.imaging.targets.ImageDisplay;
 import org.ml4j.mapping.LabeledData;
-import org.ml4j.nn.DeepBeliefNetwork;
+import org.ml4j.nn.FeedForwardNeuralNetwork;
 import org.ml4j.nn.RestrictedBoltzmannLayer;
 import org.ml4j.nn.RestrictedBoltzmannMachine;
+import org.ml4j.nn.RestrictedBoltzmannMachineStack;
+import org.ml4j.nn.SupervisedDeepBeliefNetwork;
 import org.ml4j.nn.activationfunctions.ActivationFunction;
 import org.ml4j.nn.activationfunctions.BinarySoftmaxActivationFunction;
 import org.ml4j.nn.activationfunctions.SegmentedActivationFunction;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
-import org.ml4j.nn.algorithms.DeepBeliefNetworkAlgorithm;
-import org.ml4j.nn.algorithms.DeepBeliefNetworkHypothesisFunction;
+import org.ml4j.nn.algorithms.NeuralNetworkAlgorithm;
+import org.ml4j.nn.algorithms.NeuralNetworkAlgorithmTrainingContext;
+import org.ml4j.nn.algorithms.NeuralNetworkHypothesisFunction;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithmTrainingContext;
+import org.ml4j.nn.algorithms.SupervisedDeepBeliefNetworkAlgorithm;
+import org.ml4j.nn.algorithms.SupervisedDeepBeliefNetworkHypothesisFunction;
 import org.ml4j.nn.util.MnistUtils;
 import org.ml4j.nn.util.PixelFeaturesMatrixCsvDataExtractor;
 import org.ml4j.nn.util.SingleDigitLabelsMatrixCsvDataExtractor;
@@ -44,13 +49,13 @@ import org.ml4j.util.DoubleArrayMatrixLoader;
  * @author Michael Lavelle
  *
  */
-public class DeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
+public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
 
 		DoubleArrayMatrixLoader loader = new DoubleArrayMatrixLoader(
-				DeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo.class.getClassLoader());
+				SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo.class.getClassLoader());
 
 		// Load Mnist data into double[][] matrices
 		double[][] trainingDataMatrix = loader.loadDoubleMatrixFromCsv("mnist2500_X_custom.csv",
@@ -99,23 +104,66 @@ public class DeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		
 		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 		
-		DeepBeliefNetwork dbn = new DeepBeliefNetwork(new RestrictedBoltzmannMachine(firstLayer),new RestrictedBoltzmannMachine(secondLayer),new RestrictedBoltzmannMachine(thirdLayer));
-		DeepBeliefNetworkAlgorithm alg = new DeepBeliefNetworkAlgorithm(dbn,batchSize);
+		SupervisedDeepBeliefNetwork dbn = new SupervisedDeepBeliefNetwork(new RestrictedBoltzmannMachineStack(new RestrictedBoltzmannMachine(firstLayer),new RestrictedBoltzmannMachine(secondLayer)),new RestrictedBoltzmannMachine(thirdLayer));
+		SupervisedDeepBeliefNetworkAlgorithm alg = new SupervisedDeepBeliefNetworkAlgorithm(dbn,batchSize);
 
 		// Obtain an generating hypothesis function from the Deep Belief Network, so we
 		// can generate new data from a single training example
 		System.out.println("Training");
 
-		DeepBeliefNetworkHypothesisFunction hyp1 = alg.getHypothesisFunction(trainingDataMatrix,trainingLabelsMatrix, context);
+		SupervisedDeepBeliefNetworkHypothesisFunction hyp1 = alg.getHypothesisFunction(trainingDataMatrix,trainingLabelsMatrix, context);
 	
 		System.out.println("Generating new data");
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 20; i++)
 		{
 			double[] probs = hyp1.predict(new LabeledData<double[],double[]>(twoExample,twoLabel));
 			System.out.println("Generated new probability map from given an fixed example of digit two");
 			MnistUtils.draw(probs, display);
 			Thread.sleep(100);
 		}
+		
+		System.out.println("Creating FeedForward Neural Network initialised from DBN");
+		
+		FeedForwardNeuralNetwork feedForwardNeuralNetwork = dbn.createFeedForwardNeuralNetwork();
+		
+		NeuralNetworkAlgorithm neuralNetworkAlgorithm = new NeuralNetworkAlgorithm(feedForwardNeuralNetwork);
+
+		System.out.println("Training FeedForward Neural Network using back prop");
+
+		// Training Context
+		NeuralNetworkAlgorithmTrainingContext neuralNetworkContext = new NeuralNetworkAlgorithmTrainingContext(100);
+		neuralNetworkContext.setRegularizationLambda(0.05d);
+
+				// Obtain a prediction hypothesis function from the Neural Network, so
+				// we can predict output classes given training examples
+		NeuralNetworkHypothesisFunction neuralNetworkHyp = neuralNetworkAlgorithm.getHypothesisFunction(trainingDataMatrix, trainingLabelsMatrix,
+		neuralNetworkContext);
+
+		// Training Set accuracy
+		System.out.println("Accuracy on training set:" + neuralNetworkHyp.getAccuracy(trainingDataMatrix, trainingLabelsMatrix));
+
+		// Test Set accuracy
+		System.out.println("Accuracy on test set:" + neuralNetworkHyp.getAccuracy(testSetDataMatrix, testSetLabelsMatrix));
+
+
+				for (int i = 0; i < 100; i++) {
+
+					// For each element in our test set, obtain the predicted and actual
+					// classification
+					double[] predictions = neuralNetworkHyp.predict(testSetDataMatrix[i]);
+
+					int predicted = getArgMaxIndex(predictions);
+					int actual = getArgMaxIndex(testSetLabelsMatrix[i]);
+
+					// Output prediction
+					System.out.println("Predicted:" + predicted + ",Actual:" + actual);
+
+					// Display the actual input image
+					MnistUtils.draw(testSetDataMatrix[i], display);
+					Thread.sleep(1000);
+
+				}
+		
 	}
 
 	private static double[][] getOnlyDigit2s(double[][] data, double[][] labels) {
@@ -142,6 +190,19 @@ public class DeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		return twosMatrix;
 	}
 	
-	
+	private static int getArgMaxIndex(double[] predictionNeuronValues) {
+		Double max = null;
+		Integer maxInt = null;
+		int ind = 0;
+		for (double d : predictionNeuronValues) {
+			if (max == null || d > max.doubleValue()) {
+				max = d;
+				maxInt = ind;
+			}
+			ind++;
+		}
+		return maxInt;
+	}
+
 
 }

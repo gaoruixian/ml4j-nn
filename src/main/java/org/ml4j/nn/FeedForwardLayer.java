@@ -15,7 +15,6 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	private DoubleMatrix thetas;
 
 
-
 	public FeedForwardLayer dup(boolean retrainable) {
 		FeedForwardLayer dup = new FeedForwardLayer(inputNeuronCount, outputNeuronCount, this.getClonedThetas(),
 				activationFunction, hasBiasUnit(),retrainable);
@@ -78,7 +77,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		super(biasUnit,retrainable);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + 1));
+		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + (hasBiasUnit ? 1 : 0)));
 		this.inputNeuronCount = inputNeuronCount;
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;

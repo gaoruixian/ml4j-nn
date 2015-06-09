@@ -13,6 +13,11 @@ public class SegmentedActivationFunction implements ActivationFunction {
 	private ActivationFunction[] activationFunctions;
 	
 	
+	
+	public ActivationFunction[] getActivationFunctions() {
+		return activationFunctions;
+	}
+
 	public SegmentedActivationFunction(ActivationFunction[] activationFunctions,int[][] ranges)
 	{
 		if (ranges.length != activationFunctions.length)

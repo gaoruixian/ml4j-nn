@@ -122,6 +122,8 @@ public class RestrictedBoltzmannMachineHandwrittenDigitFeatureExtractionDemo {
 		
 		RestrictedBoltzmannMachine clonedRestrictedBolzmannMachine = new RestrictedBoltzmannMachine(firstLayer.dup(false));
 		
+		
+		
 		// Use a cloned rbm to generate new data
 
 		System.out.println("Generating new data");
@@ -180,5 +182,6 @@ public class RestrictedBoltzmannMachineHandwrittenDigitFeatureExtractionDemo {
 
 		return twosMatrix;
 	}
-
+	
+	
 }
