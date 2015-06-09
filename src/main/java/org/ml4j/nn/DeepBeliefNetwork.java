@@ -32,9 +32,7 @@ public abstract class DeepBeliefNetwork<N extends DeepBeliefNetwork<N>> extends 
 		}
 		return layers;
 	}
-	
-	public abstract FeedForwardNeuralNetwork createFeedForwardNeuralNetwork();
-	
+		
 	private static RestrictedBoltzmannLayer[] getLayers(RestrictedBoltzmannMachineStack unsupervisedStack,RestrictedBoltzmannMachine supervisedRbm)
 	{
 		RestrictedBoltzmannLayer[] layers = new RestrictedBoltzmannLayer[unsupervisedStack.size() + 1];

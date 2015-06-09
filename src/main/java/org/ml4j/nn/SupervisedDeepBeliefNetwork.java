@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
-import org.ml4j.nn.activationfunctions.SegmentedActivationFunction;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithm;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithmTrainingContext;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineHypothesisFunction;
@@ -41,7 +40,7 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 	
 
 	
-	public FeedForwardNeuralNetwork createFeedForwardNeuralNetwork()
+	public FeedForwardNeuralNetwork createFeedForwardNeuralNetwork(DifferentiableActivationFunction supervisedActivationFunction)
 	{
 		List<FeedForwardLayer> feedForwardLayers = new ArrayList<FeedForwardLayer>();
 		for (int i = 0; i < getNumberOfLayers() - 1; i++)
@@ -71,7 +70,7 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 		DoubleMatrix thets1 =  finalLayer.getClonedThetas().transpose().getColumns(cols).transpose();
 		DoubleMatrix thets2 =  finalLayer.getClonedThetas().getRows(cols2);
 		FeedForwardLayer ff1 = new FeedForwardLayer(finalLayer.getVisibleNeuronCount() - labelsLength,finalLayer.getHiddenNeuronCount() + 1, thets1.transpose(),(DifferentiableActivationFunction) finalLayer.hiddenActivationFunction,true,true);
-		FeedForwardLayer ff2 = new FeedForwardLayer(finalLayer.getHiddenNeuronCount() + 1,labelsLength,thets2,(DifferentiableActivationFunction)((SegmentedActivationFunction)(finalLayer.visibleActivationFunction)).getActivationFunctions()[0],false,true);
+		FeedForwardLayer ff2 = new FeedForwardLayer(finalLayer.getHiddenNeuronCount() + 1,labelsLength,thets2,supervisedActivationFunction,false,true);
 		feedForwardLayers.add(ff1);
 		feedForwardLayers.add(ff2);
 

@@ -17,27 +17,21 @@ package org.ml4j.nn.demo;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.ml4j.imaging.targets.ImageDisplay;
-import org.ml4j.mapping.LabeledData;
+import org.ml4j.nn.FeedForwardLayer;
 import org.ml4j.nn.FeedForwardNeuralNetwork;
 import org.ml4j.nn.RestrictedBoltzmannLayer;
 import org.ml4j.nn.RestrictedBoltzmannMachine;
 import org.ml4j.nn.RestrictedBoltzmannMachineStack;
-import org.ml4j.nn.SupervisedDeepBeliefNetwork;
-import org.ml4j.nn.activationfunctions.ActivationFunction;
-import org.ml4j.nn.activationfunctions.BinarySoftmaxActivationFunction;
-import org.ml4j.nn.activationfunctions.SegmentedActivationFunction;
-import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
+import org.ml4j.nn.UnsupervisedDeepBeliefNetwork;
 import org.ml4j.nn.activationfunctions.SoftmaxActivationFunction;
 import org.ml4j.nn.algorithms.NeuralNetworkAlgorithm;
 import org.ml4j.nn.algorithms.NeuralNetworkAlgorithmTrainingContext;
 import org.ml4j.nn.algorithms.NeuralNetworkHypothesisFunction;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithmTrainingContext;
-import org.ml4j.nn.algorithms.SupervisedDeepBeliefNetworkAlgorithm;
-import org.ml4j.nn.algorithms.SupervisedDeepBeliefNetworkHypothesisFunction;
+import org.ml4j.nn.algorithms.UnsupervisedDeepBeliefNetworkAlgorithm;
+import org.ml4j.nn.algorithms.UnsupervisedDeepBeliefNetworkHypothesisFunction;
 import org.ml4j.nn.util.MnistUtils;
 import org.ml4j.nn.util.PixelFeaturesMatrixCsvDataExtractor;
 import org.ml4j.nn.util.SingleDigitLabelsMatrixCsvDataExtractor;
@@ -50,13 +44,13 @@ import org.ml4j.util.DoubleArrayMatrixLoader;
  * @author Michael Lavelle
  *
  */
-public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
+public class FeedForwardFromUnsupervisedDBNDigitFeatureExtractionDemo {
 
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
 
 		DoubleArrayMatrixLoader loader = new DoubleArrayMatrixLoader(
-				SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo.class.getClassLoader());
+				FeedForwardFromUnsupervisedDBNDigitFeatureExtractionDemo.class.getClassLoader());
 
 		// Load Mnist data into double[][] matrices
 		double[][] trainingDataMatrix = loader.loadDoubleMatrixFromCsv("mnist2500_X_custom.csv",
@@ -70,12 +64,6 @@ public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		double[][] testSetLabelsMatrix = loader.loadDoubleMatrixFromCsv("mnist2500_labels_custom.csv",
 				new SingleDigitLabelsMatrixCsvDataExtractor(), 500, 1000);
 
-		double[][] onlyTwoLabels = getOnlyDigit2s(testSetLabelsMatrix,testSetLabelsMatrix);
-		double[][] onlyTwosExamples = getOnlyDigit2s(testSetDataMatrix,testSetLabelsMatrix);
-
-		double[] twoLabel = onlyTwoLabels[0];
-		double[] twoExample = onlyTwosExamples[0];
-		
 		// Configure a Deep Belief Network		
 
 		// Training Context
@@ -92,40 +80,25 @@ public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		RestrictedBoltzmannLayer secondLayer = new RestrictedBoltzmannLayer(500, 500,
 				RestrictedBoltzmannLayer.generateInitialThetas(new double[198][500], 500,context.getLearningRate()), true);
 
-		ActivationFunction sigmoid = new SigmoidActivationFunction();
-		ActivationFunction binarySoftmax = new BinarySoftmaxActivationFunction();
-		int[][] ranges = new int[][] {new int[] {0,1},new int[]{1,11},new int[] {11,511}};
-		ActivationFunction[] acts = new ActivationFunction[] {sigmoid,binarySoftmax,sigmoid};
-		SegmentedActivationFunction act = new SegmentedActivationFunction(acts,ranges);
-		
-		RestrictedBoltzmannLayer thirdLayer = new RestrictedBoltzmannLayer(510, 2000,act,sigmoid,
-				RestrictedBoltzmannLayer.generateInitialThetas(new double[198][510], 2000,context.getLearningRate()), true);
-
-		//thirdLayer.setLabeled(true);
+		RestrictedBoltzmannLayer thirdLayer = new RestrictedBoltzmannLayer(500, 2000,
+				RestrictedBoltzmannLayer.generateInitialThetas(new double[198][500], 2000,context.getLearningRate()), true);
 		
 		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 		
-		SupervisedDeepBeliefNetwork dbn = new SupervisedDeepBeliefNetwork(new RestrictedBoltzmannMachineStack(new RestrictedBoltzmannMachine(firstLayer),new RestrictedBoltzmannMachine(secondLayer)),new RestrictedBoltzmannMachine(thirdLayer));
-		SupervisedDeepBeliefNetworkAlgorithm alg = new SupervisedDeepBeliefNetworkAlgorithm(dbn,batchSize);
+		UnsupervisedDeepBeliefNetwork dbn = new UnsupervisedDeepBeliefNetwork(new RestrictedBoltzmannMachineStack(new RestrictedBoltzmannMachine(firstLayer),new RestrictedBoltzmannMachine(secondLayer),new RestrictedBoltzmannMachine(thirdLayer)));
+		UnsupervisedDeepBeliefNetworkAlgorithm alg = new UnsupervisedDeepBeliefNetworkAlgorithm(dbn,batchSize);
 
 		// Obtain an generating hypothesis function from the Deep Belief Network, so we
 		// can generate new data from a single training example
 		System.out.println("Training");
 
-		SupervisedDeepBeliefNetworkHypothesisFunction hyp1 = alg.getHypothesisFunction(trainingDataMatrix,trainingLabelsMatrix, context);
+		@SuppressWarnings("unused")
+		UnsupervisedDeepBeliefNetworkHypothesisFunction hyp1 = alg.getHypothesisFunction(trainingDataMatrix, context);
 	
-		System.out.println("Generating new data");
-		for (int i = 0; i < 20; i++)
-		{
-			double[] probs = hyp1.predict(new LabeledData<double[],double[]>(twoExample,twoLabel));
-			System.out.println("Generated new probability map from given an fixed example of digit two");
-			MnistUtils.draw(probs, display);
-			Thread.sleep(100);
-		}
-		
 		System.out.println("Creating FeedForward Neural Network initialised from DBN");
 		
-		FeedForwardNeuralNetwork feedForwardNeuralNetwork = dbn.createFeedForwardNeuralNetwork(new SoftmaxActivationFunction());
+		FeedForwardLayer supervisedLayer = new FeedForwardLayer(2000,10,new SoftmaxActivationFunction(),true);
+		FeedForwardNeuralNetwork feedForwardNeuralNetwork = dbn.createFeedForwardNeuralNetwork(supervisedLayer);
 		
 		NeuralNetworkAlgorithm neuralNetworkAlgorithm = new NeuralNetworkAlgorithm(feedForwardNeuralNetwork);
 
@@ -167,30 +140,7 @@ public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		
 	}
 
-	private static double[][] getOnlyDigit2s(double[][] data, double[][] labels) {
 
-		List<double[]> twosData = new ArrayList<double[]>();
-		int r = 0;
-		for (double[] dataPoint : data) {
-			int digit = 0;
-			for (int l = 0; l < labels[0].length; l++) {
-				if (labels[r][l] == 1)
-					digit = l;
-			}
-			if (digit == 2) {
-				twosData.add(dataPoint);
-			}
-			r++;
-		}
-
-		double[][] twosMatrix = new double[twosData.size()][];
-		for (int i = 0; i < twosMatrix.length; i++) {
-			twosMatrix[i] = twosData.get(i);
-		}
-
-		return twosMatrix;
-	}
-	
 	private static int getArgMaxIndex(double[] predictionNeuronValues) {
 		Double max = null;
 		Integer maxInt = null;
