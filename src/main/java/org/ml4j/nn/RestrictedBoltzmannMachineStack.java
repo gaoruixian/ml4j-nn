@@ -58,7 +58,7 @@ public class RestrictedBoltzmannMachineStack extends ArrayList<RestrictedBoltzma
 		List<AutoEncoder> autoEncoders = new ArrayList<AutoEncoder>();
 		for (RestrictedBoltzmannMachine rbm : this)
 		{
-			rbm.getLayer().createAutoEncoder();
+			autoEncoders.add(rbm.getLayer().createAutoEncoder());
 		}
 		return new StackedAutoEncoder(autoEncoders.toArray(new AutoEncoder[size()]));
 	}
