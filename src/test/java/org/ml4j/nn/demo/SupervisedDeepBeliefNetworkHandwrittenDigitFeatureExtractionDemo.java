@@ -82,9 +82,8 @@ public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		int batchSize = 10;
 		int iterations = 100;
 		double learningRate = 0.05;
-		int gibbsSamples = 100;
 
-		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate,gibbsSamples);
+		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate);
 	
 		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, 500);
 
@@ -101,7 +100,7 @@ public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 		
 		SupervisedDeepBeliefNetwork dbn = new SupervisedDeepBeliefNetwork(new RestrictedBoltzmannMachineStack(firstLayer,secondLayer),new RestrictedBoltzmannMachine(thirdLayer));
-		SupervisedDeepBeliefNetworkAlgorithm alg = new SupervisedDeepBeliefNetworkAlgorithm(dbn,batchSize);
+		SupervisedDeepBeliefNetworkAlgorithm alg = new SupervisedDeepBeliefNetworkAlgorithm(dbn);
 
 		// Obtain an generating hypothesis function from the Deep Belief Network, so we
 		// can generate new data from a single training example

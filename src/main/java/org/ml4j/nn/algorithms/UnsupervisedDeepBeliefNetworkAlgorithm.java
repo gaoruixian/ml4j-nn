@@ -6,19 +6,19 @@ import org.ml4j.nn.UnsupervisedDeepBeliefNetwork;
 public class UnsupervisedDeepBeliefNetworkAlgorithm  {
 
 	private UnsupervisedDeepBeliefNetwork dbn;
-	private int miniBatchSize;
+	private int reconstructionGibbsSamples;
 	
-	public UnsupervisedDeepBeliefNetworkAlgorithm(UnsupervisedDeepBeliefNetwork dbn,int miniBatchSize) {
+	public UnsupervisedDeepBeliefNetworkAlgorithm(UnsupervisedDeepBeliefNetwork dbn,int reconstructionGibbsSamples) {
 		this.dbn = dbn;
-		this.miniBatchSize = miniBatchSize;
+		this.reconstructionGibbsSamples = reconstructionGibbsSamples;
 	}
 	
 	public UnsupervisedDeepBeliefNetworkHypothesisFunction getHypothesisFunction(double[][] trainingDataMatrix,
 			RestrictedBoltzmannMachineAlgorithmTrainingContext context) {
 
 		dbn.trainGreedilyLayerwise(new DoubleMatrix(trainingDataMatrix),
-				context.getMaxIterations(),miniBatchSize,context.getLearningRate(),context.getGibbsSamples());
-		return new UnsupervisedDeepBeliefNetworkHypothesisFunction(dbn,context.getGibbsSamples());
+				context.getMaxIterations(),context.getBatchSize(),context.getLearningRate());
+		return new UnsupervisedDeepBeliefNetworkHypothesisFunction(dbn,reconstructionGibbsSamples);
 	
 	}
 

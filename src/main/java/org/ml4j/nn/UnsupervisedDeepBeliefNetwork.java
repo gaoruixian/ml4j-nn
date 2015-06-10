@@ -103,8 +103,8 @@ public class UnsupervisedDeepBeliefNetwork extends DeepBeliefNetwork<Unsupervise
 		return inputs;
 	}
 
-	public void trainGreedilyLayerwise(DoubleMatrix inputs, int max_iter,int miniBatchSize,double learningRate,int gibbsSamples) {
-		unsupervisedRbmStack.trainGreedilyLayerwise(inputs, max_iter, miniBatchSize, learningRate,gibbsSamples);
+	public void trainGreedilyLayerwise(DoubleMatrix inputs, int max_iter,int miniBatchSize,double learningRate) {
+		unsupervisedRbmStack.trainGreedilyLayerwise(inputs, max_iter, miniBatchSize, learningRate);
 	}
 	
 	

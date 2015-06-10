@@ -32,7 +32,7 @@ public class NeuralNetworkHypothesisFunction implements HypothesisFunction<doubl
 	
 	public double[][] predict(double[][] arg0)
 	{
-		DoubleMatrix inputs = new DoubleMatrix(arg0).transpose();
+		DoubleMatrix inputs = new DoubleMatrix(arg0);
 		double[][] predictions = neuralNetwork.forwardPropagate(inputs).getOutputs().toArray2();
 		return predictions;
 	}

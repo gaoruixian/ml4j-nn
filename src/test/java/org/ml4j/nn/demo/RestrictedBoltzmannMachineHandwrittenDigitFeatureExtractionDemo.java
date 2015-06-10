@@ -71,9 +71,8 @@ public class RestrictedBoltzmannMachineHandwrittenDigitFeatureExtractionDemo {
 		int batchSize = 10;
 		int iterations = 500;
 		double learningRate = 0.05;
-		int gibbsSamples = 100;
 
-		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate,gibbsSamples);
+		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate);
 	
 		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, hiddenNeuronsCount);
 
