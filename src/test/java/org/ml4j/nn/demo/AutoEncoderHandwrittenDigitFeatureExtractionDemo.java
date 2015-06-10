@@ -91,7 +91,7 @@ public class AutoEncoderHandwrittenDigitFeatureExtractionDemo {
         System.out.println("Drawing visualisations of patterns sought by the hidden neurons");
 		for (int j = 0; j < hiddenNeuronsCount; j++)
 		{
-			double[] neuronActivationMaximisingFeatures = firstLayer.getNeuronActivationMaximisingInputFeatures(j);
+			double[] neuronActivationMaximisingFeatures = firstLayer.getOutputNeuronActivationMaximisingInputFeatures(j);
 			double[] intensities = new double[neuronActivationMaximisingFeatures.length];
 			for (int i = 0 ; i < intensities.length; i++)
 			{
