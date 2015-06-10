@@ -19,6 +19,7 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.ActivationFunction;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
+import org.ml4j.nn.util.NeuralNetworkUtils;
 
 /**
  * A BipartiteUndirectedGraph which propagates information between visible and hidden units
@@ -50,12 +51,12 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 	
 	public FeedForwardLayer createVisibleToHiddenFeedForwardLayer()
 	{
-		return new FeedForwardLayer(this.getVisibleNeuronCount(), this.getHiddenNeuronCount(), RestrictedBoltzmannLayer.removeInterceptColumn(getClonedThetas()).transpose(),(DifferentiableActivationFunction) this.hiddenActivationFunction,true,true);
+		return new FeedForwardLayer(this.getVisibleNeuronCount(), this.getHiddenNeuronCount(), NeuralNetworkUtils.removeInterceptColumn(getClonedThetas()).transpose(),(DifferentiableActivationFunction) this.hiddenActivationFunction,true,true);
 	}
 	
 	public FeedForwardLayer createHiddenToVisibleFeedForwardLayer()
 	{
-		DoubleMatrix secondThetas = RestrictedBoltzmannLayer.removeInterceptColumn(getClonedThetas().transpose()).transpose();
+		DoubleMatrix secondThetas = NeuralNetworkUtils.removeInterceptRow(getClonedThetas());
 
 		return new FeedForwardLayer(this.getHiddenNeuronCount(), this.getVisibleNeuronCount(),secondThetas, (DifferentiableActivationFunction) this.visibleActivationFunction,true,true);
 	}
@@ -75,7 +76,21 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 		super(visibleNeuronCount,hiddenNeuronCount,thetas,visibleActivationFunction,hiddenActivationFunction,retrainable);
 	}
 	
-
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction activationFunction) {
+		this(visibleNeuronCount,hiddenNeuronCount,activationFunction,activationFunction,generateDefaultThetas(visibleNeuronCount,hiddenNeuronCount),true);
+	}
+	
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount) {
+		this(visibleNeuronCount,hiddenNeuronCount,new SigmoidActivationFunction(),new SigmoidActivationFunction(),generateDefaultThetas(visibleNeuronCount,hiddenNeuronCount),true);
+	}
+	
+	public RestrictedBoltzmannLayer(int visibleNeuronCount, int hiddenNeuronCount,ActivationFunction visibleActivationFunction,ActivationFunction hiddenActivationFunction) {
+		super(visibleNeuronCount,hiddenNeuronCount,generateDefaultThetas(visibleNeuronCount,hiddenNeuronCount),visibleActivationFunction,hiddenActivationFunction,true);
+	}
+	
+	
+	
+	
 
 
 	/**
@@ -106,6 +121,13 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 		return thetas;
 	}
 	
+	private static DoubleMatrix generateDefaultThetas(int visibleNeuronCount,int hiddenNeuronCount)
+	{
+		DoubleMatrix thetas = DoubleMatrix.randn(visibleNeuronCount + 1, hiddenNeuronCount + 1);
+		return thetas;
+	}
+	
+	
 
 	@Override
 	public RestrictedBoltzmannLayer dup(boolean retrainable) {
@@ -122,11 +144,11 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 	}
 
 	public DoubleMatrix getHiddenUnitProbabilities(double[][] visibleUnits) {
-		return removeInterceptColumn(getProbHGivenV(addInterceptColumn(new DoubleMatrix(visibleUnits))));
+		return NeuralNetworkUtils.removeInterceptColumn(getProbHGivenV(addInterceptColumn(new DoubleMatrix(visibleUnits))));
 	}
 
 	public DoubleMatrix getVisibleUnitProbabilities(double[][] hiddenUnits) {
-		return removeInterceptColumn(getProbVGivenH(addInterceptColumn(new DoubleMatrix(hiddenUnits))));
+		return NeuralNetworkUtils.removeInterceptColumn(getProbVGivenH(addInterceptColumn(new DoubleMatrix(hiddenUnits))));
 	}
 
 	public double[] getHiddenUnitProbabilities(double[] visibleUnits) {
@@ -138,11 +160,11 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 	}
 
 	public DoubleMatrix getHiddenUnitProbabilities(DoubleMatrix visibleUnits) {
-		return removeInterceptColumn(getProbHGivenV(addInterceptColumn(visibleUnits)));
+		return NeuralNetworkUtils.removeInterceptColumn(getProbHGivenV(addInterceptColumn(visibleUnits)));
 	}
 
 	public DoubleMatrix getVisibleUnitProbabilities(DoubleMatrix hiddenUnits) {
-		return removeInterceptColumn(getProbVGivenH(addInterceptColumn(hiddenUnits)));
+		return NeuralNetworkUtils.removeInterceptColumn(getProbVGivenH(addInterceptColumn(hiddenUnits)));
 	}
 
 	public double[] getHiddenUnitSample(double[] visibleUnits) {
@@ -216,16 +238,6 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 		
 		for (int i = 0; i < h.getRows(); i++) {
 			result.put(i, 0, 1);
-		}
-		return result;
-	}
-
-	public static DoubleMatrix removeInterceptColumn(DoubleMatrix in) {
-		DoubleMatrix result = new DoubleMatrix(in.getRows(), in.getColumns() - 1);
-		for (int i = 0; i < result.getRows(); i++) {
-			for (int j = 0; j < result.getColumns() - 1; j++) {
-				result.put(i, j, in.get(i, j + 1));
-			}
 		}
 		return result;
 	}

@@ -26,13 +26,9 @@ public class NeuralNetworkLayerActivation {
 	private DoubleMatrix Z;
 	private DoubleMatrix thetas;
 
-	// private DoubleMatrix delta;
 
 	public double getRegularisationCost(int m, double lambda) {
 		DoubleMatrix currentTheta = thetas;
-
-		// int m = X.getRows();
-
 		int[] rows = new int[currentTheta.getRows()];
 		int[] cols = new int[currentTheta.getColumns() - 1];
 		for (int j = 0; j < currentTheta.getRows(); j++) {
@@ -79,7 +75,6 @@ public class NeuralNetworkLayerActivation {
 	}
 
 	protected NeuralNetworkLayerErrorGradient getErrorGradient(DoubleMatrix D, double lambda, int m) {
-		// DoubleMatrix D = delta.get(i);
 		DoubleMatrix inputActivations = getInputActivations();
 		NeuralNetworkLayerErrorGradient grad = new NeuralNetworkLayerErrorGradient(getLayer(), thetas, D, m, lambda,
 				inputActivations);

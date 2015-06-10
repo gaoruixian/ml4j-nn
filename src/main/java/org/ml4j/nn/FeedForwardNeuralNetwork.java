@@ -20,25 +20,41 @@ import java.util.List;
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.costfunctions.CostFunction;
 
+/**
+ * A supervised FeedForwardNeuralNetwork which predicts labels from input features.
+ * 
+ * @author Michael Lavelle
+ *
+ */
 public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedForwardNeuralNetwork> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	
-	
+	/**
+	 * FeedForwardNeuralNetwork constructor
+	 * 
+	 * @param layers The FeedForwardLayers contained within this NeuralNetwork
+	 */
 	public FeedForwardNeuralNetwork(FeedForwardLayer... layers)
 	{
 		super(layers);
 	}
 	
-	public FeedForwardNeuralNetwork(BaseFeedForwardNeuralNetwork<?> n)
+	/**
+	 * FeedForwardNeuralNetwork constructor
+	 * 
+	 * @param network A network to clone
+	 */
+	protected FeedForwardNeuralNetwork(BaseFeedForwardNeuralNetwork<?> network)
 	{
-		super(n);
+		super(network);
 	}
 	
+	/**
+	 * FeedForwardNeuralNetwork constructor
+	 * 
+	 * @param layers The FeedForwardLayers contained within this NeuralNetwork
+	 */
 	public FeedForwardNeuralNetwork(List<FeedForwardLayer> layers)
 	{
 		super(layers);
@@ -46,19 +62,36 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 	
 
 	/**
-	 * Helper function to compute the accuracy of predictions give said
+	 * Helper function to compute the accuracy of predictions using calculated predictions
 	 * predictions and correct output matrix
+	 * 
+	 * @param trainingDataMatrix The training examples to compute accuracy for
+	 * 
+	 * @param trainingLabelsMatrix The desired output labels
+	 * 
+	 * @return The accuracy of the network
 	 */
-	public String getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
+	public double getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
 
 		DoubleMatrix predictions = forwardPropagate(trainingDataMatrix).getPredictions();
-		return computeAccuracy(predictions, trainingLabelsMatrix) + "";
+		return computeAccuracy(predictions, trainingLabelsMatrix);
 
 	}
 	
+	/**
+	 * Helper function to compute the accuracy of predictions using calculated predictions
+	 * predictions and correct output matrix
+	 * 
+	 * @param predictions The predictions
+	 * 
+	 * @param Y The desired output labels
+	 * 
+	 * @return The accuracy of the network
+	 */
 	protected double computeAccuracy(DoubleMatrix predictions, DoubleMatrix Y) {
 		return ((predictions.mul(Y)).sum()) * 100 / Y.getRows();
 	}
+
 
 	@Override
 	public void train(DoubleMatrix inputs, DoubleMatrix desiredOutputs, double[] lambdas, int max_iter) {

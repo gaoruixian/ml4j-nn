@@ -82,15 +82,13 @@ public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		int batchSize = 10;
 		int iterations = 500;
 		double learningRate = 0.05;
+		int gibbsSamples = 100;
 
-		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate);
+		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate,gibbsSamples);
 	
-		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, 500,
-				RestrictedBoltzmannLayer.generateInitialThetas(trainingDataMatrix, 500,context.getLearningRate()), true);
+		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, 500);
 
-		
-		RestrictedBoltzmannLayer secondLayer = new RestrictedBoltzmannLayer(500, 500,
-				RestrictedBoltzmannLayer.generateInitialThetas(new double[198][500], 500,context.getLearningRate()), true);
+		RestrictedBoltzmannLayer secondLayer = new RestrictedBoltzmannLayer(500, 500);
 
 		ActivationFunction sigmoid = new SigmoidActivationFunction();
 		ActivationFunction binarySoftmax = new BinarySoftmaxActivationFunction();
@@ -98,8 +96,7 @@ public class SupervisedDeepBeliefNetworkHandwrittenDigitFeatureExtractionDemo {
 		ActivationFunction[] acts = new ActivationFunction[] {sigmoid,binarySoftmax,sigmoid};
 		SegmentedActivationFunction act = new SegmentedActivationFunction(acts,ranges);
 		
-		RestrictedBoltzmannLayer thirdLayer = new RestrictedBoltzmannLayer(510, 2000,act,sigmoid,
-				RestrictedBoltzmannLayer.generateInitialThetas(new double[198][510], 2000,context.getLearningRate()), true);
+		RestrictedBoltzmannLayer thirdLayer = new RestrictedBoltzmannLayer(510, 2000,act,sigmoid);
 
 		//thirdLayer.setLabeled(true);
 		

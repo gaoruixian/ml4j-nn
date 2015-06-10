@@ -68,20 +68,17 @@ public class FeedForwardFromUnsupervisedDBNDigitFeatureExtractionDemo {
 
 		// Training Context
 		int batchSize = 10;
-		int iterations = 500;
+		int iterations = 100;
 		double learningRate = 0.05;
+		int gibbsSamples = 100;
 
-		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate);
+		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate,gibbsSamples);
 	
-		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, 500,
-				RestrictedBoltzmannLayer.generateInitialThetas(trainingDataMatrix, 500,context.getLearningRate()), true);
+		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, 500);
 
-		
-		RestrictedBoltzmannLayer secondLayer = new RestrictedBoltzmannLayer(500, 500,
-				RestrictedBoltzmannLayer.generateInitialThetas(new double[198][500], 500,context.getLearningRate()), true);
+		RestrictedBoltzmannLayer secondLayer = new RestrictedBoltzmannLayer(500, 500);
 
-		RestrictedBoltzmannLayer thirdLayer = new RestrictedBoltzmannLayer(500, 2000,
-				RestrictedBoltzmannLayer.generateInitialThetas(new double[198][500], 2000,context.getLearningRate()), true);
+		RestrictedBoltzmannLayer thirdLayer = new RestrictedBoltzmannLayer(500, 2000);
 		
 		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 		

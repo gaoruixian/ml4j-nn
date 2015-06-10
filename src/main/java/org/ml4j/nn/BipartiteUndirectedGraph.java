@@ -57,7 +57,7 @@ public abstract class BipartiteUndirectedGraph<L extends BipartiteUndirectedGrap
 		this.visibleActivationFunction = visibleActivationFunction;
 		this.hiddenActivationFunction = hiddenActivationFunction;
 		this.thetas = thetas;
-		if (thetas.getRows() != visibleNeuronCount + 1 || thetas.getColumns() != hiddenNeuronCount + 1)
+		if (thetas != null && (thetas.getRows() != visibleNeuronCount + 1 || thetas.getColumns() != hiddenNeuronCount + 1))
 		{
 			throw new IllegalArgumentException("Thetas incorrect size of " + thetas.getRows() + ":" + thetas.getColumns() + " - required is:" +  (visibleNeuronCount + 1) + ":" + (hiddenNeuronCount + 1));
 		}

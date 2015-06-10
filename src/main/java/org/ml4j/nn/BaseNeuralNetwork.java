@@ -15,30 +15,60 @@
  */
 package org.ml4j.nn;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+/**
+ * Base class for NeuralNetworks - each NeuralNetwork is Serializable and consists of
+ * a list of serializable layers which represent connections between Neuron groups.
+ * 
+ * @author Michael Lavelle
+ *
+ * @param <L> The type of BaseLayer of which this NeuralNetwork is comprised
+ * @param <N> The type of BaseNeuralNetwork that this NeuralNetwork represents
+ */
+public abstract class BaseNeuralNetwork<L extends BaseLayer<?>,N extends BaseNeuralNetwork<L,N>> implements Serializable {
 
-public abstract class BaseNeuralNetwork<L extends BaseLayer<?>,N extends BaseNeuralNetwork<L,N>> {
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	protected List<L> layers;
 	
+	/**
+	 * @return The number of layers in this Neural Network
+	 */
 	public int getNumberOfLayers()
 	{
 		return layers.size();
 	}
 	
+	/**
+	 * BaseNeuralNetwork constructor
+	 * 
+	 * @param layers The layers of this NeuralNetwork
+	 */
 	protected BaseNeuralNetwork(L[] layers)
 	{
 		this.layers = Arrays.asList(layers);
 	}
 	
+	/**
+	 * BaseNeuralNetwork constructor
+	 * 
+	 * @param layers The layers of this NeuralNetwork
+	 */
 	protected BaseNeuralNetwork(List<L> layers)
 	{
 		this.layers = new ArrayList<L>();
 		this.layers.addAll(layers);
 	}
 	
+	/**
+	 * @return The layers of this NeuralNetwork
+	 */
 	public List<L> getLayers()
 	{
 		return layers;

@@ -29,7 +29,12 @@ import org.ml4j.nn.optimisation.MinimisableCostAndGradientFunction;
 import org.ml4j.nn.optimisation.NeuralNetworkUpdatingCostFunction;
 import org.ml4j.nn.optimisation.Tuple;
 import org.ml4j.nn.util.NeuralNetworkUtils;
-
+/**
+ * 
+ * @author michael
+ *
+ * @param <N> The type of BaseFeedForwardNeuralNetwork that this NeuralNetwork represents
+ */
 public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeuralNetwork<N>> extends DirectedNeuralNetwork<FeedForwardLayer,N> implements Serializable {
 
 	/**
@@ -93,6 +98,9 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		return createFromLayers(dupLayers);
 	}
 	
+	/**
+	 * Create a NeuralNetwork of type N from an array of FeedForwardLayer
+	 */
 	protected abstract N createFromLayers(FeedForwardLayer[] layers);
 
 	private int[] getCalculatedTopology() {

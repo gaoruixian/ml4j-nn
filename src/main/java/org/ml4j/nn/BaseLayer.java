@@ -34,12 +34,19 @@ public abstract class BaseLayer<L extends BaseLayer<?>> implements Serializable 
 	
 	private boolean retrainable;
 
-
+	/**
+	 * 
+	 * @return Whether the parameters of this layer are able to be updated ( retrained)
+	 */
 	public boolean isRetrainable() {
 		return retrainable;
 	}
 
-
+	/**
+	 * Set whether the parameters of this layer are able to be updated ( retrained)
+	 * 
+	 * @param retrainable A flag to indicate whether the parameter of this layer are updatable
+	 */
 	public void setRetrainable(boolean retrainable) {
 		this.retrainable = retrainable;
 	}

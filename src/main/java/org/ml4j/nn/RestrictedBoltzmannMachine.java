@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jblas.DoubleMatrix;
+import org.ml4j.nn.util.NeuralNetworkUtils;
 
 public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetwork<RestrictedBoltzmannLayer,RestrictedBoltzmannMachine> implements Serializable {
 
@@ -93,7 +94,7 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 		for (int i = 0; i < cdn; i++) {
 			DoubleMatrix recWithIntercept = pushData(visibleUnitsMatrix);
 			pushReconstruction(recWithIntercept);
-			probs = getLayer().getVisibleUnitProbabilities(RestrictedBoltzmannLayer.removeInterceptColumn(currentHiddenStates).toArray());
+			probs = getLayer().getVisibleUnitProbabilities(NeuralNetworkUtils.removeInterceptColumn(currentHiddenStates).toArray());
 		}
 		return probs;
 	}
@@ -132,7 +133,10 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 	
 	public void train(DoubleMatrix matrix, int maxIterations,int miniBatchSize,double learningRate) {
 
-		getLayer().setThetas(RestrictedBoltzmannLayer.generateInitialThetas(new double[matrix.getRows()][getLayer().getVisibleNeuronCount()], getLayer().getHiddenNeuronCount(),learningRate));
+		if (getLayer().thetas == null)
+		{
+			getLayer().setThetas(RestrictedBoltzmannLayer.generateInitialThetas(new double[matrix.getRows()][getLayer().getVisibleNeuronCount()], getLayer().getHiddenNeuronCount(),learningRate));
+		}
 		for (int l = 0; l < maxIterations; l++) {
 			for (DoubleMatrix doubleMatrix : getBatches(matrix,miniBatchSize))
 			{
@@ -147,8 +151,8 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 					getLayer().updateWithDelta(delta);
 			}
 			DoubleMatrix reconstructions = getReconstruction(matrix);
-			System.out.println(getAverageReconstructionError(matrix,reconstructions));
-
+		
+			System.out.print("Iteration " + (l + 1) + " | Average Reconstrucion Error: " + getAverageReconstructionError(matrix,reconstructions) + "\r");
 		}
 
 	}
@@ -182,7 +186,7 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 	protected DoubleMatrix getReconstruction(DoubleMatrix data) {
 		DoubleMatrix currentVisibleStates = getLayer().addInterceptColumn(data);
 		DoubleMatrix currentHiddenStates = getLayer().getHSampleGivenV(currentVisibleStates);
-		return RestrictedBoltzmannLayer.removeInterceptColumn(getLayer().getProbVGivenH(currentHiddenStates));
+		return NeuralNetworkUtils.removeInterceptColumn(getLayer().getProbVGivenH(currentHiddenStates));
 	}
 
 	protected void pushReconstruction(DoubleMatrix reconstructionWithIntercept) {

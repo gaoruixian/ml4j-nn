@@ -5,12 +5,14 @@ public class RestrictedBoltzmannMachineAlgorithmTrainingContext {
 	private int maxIterations;
 	private int batchSize;
 	private double learningRate;
+	private int gibbsSamples;
 
-	public RestrictedBoltzmannMachineAlgorithmTrainingContext(int batchSize,int maxIterations,double learningRate)
+	public RestrictedBoltzmannMachineAlgorithmTrainingContext(int batchSize,int maxIterations,double learningRate,int gibbsSamples)
 	{
 		this.maxIterations = maxIterations;
 		this.batchSize = batchSize;
 		this.learningRate = learningRate;
+		this.gibbsSamples = gibbsSamples;
 	}
 
 	public int getBatchSize() {
@@ -24,6 +26,12 @@ public class RestrictedBoltzmannMachineAlgorithmTrainingContext {
 	public double getLearningRate() {
 		return learningRate;
 	}
+
+	public int getGibbsSamples() {
+		return gibbsSamples;
+	}
+	
+	
 	
 	
 	

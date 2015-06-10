@@ -20,36 +20,114 @@ import java.util.List;
 
 import org.jblas.DoubleMatrix;
 
+/**
+ * Base class for directed NeuralNetworks. Information propagates through the Network
+ * in a single direction ( forward propagation)
+ * 
+ * @author Michael Lavelle
+ *
+ * @param <L> The type of DirectedLayer of which this NeuralNetwork is comprised
+ * @param <N> The type of DirectedNeuralNetwork that this NeuralNetwork represents
+ */
 public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends DirectedNeuralNetwork<L,N>> extends BaseNeuralNetwork<L,N> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * DirectedNeuralNetwork constructor
+	 * 
+	 * @param layers The layers of this NeuralNetwork
+	 */
 	protected DirectedNeuralNetwork(L[] layers) {
 		super(layers);
 	}
 	
+	
+	/**
+	 * DirectedNeuralNetwork constructor
+	 * 
+	 * @param layers The layers of this NeuralNetwork
+	 */
 	protected DirectedNeuralNetwork(List<L> layers) {
 		super(layers);
 	}
 	
+	/**
+	 * 
+	 * @param inputs Multiple sets of input activations (not including bias units) to be propagated in parallel.
+	 * Each double[] of the double[][] is a single set of input activations (not including bias unit)
+	 * 
+	 * @return The artifacts of ForwardPropagation
+	 * 
+	 */
 	public ForwardPropagation forwardPropagate(double[][] inputs) {
 		return forwardPropagate(new DoubleMatrix(inputs));
 	}
 
+	/**
+	 * 
+	 * @param inputs A single set of input activations (not including bias units)
+	 * 
+	 * @return The artifacts of ForwardPropagation
+	 * 
+	 */
 	public ForwardPropagation forwardPropagate(double[] inputs) {
 		return forwardPropagate(new DoubleMatrix(new double[][] { inputs }));
 	}
 
+	/**
+	 * 
+	 * @param inputs Multiple sets of input activations (not including bias units) to be propagated in parallel.
+	 * Each row of the matrix is a single set of input activations (not including bias unit)
+	 * 
+	 * @return The artifacts of ForwardPropagation
+	 * 
+	 */
 	public ForwardPropagation forwardPropagate(DoubleMatrix inputs) {
 		return forwardPropagateFromTo(inputs,0,getNumberOfLayers() -1);
 	}
 	
+	/**
+	 * 
+	 * @param inputs Multiple sets of input activations (not including bias units) to be propagated in parallel.
+	 * Each double[] within the double[][] is a single set of input activations (not including bias unit)
+	 * @param fromLayerIndex The layer to start applying the input activations to.
+	 * @param toLayerIndex The layer to stop forward propagation
+	 * 
+	 * @return The artifacts of ForwardPropagation
+	 * 
+	 */
 	public ForwardPropagation forwardPropagateFromTo(double[][] inputs,int fromLayerIndex,int toLayerIndex) {
 		return forwardPropagateFromTo(new DoubleMatrix(inputs),fromLayerIndex,toLayerIndex);
 	}
 	
+	/**
+	 * 
+	 * @param inputs A single set of input activations (not including bias units)
+	 * @param fromLayerIndex The layer to start applying the input activations to.
+	 * @param toLayerIndex The layer to stop forward propagation
+	 * 
+	 * @return The artifacts of ForwardPropagation
+	 * 
+	 */
 	protected ForwardPropagation forwardPropagateFromTo(double[] inputs,int fromLayerIndex,int toLayerIndex) {
 		return forwardPropagateFromTo(new DoubleMatrix(new double[][] {inputs}),fromLayerIndex,toLayerIndex);
 	}
-	protected ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex) {
+	
+	/**
+	 * 
+	 * @param inputs Multiple sets of input activations (not including bias units) to be propagated in parallel.
+	 * Each row of the matrix is a single set of input activations (not including bias unit)
+	 * @param fromLayerIndex The layer to start applying the input activations to.
+	 * @param toLayerIndex The layer to stop forward propagation
+	 * 
+	 * @return The artifacts of ForwardPropagation
+	 * 
+	 */
+	protected ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex) {		
 		DoubleMatrix inputActivations = inputs;
 		List<NeuralNetworkLayerActivation> layerActivations = new ArrayList<NeuralNetworkLayerActivation>();
 		boolean start = false;

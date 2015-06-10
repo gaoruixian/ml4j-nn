@@ -16,6 +16,8 @@
 package org.ml4j.nn;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DeepBeliefNetwork<N extends DeepBeliefNetwork<N>> extends BaseNeuralNetwork<RestrictedBoltzmannLayer,N> implements Serializable {
 
@@ -27,9 +29,11 @@ public abstract class DeepBeliefNetwork<N extends DeepBeliefNetwork<N>> extends 
 
 	protected DeepBeliefNetwork(RestrictedBoltzmannMachineStack unsupervisedRbmStack)
 	{
-		super(getLayers(unsupervisedRbmStack));
+		super(unsupervisedRbmStack.getLayers());
 		this.unsupervisedRbmStack = unsupervisedRbmStack;
 	}
+	
+	
 	
 	protected DeepBeliefNetwork(RestrictedBoltzmannMachineStack unsupervisedRbmStack,RestrictedBoltzmannMachine supervisedLayer)
 	{
@@ -37,26 +41,12 @@ public abstract class DeepBeliefNetwork<N extends DeepBeliefNetwork<N>> extends 
 		this.unsupervisedRbmStack = unsupervisedRbmStack;
 	}
 	
-	private static RestrictedBoltzmannLayer[] getLayers(RestrictedBoltzmannMachineStack unsupervisedStack)
-	{
-		RestrictedBoltzmannLayer[] layers = new RestrictedBoltzmannLayer[unsupervisedStack.size()];
-		int i = 0;
-		for (RestrictedBoltzmannMachine rbm : unsupervisedStack)
-		{
-			layers[i++] = rbm.getLayer();
-		}
-		return layers;
-	}
 		
-	private static RestrictedBoltzmannLayer[] getLayers(RestrictedBoltzmannMachineStack unsupervisedStack,RestrictedBoltzmannMachine supervisedRbm)
+	private static List<RestrictedBoltzmannLayer> getLayers(RestrictedBoltzmannMachineStack unsupervisedStack,RestrictedBoltzmannMachine supervisedRbm)
 	{
-		RestrictedBoltzmannLayer[] layers = new RestrictedBoltzmannLayer[unsupervisedStack.size() + 1];
-		int i = 0;
-		for (RestrictedBoltzmannMachine rbm : unsupervisedStack)
-		{
-			layers[i++] = rbm.getLayer();
-		}
-		layers[i++] = supervisedRbm.getLayer();
+		List<RestrictedBoltzmannLayer> layers = new ArrayList<RestrictedBoltzmannLayer>();
+		layers.addAll(unsupervisedStack.getLayers());
+		layers.add(supervisedRbm.getLayer());
 		return layers;
 	}
 }

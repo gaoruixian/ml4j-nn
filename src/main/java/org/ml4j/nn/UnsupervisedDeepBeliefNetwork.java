@@ -18,6 +18,7 @@ package org.ml4j.nn;
 import java.io.Serializable;
 
 import org.jblas.DoubleMatrix;
+import org.ml4j.nn.util.NeuralNetworkUtils;
 
 public class UnsupervisedDeepBeliefNetwork extends DeepBeliefNetwork<UnsupervisedDeepBeliefNetwork> implements Serializable  {
 
@@ -26,12 +27,14 @@ public class UnsupervisedDeepBeliefNetwork extends DeepBeliefNetwork<Unsupervise
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private RestrictedBoltzmannMachineStack  unsupervisedRbmStack;
 	
 	
 	public UnsupervisedDeepBeliefNetwork(RestrictedBoltzmannMachineStack unsupervisedRbmStack) {
 		super(unsupervisedRbmStack);
-		this.unsupervisedRbmStack = unsupervisedRbmStack;
+	}
+	
+	public UnsupervisedDeepBeliefNetwork(RestrictedBoltzmannLayer... layers) {
+		super(new RestrictedBoltzmannMachineStack(layers));
 	}
 	
 	
@@ -51,31 +54,36 @@ public class UnsupervisedDeepBeliefNetwork extends DeepBeliefNetwork<Unsupervise
 		return unsupervisedRbmStack.createFeedForwardNeuralNetwork();
 	}
 	
-	
-	public double[] generateVisibleProbabilities(double[] visibleUnits) {
+	/**
+	 * Generate probabilities of activations of each of the visible units,
+	 * after
+	 * 
+	 * @param visibleUnits
+	 * @return
+	 */
+	public double[] generateVisibleProbabilities(double[] visibleUnits,int gibbsSamples) {
 	
 	
 		double[] inputs = visibleUnits;
 		int in = 0;
 		for (RestrictedBoltzmannMachine rbm : unsupervisedRbmStack)
 		{
-			if (in != unsupervisedRbmStack.size() - 1)
+			if (in != unsupervisedRbmStack.getNumberOfLayers() - 1)
 			{
 			inputs = rbm.encodeToBinary(inputs);
 			}
 			in++;
 		}
 		
-		RestrictedBoltzmannMachine finalRbm = unsupervisedRbmStack.get(unsupervisedRbmStack.size() - 1);
+		RestrictedBoltzmannMachine finalRbm = unsupervisedRbmStack.getFinalRestrictedBoltzmannMachine();
 		
-		int gibbsSamples = 100;
 		for (int i = 0; i <gibbsSamples; i++)
 		{
 			DoubleMatrix reconstructionWithIntercept = finalRbm.pushData(new DoubleMatrix(new double[][] {inputs}));
 			finalRbm.pushReconstruction(reconstructionWithIntercept);
 		}
 		
-		inputs = RestrictedBoltzmannLayer.removeInterceptColumn(finalRbm.getCurrentVisibleStates()).toArray();
+		inputs = NeuralNetworkUtils.removeInterceptColumn(finalRbm.getCurrentVisibleStates()).toArray();
 		
 		
 		RestrictedBoltzmannMachineStack reversedStack = unsupervisedRbmStack.reverse();
@@ -90,15 +98,15 @@ public class UnsupervisedDeepBeliefNetwork extends DeepBeliefNetwork<Unsupervise
 			}
 			ind++;
 		}
-		inputs = unsupervisedRbmStack.get(0).decodeToProbabilities(new DoubleMatrix(new double[][] {inputs})).toArray();
+		inputs = unsupervisedRbmStack.getFirstRestrictedBoltzmannMachine().decodeToProbabilities(new DoubleMatrix(new double[][] {inputs})).toArray();
 		
 		return inputs;
 	}
 
-	public void trainGreedilyLayerwise(DoubleMatrix inputs, int max_iter,int miniBatchSize,double learningRate) {
-		unsupervisedRbmStack.trainGreedilyLayerwise(inputs, max_iter, miniBatchSize, learningRate);
+	public void trainGreedilyLayerwise(DoubleMatrix inputs, int max_iter,int miniBatchSize,double learningRate,int gibbsSamples) {
+		unsupervisedRbmStack.trainGreedilyLayerwise(inputs, max_iter, miniBatchSize, learningRate,gibbsSamples);
 	}
 	
-
+	
 	
 }

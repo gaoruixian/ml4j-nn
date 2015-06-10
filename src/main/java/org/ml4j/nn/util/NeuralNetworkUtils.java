@@ -139,5 +139,25 @@ public class NeuralNetworkUtils {
 		DoubleMatrix sums = exp.rowSums();
 		return exp.diviColumnVector(sums);
 	}
+	
+	public static DoubleMatrix removeInterceptColumn(DoubleMatrix in) {
+		DoubleMatrix result = new DoubleMatrix(in.getRows(), in.getColumns() - 1);
+		for (int i = 0; i < result.getRows(); i++) {
+			for (int j = 0; j < result.getColumns() - 1; j++) {
+				result.put(i, j, in.get(i, j + 1));
+			}
+		}
+		return result;
+	}
+	
+	public static DoubleMatrix removeInterceptRow(DoubleMatrix in) {
+		DoubleMatrix result = new DoubleMatrix(in.getRows() - 1, in.getColumns());
+		for (int i = 0; i < result.getRows() - 1; i++) {
+			for (int j = 0; j < result.getColumns(); j++) {
+				result.put(i, j, in.get(i + 1, j));
+			}
+		}
+		return result;
+	}
 
 }

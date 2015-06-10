@@ -24,6 +24,7 @@ import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithm;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithmTrainingContext;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineHypothesisFunction;
+import org.ml4j.nn.util.NeuralNetworkUtils;
 
 public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDeepBeliefNetwork> implements Serializable  {
 
@@ -67,7 +68,7 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 
 		int inputsLength = supervisedRbm.getLayer().getVisibleNeuronCount() + 1;
 		
-		int labelsLength = inputsLength - unsupervisedRbmStack.get(unsupervisedRbmStack.size() - 1).getLayer().getHiddenNeuronCount() - 1;
+		int labelsLength = inputsLength - unsupervisedRbmStack.getFinalLayer().getHiddenNeuronCount() - 1;
 
 		int columns = inputsLength - labelsLength;
 		int[] cols = new int[columns];
@@ -113,7 +114,7 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 			supervisedRbm.pushReconstruction(reconstructionWithIntercept);
 		}
 		
-		inputs = RestrictedBoltzmannLayer.removeInterceptColumn(supervisedRbm.getCurrentVisibleStates()).toArray();
+		inputs = NeuralNetworkUtils.removeInterceptColumn(supervisedRbm.getCurrentVisibleStates()).toArray();
 		
 		
 		
@@ -131,30 +132,30 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 		int i = 0;
 		for (RestrictedBoltzmannMachine rbm : reversedStack)
 		{
-			if ( i != reversedStack.size() -1)
+			if ( i != reversedStack.getNumberOfLayers() -1)
 			{
 				inputs = rbm.decodeToBinary(inputs);
 			}
 			i++;
 		}
-		inputs = unsupervisedRbmStack.get(0).decodeToProbabilities(new DoubleMatrix(new double[][] {inputs})).toArray();
+		inputs = unsupervisedRbmStack.getFirstRestrictedBoltzmannMachine().decodeToProbabilities(new DoubleMatrix(new double[][] {inputs})).toArray();
 		
 		return inputs;
 	}
 
-	public void trainGreedilyLayerwise(DoubleMatrix inputs,DoubleMatrix labels, int max_iter,int miniBatchSize,double learningRate) {
+	public void trainGreedilyLayerwise(DoubleMatrix inputs,DoubleMatrix labels, int max_iter,int miniBatchSize,double learningRate,int gibbsSamples) {
 		DoubleMatrix currentInputs = inputs;
 		for (RestrictedBoltzmannMachine rbm : unsupervisedRbmStack)
 		{
 			RestrictedBoltzmannMachineAlgorithm alg = new RestrictedBoltzmannMachineAlgorithm(rbm,miniBatchSize);
-			RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(max_iter,miniBatchSize,learningRate);
+			RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(miniBatchSize,max_iter,learningRate,gibbsSamples);
 			RestrictedBoltzmannMachineHypothesisFunction hyp = alg.getHypothesisFunction(currentInputs.toArray2(), context);
 			currentInputs= new DoubleMatrix(hyp.sampleHiddenFromVisible(currentInputs.toArray2()));
 		}	
 		currentInputs = DoubleMatrix.concatHorizontally(labels, currentInputs);
 
 		RestrictedBoltzmannMachineAlgorithm alg = new RestrictedBoltzmannMachineAlgorithm(supervisedRbm,miniBatchSize);
-		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(max_iter,miniBatchSize,learningRate);
+		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(max_iter,miniBatchSize,learningRate,gibbsSamples);
 		RestrictedBoltzmannMachineHypothesisFunction hyp = alg.getHypothesisFunction(currentInputs.toArray2(), context);
 		currentInputs= new DoubleMatrix(hyp.sampleHiddenFromVisible(currentInputs.toArray2()));
 	}

@@ -18,6 +18,11 @@ package org.ml4j.nn;
 
 public class SymmetricallyConnectedNeuralNetwork<L extends UndirectedLayer<L>,N extends SymmetricallyConnectedNeuralNetwork<L,N>> extends BaseNeuralNetwork<L,N> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public SymmetricallyConnectedNeuralNetwork(L[] layers)
 	{
 		super(layers);

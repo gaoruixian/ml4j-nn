@@ -17,8 +17,8 @@ public class UnsupervisedDeepBeliefNetworkAlgorithm  {
 			RestrictedBoltzmannMachineAlgorithmTrainingContext context) {
 
 		dbn.trainGreedilyLayerwise(new DoubleMatrix(trainingDataMatrix),
-				context.getMaxIterations(),miniBatchSize,context.getLearningRate());
-		return new UnsupervisedDeepBeliefNetworkHypothesisFunction(dbn);
+				context.getMaxIterations(),miniBatchSize,context.getLearningRate(),context.getGibbsSamples());
+		return new UnsupervisedDeepBeliefNetworkHypothesisFunction(dbn,context.getGibbsSamples());
 	
 	}
 

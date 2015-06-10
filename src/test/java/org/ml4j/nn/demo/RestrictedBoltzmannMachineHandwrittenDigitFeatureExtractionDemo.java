@@ -71,11 +71,11 @@ public class RestrictedBoltzmannMachineHandwrittenDigitFeatureExtractionDemo {
 		int batchSize = 10;
 		int iterations = 500;
 		double learningRate = 0.05;
+		int gibbsSamples = 100;
 
-		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate);
+		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(batchSize,iterations,learningRate,gibbsSamples);
 	
-		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, hiddenNeuronsCount,
-				RestrictedBoltzmannLayer.generateInitialThetas(trainingDataMatrix, hiddenNeuronsCount,context.getLearningRate()), true);
+		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, hiddenNeuronsCount);
 
 		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 		

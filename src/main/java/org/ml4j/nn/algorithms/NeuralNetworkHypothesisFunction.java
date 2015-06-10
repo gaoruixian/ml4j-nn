@@ -38,17 +38,32 @@ public class NeuralNetworkHypothesisFunction implements HypothesisFunction<doubl
 	}
 
 	/**
-	 * Helper function to compute the accuracy of predictions give said
+	 * Helper function to compute the accuracy of predictions using calculated predictions
 	 * predictions and correct output matrix
+	 * 
+	 * @param trainingDataMatrix The training examples to compute accuracy for
+	 * 
+	 * @param trainingLabelsMatrix The desired output labels
+	 * 
+	 * @return
 	 */
-
-	public String getAccuracy(double[][] trainingDataMatrix, double[][] trainingLabelsMatrix) {
+	public double getAccuracy(double[][] trainingDataMatrix, double[][] trainingLabelsMatrix) {
 
 		return neuralNetwork.getAccuracy(new DoubleMatrix(trainingDataMatrix), new DoubleMatrix(trainingLabelsMatrix));
 
 	}
 
-	public String getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
+	/**
+	 * Helper function to compute the accuracy of predictions using calculated predictions
+	 * predictions and correct output matrix
+	 * 
+	 * @param trainingDataMatrix The training examples to compute accuracy for
+	 * 
+	 * @param trainingLabelsMatrix The desired output labels
+	 * 
+	 * @return The accuracy of the network
+	 */
+	public double getAccuracy(DoubleMatrix trainingDataMatrix, DoubleMatrix trainingLabelsMatrix) {
 
 		return neuralNetwork.getAccuracy(trainingDataMatrix, trainingLabelsMatrix);
 
