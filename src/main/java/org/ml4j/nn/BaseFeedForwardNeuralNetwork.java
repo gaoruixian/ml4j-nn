@@ -30,8 +30,9 @@ import org.ml4j.nn.optimisation.NeuralNetworkUpdatingCostFunction;
 import org.ml4j.nn.optimisation.Tuple;
 import org.ml4j.nn.util.NeuralNetworkUtils;
 /**
+ * Base class for unsupervised (AutoEncoder/StackedAutoEncoder) and supervised (FeedForwardNeuralNetwork) feed forward neural networks
  * 
- * @author michael
+ * @author Michael Lavelle
  *
  * @param <N> The type of BaseFeedForwardNeuralNetwork that this NeuralNetwork represents
  */

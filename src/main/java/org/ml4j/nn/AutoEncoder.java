@@ -21,6 +21,14 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.costfunctions.CostFunction;
 
+/**
+ * Unsupervised feed forward Neural Network that attempts to reconstruct
+ * input features after they have been mapped/compressed/encoded into alternative
+ * feature domains.
+ * 
+ * @author Michael Lavelle
+ *
+ */
 public class AutoEncoder extends BaseFeedForwardNeuralNetwork<AutoEncoder> {
 
 	/**

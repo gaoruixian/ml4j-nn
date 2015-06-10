@@ -19,12 +19,22 @@ import java.util.List;
 
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.costfunctions.CostFunction;
-
+/**
+ * Encapsulates the artifacts of a forward propagation through an entire Neural Network
+ * 
+ * @author Michael Lavelle
+ *
+ */
 public class ForwardPropagation {
 
 	private DoubleMatrix outputs;
 	private List<NeuralNetworkLayerActivation> activations;
 
+	/**
+	 * 
+	 * @param outputs The final output activations of the forward propagation
+	 * @param activations The list of NeuralNetworkLayerActivation for each of the layers
+	 */
 	public ForwardPropagation(DoubleMatrix outputs, List<NeuralNetworkLayerActivation> activations) {
 		this.outputs = outputs;
 		this.activations = activations;
@@ -37,6 +47,17 @@ public class ForwardPropagation {
 	public DoubleMatrix getOutputs() {
 		return outputs;
 	}
+	
+	/**
+	 * BackPropagate the output errors of this ForwardPropagation through the NeuralNetwork
+	 * 
+	 * @param neuralNetwork The 
+	 * @param desiredOutputs The desired final-layer activations
+	 * @param lambdas An array of regularization parameters for each of the layers
+	 * 
+	 * @return a BackPropagation which encapsulates the error-related artifacts such
+	 * as error gradients for each layer.
+	 */
 	public BackPropagation backPropagate(FeedForwardNeuralNetwork neuralNetwork,DoubleMatrix desiredOutputs,
 			double[] lambdas)
 	{

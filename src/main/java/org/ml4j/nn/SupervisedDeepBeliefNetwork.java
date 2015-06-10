@@ -26,6 +26,13 @@ import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithmTrainingContext
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineHypothesisFunction;
 import org.ml4j.nn.util.NeuralNetworkUtils;
 
+/**
+ * A supervised Deep Belief Network that consists of a stack of unsupervised Restricted Boltzmann Machines, followed
+ * by a final supervised Restricted Boltzmann Machine.
+ * 
+ * @author Michael Lavelle
+ *
+ */
 public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDeepBeliefNetwork> implements Serializable  {
 
 	/**

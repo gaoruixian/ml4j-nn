@@ -20,6 +20,14 @@ import java.io.Serializable;
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.util.NeuralNetworkUtils;
 
+/**
+ * 
+ * 
+ * An unsupervised Deep Belief Network that consists of a stack of unsupervised Restricted Boltzmann Machines
+ * 
+ * @author Michael Lavelle
+ *
+ */
 public class UnsupervisedDeepBeliefNetwork extends DeepBeliefNetwork<UnsupervisedDeepBeliefNetwork> implements Serializable  {
 
 	/**

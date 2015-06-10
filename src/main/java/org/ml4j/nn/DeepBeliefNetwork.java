@@ -19,6 +19,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Base class for unsupervised/supervised Deep Belief Networks.
+ * 
+ * A Deep Belief Network consists of a minimum of a stack of unsupervised Restricted Boltzmann Machines, which may be followed
+ * by a final supervised Restricted Boltzmann Machine (if the use case is supervised training).
+ * 
+ * @author Michael Lavelle
+ *
+ * @param <N> The type of DeepBeliefNetwork that this NeuralNetwork represents
+ */
 public abstract class DeepBeliefNetwork<N extends DeepBeliefNetwork<N>> extends BaseNeuralNetwork<RestrictedBoltzmannLayer,N> implements Serializable {
 
 	/**
