@@ -36,25 +36,12 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 	private RestrictedBoltzmannMachineStack  unsupervisedRbmStack;
 	private RestrictedBoltzmannMachine supervisedRbm;
 	
-	/*
-	private List<RestrictedBoltzmannMachine> getRestrictedBoltzmannMachineStack()
-	{
-		return rbmStack;
-	}
-	
-	public SupervisedDeepBeliefNetwork(RestrictedBoltzmannMachine...rbms) {
-		super(getLayers(rbms));
-		this.rbmStack = Arrays.asList(rbms);
-	}
-	*/
 	
 	public SupervisedDeepBeliefNetwork(RestrictedBoltzmannMachineStack unsupervisedRbmStack,RestrictedBoltzmannMachine supervisedRbm) {
 		super(unsupervisedRbmStack,supervisedRbm);
 		this.unsupervisedRbmStack = unsupervisedRbmStack;
 		this.supervisedRbm = supervisedRbm;
 	}
-	
-
 	
 	public FeedForwardNeuralNetwork createFeedForwardNeuralNetwork(DifferentiableActivationFunction supervisedActivationFunction)
 	{
@@ -155,7 +142,7 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 		currentInputs = DoubleMatrix.concatHorizontally(labels, currentInputs);
 
 		RestrictedBoltzmannMachineAlgorithm alg = new RestrictedBoltzmannMachineAlgorithm(supervisedRbm,miniBatchSize);
-		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(max_iter,miniBatchSize,learningRate,gibbsSamples);
+		RestrictedBoltzmannMachineAlgorithmTrainingContext context = new RestrictedBoltzmannMachineAlgorithmTrainingContext(miniBatchSize,max_iter,learningRate,gibbsSamples);
 		RestrictedBoltzmannMachineHypothesisFunction hyp = alg.getHypothesisFunction(currentInputs.toArray2(), context);
 		currentInputs= new DoubleMatrix(hyp.sampleHiddenFromVisible(currentInputs.toArray2()));
 	}

@@ -22,8 +22,6 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.imaging.targets.ImageDisplay;
 import org.ml4j.nn.FeedForwardLayer;
 import org.ml4j.nn.RestrictedBoltzmannLayer;
-import org.ml4j.nn.RestrictedBoltzmannMachine;
-import org.ml4j.nn.RestrictedBoltzmannMachineStack;
 import org.ml4j.nn.StackedAutoEncoder;
 import org.ml4j.nn.UnsupervisedDeepBeliefNetwork;
 import org.ml4j.nn.algorithms.AutoEncoderAlgorithm;
@@ -63,15 +61,13 @@ public class StackedAutoEncoderHandwrittenDigitFeatureExtractionDemo {
 		
 		RestrictedBoltzmannLayer firstLayer = new RestrictedBoltzmannLayer(784, 500);
 
-		
 		RestrictedBoltzmannLayer secondLayer = new RestrictedBoltzmannLayer(500, 500);
 
 		RestrictedBoltzmannLayer thirdLayer = new RestrictedBoltzmannLayer(500, 2000);
 		
-		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 		
 		
-		UnsupervisedDeepBeliefNetwork dbn = new UnsupervisedDeepBeliefNetwork(new RestrictedBoltzmannMachineStack(new RestrictedBoltzmannMachine(firstLayer),new RestrictedBoltzmannMachine(secondLayer),new RestrictedBoltzmannMachine(thirdLayer)));
+		UnsupervisedDeepBeliefNetwork dbn = new UnsupervisedDeepBeliefNetwork(firstLayer,secondLayer,thirdLayer);
 		UnsupervisedDeepBeliefNetworkAlgorithm alg = new UnsupervisedDeepBeliefNetworkAlgorithm(dbn,batchSize);
 
 		// Obtain an generating hypothesis function from the Deep Belief Network, so we
@@ -119,6 +115,9 @@ public class StackedAutoEncoderHandwrittenDigitFeatureExtractionDemo {
 		// TODO Add sparsity constraints
 		
 		// TODO Check that sparsity contraints affect the average activation values appropriately
+		
+		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
+
 		
 		// Visualise the reconstructions of the input data
         System.out.println("Visualising reconstructed data");

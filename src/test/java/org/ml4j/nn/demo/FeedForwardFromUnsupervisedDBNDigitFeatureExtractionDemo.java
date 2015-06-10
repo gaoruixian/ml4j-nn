@@ -22,8 +22,6 @@ import org.ml4j.imaging.targets.ImageDisplay;
 import org.ml4j.nn.FeedForwardLayer;
 import org.ml4j.nn.FeedForwardNeuralNetwork;
 import org.ml4j.nn.RestrictedBoltzmannLayer;
-import org.ml4j.nn.RestrictedBoltzmannMachine;
-import org.ml4j.nn.RestrictedBoltzmannMachineStack;
 import org.ml4j.nn.UnsupervisedDeepBeliefNetwork;
 import org.ml4j.nn.activationfunctions.SoftmaxActivationFunction;
 import org.ml4j.nn.algorithms.NeuralNetworkAlgorithm;
@@ -68,7 +66,7 @@ public class FeedForwardFromUnsupervisedDBNDigitFeatureExtractionDemo {
 
 		// Training Context
 		int batchSize = 10;
-		int iterations = 100;
+		int iterations = 10;
 		double learningRate = 0.05;
 		int gibbsSamples = 100;
 
@@ -79,10 +77,9 @@ public class FeedForwardFromUnsupervisedDBNDigitFeatureExtractionDemo {
 		RestrictedBoltzmannLayer secondLayer = new RestrictedBoltzmannLayer(500, 500);
 
 		RestrictedBoltzmannLayer thirdLayer = new RestrictedBoltzmannLayer(500, 2000);
+			
+		UnsupervisedDeepBeliefNetwork dbn = new UnsupervisedDeepBeliefNetwork(firstLayer,secondLayer,thirdLayer);
 		
-		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
-		
-		UnsupervisedDeepBeliefNetwork dbn = new UnsupervisedDeepBeliefNetwork(new RestrictedBoltzmannMachineStack(new RestrictedBoltzmannMachine(firstLayer),new RestrictedBoltzmannMachine(secondLayer),new RestrictedBoltzmannMachine(thirdLayer)));
 		UnsupervisedDeepBeliefNetworkAlgorithm alg = new UnsupervisedDeepBeliefNetworkAlgorithm(dbn,batchSize);
 
 		// Obtain an generating hypothesis function from the Deep Belief Network, so we
@@ -99,7 +96,7 @@ public class FeedForwardFromUnsupervisedDBNDigitFeatureExtractionDemo {
 		
 		NeuralNetworkAlgorithm neuralNetworkAlgorithm = new NeuralNetworkAlgorithm(feedForwardNeuralNetwork);
 
-		System.out.println("Training FeedForward Neural Network using back prop");
+		System.out.println("Training FeedForward Neural Network to classify using back prop");
 
 		// Training Context
 		NeuralNetworkAlgorithmTrainingContext neuralNetworkContext = new NeuralNetworkAlgorithmTrainingContext(100);
@@ -116,6 +113,8 @@ public class FeedForwardFromUnsupervisedDBNDigitFeatureExtractionDemo {
 		// Test Set accuracy
 		System.out.println("Accuracy on test set:" + neuralNetworkHyp.getAccuracy(testSetDataMatrix, testSetLabelsMatrix));
 
+
+		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 
 				for (int i = 0; i < 100; i++) {
 

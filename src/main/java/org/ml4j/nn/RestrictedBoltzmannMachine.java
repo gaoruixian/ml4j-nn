@@ -33,6 +33,9 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 	private DoubleMatrix currentHiddenStates;
 	private DoubleMatrix currentVisibleStates;
 	
+	private boolean thetasInitialised = false;
+
+	
 	protected DoubleMatrix getCurrentVisibleStates() {
 		return currentVisibleStates;
 	}
@@ -133,9 +136,10 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 	
 	public void train(DoubleMatrix matrix, int maxIterations,int miniBatchSize,double learningRate) {
 
-		if (getLayer().thetas == null)
+		if (!thetasInitialised)
 		{
 			getLayer().setThetas(RestrictedBoltzmannLayer.generateInitialThetas(new double[matrix.getRows()][getLayer().getVisibleNeuronCount()], getLayer().getHiddenNeuronCount(),learningRate));
+			this.thetasInitialised = true;
 		}
 		for (int l = 0; l < maxIterations; l++) {
 			for (DoubleMatrix doubleMatrix : getBatches(matrix,miniBatchSize))
@@ -152,7 +156,7 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 			}
 			DoubleMatrix reconstructions = getReconstruction(matrix);
 		
-			System.out.print("Iteration " + (l + 1) + " | Average Reconstrucion Error: " + getAverageReconstructionError(matrix,reconstructions) + "\r");
+			System.out.print("Iteration " + (l + 1) + " | Average Reconstruction Error: " + getAverageReconstructionError(matrix,reconstructions) + "\r");
 		}
 
 	}

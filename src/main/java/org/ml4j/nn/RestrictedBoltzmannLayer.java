@@ -43,7 +43,6 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 	private static final long serialVersionUID = 1L;
 
 	
-	
 	public AutoEncoder createAutoEncoder()
 	{	
 		return new AutoEncoder(createVisibleToHiddenFeedForwardLayer(),createHiddenToVisibleFeedForwardLayer());
@@ -123,7 +122,8 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 	
 	private static DoubleMatrix generateDefaultThetas(int visibleNeuronCount,int hiddenNeuronCount)
 	{
-		DoubleMatrix thetas = DoubleMatrix.randn(visibleNeuronCount + 1, hiddenNeuronCount + 1);
+		double defaultLearningRate = 0.05;
+		DoubleMatrix thetas = DoubleMatrix.randn(visibleNeuronCount + 1, hiddenNeuronCount + 1).mul(defaultLearningRate);
 		return thetas;
 	}
 	
