@@ -104,7 +104,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	 * @return A NeuralNetworkLayerActivation instance specifying how
 	 * the information propagated through the layer.
 	 */
-	protected NeuralNetworkLayerActivation forwardPropagate(DoubleMatrix layerInputsWithIntercept) {
+	protected NeuralNetworkLayerActivation<FeedForwardLayer> forwardPropagate(DoubleMatrix layerInputsWithIntercept) {
 		
 		if (layerInputsWithIntercept.getColumns() != getInputNeuronCount() + (hasBiasUnit() ? 1 : 0))
 		{
@@ -114,7 +114,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		DoubleMatrix Z = layerInputsWithIntercept.mmul(thetas.transpose());
 
 		DoubleMatrix acts = activationFunction.activate(Z);
-		NeuralNetworkLayerActivation activation = new NeuralNetworkLayerActivation(this, layerInputsWithIntercept, Z, acts);
+		NeuralNetworkLayerActivation<FeedForwardLayer> activation = new NeuralNetworkLayerActivation<FeedForwardLayer>(this, layerInputsWithIntercept, Z, acts);
 
 		return activation;
 	}

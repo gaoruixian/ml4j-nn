@@ -28,19 +28,19 @@ import org.ml4j.nn.costfunctions.CostFunction;
 public class ForwardPropagation {
 
 	private DoubleMatrix outputs;
-	private List<NeuralNetworkLayerActivation> activations;
+	private List<NeuralNetworkLayerActivation<?>> activations;
 
 	/**
 	 * 
 	 * @param outputs The final output activations of the forward propagation
 	 * @param activations The list of NeuralNetworkLayerActivation for each of the layers
 	 */
-	public ForwardPropagation(DoubleMatrix outputs, List<NeuralNetworkLayerActivation> activations) {
+	public ForwardPropagation(DoubleMatrix outputs, List<NeuralNetworkLayerActivation<?>> activations) {
 		this.outputs = outputs;
 		this.activations = activations;
 	}
 
-	public List<NeuralNetworkLayerActivation> getActivations() {
+	public List<NeuralNetworkLayerActivation<?>> getActivations() {
 		return activations;
 	}
 
@@ -94,7 +94,7 @@ public class ForwardPropagation {
 
 		// Calculate regularization part of cost.
 		int i = 0;
-		for (NeuralNetworkLayerActivation layerActivation : getActivations()) {
+		for (NeuralNetworkLayerActivation<?> layerActivation : getActivations()) {
 			if (layerActivation.getLayer().isRetrainable()) {
 				J = J + layerActivation.getRegularisationCost(m, lambda[i]);
 			}

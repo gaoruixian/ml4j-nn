@@ -36,7 +36,7 @@ import org.ml4j.nn.util.NeuralNetworkUtils;
  *
  * @param <N> The type of BaseFeedForwardNeuralNetwork that this NeuralNetwork represents
  */
-public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeuralNetwork<N>> extends DirectedNeuralNetwork<FeedForwardLayer,N> implements Serializable {
+public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N extends BaseFeedForwardNeuralNetwork<L,N>> extends DirectedNeuralNetwork<L,N> implements Serializable {
 
 	/**
 	 * 
@@ -44,30 +44,32 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 	private static final long serialVersionUID = 1L;
 	private int[] topology;
 
-	public BaseFeedForwardNeuralNetwork(FeedForwardLayer... layers) {
+	public BaseFeedForwardNeuralNetwork(L[] layers) {
 		super(layers);
 		this.topology = getCalculatedTopology();
 	}
 	
-	public BaseFeedForwardNeuralNetwork(List<FeedForwardLayer> layers) {
+	
+	
+	public BaseFeedForwardNeuralNetwork(List<L> layers) {
 		super(layers);
 		this.topology = getCalculatedTopology();
 	}
 	
-	public BaseFeedForwardNeuralNetwork(BaseFeedForwardNeuralNetwork<?> nn)
+	public BaseFeedForwardNeuralNetwork(BaseFeedForwardNeuralNetwork<L,?> nn)
 	{
 		super(nn.layers);
 		this.topology = getCalculatedTopology();
 	}
 
 	public void setAllLayersRetrainable() {
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			layer.setRetrainable(true);
 		}
 	}
 	
 	public FeedForwardNeuralNetwork cloneAndAddLayers(FeedForwardLayer... layers) {
-		List<FeedForwardLayer> clonedLayers = new ArrayList<FeedForwardLayer>();
+		List<DirectedLayer<?>> clonedLayers = new ArrayList<DirectedLayer<?>>();
 		clonedLayers.addAll(this.layers);
 		clonedLayers.addAll(Arrays.asList(layers));
 		return new FeedForwardNeuralNetwork(clonedLayers.toArray(new FeedForwardLayer[clonedLayers.size()]));
@@ -91,18 +93,8 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		return true;
 	}
 
-	public N dup(boolean allLayersRetrainable) {
-		FeedForwardLayer[] dupLayers = new FeedForwardLayer[layers.size()];
-		for (int i = 0; i < dupLayers.length; i++) {
-			dupLayers[i] = layers.get(i).dup(allLayersRetrainable || layers.get(i).isRetrainable());
-		}
-		return createFromLayers(dupLayers);
-	}
+	public abstract N dup(boolean allLayersRetrainable);
 	
-	/**
-	 * Create a NeuralNetwork of type N from an array of FeedForwardLayer
-	 */
-	protected abstract N createFromLayers(FeedForwardLayer[] layers);
 
 	private int[] getCalculatedTopology() {
 		int[] topology = new int[layers.size() + 1];
@@ -110,7 +102,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		int ind = 1;
 		Integer previousOutputNeuronCount = null;
 		int layerNumber = 1;
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			if (previousOutputNeuronCount != null) {
 				if (previousOutputNeuronCount.intValue() != layer.getInputNeuronCount()) {
 					throw new IllegalArgumentException("Input neuron count of layer " + layerNumber + " is "
@@ -134,12 +126,12 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		DoubleMatrix deltas = forwardPropatation.getOutputs().sub(desiredOutputs).transpose();
 
 		// Iterate thrrough activations in reverse order
-		List<NeuralNetworkLayerActivation> activations = forwardPropatation.getActivations();
-		List<NeuralNetworkLayerActivation> activationsReversed = new ArrayList<NeuralNetworkLayerActivation>();
+		List<NeuralNetworkLayerActivation<?>> activations = forwardPropatation.getActivations();
+		List<NeuralNetworkLayerActivation<?>> activationsReversed = new ArrayList<NeuralNetworkLayerActivation<?>>();
 		activationsReversed.addAll(activations);
 		Collections.reverse(activationsReversed);
-		NeuralNetworkLayerActivation previousActivation = null;
-		for (NeuralNetworkLayerActivation activation : activationsReversed) {
+		NeuralNetworkLayerActivation<?> previousActivation = null;
+		for (NeuralNetworkLayerActivation<?> activation : activationsReversed) {
 			// For outer most layer, we just use the outer-most deltas
 
 			// For other layers, we perform back propagation to obtain deltas,
@@ -203,7 +195,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		updateThetasForRetrainableLayers(newThetas, false);
 	}
 
-	public List<FeedForwardLayer> getLayers() {
+	public List<L> getLayers() {
 		return layers;
 	}
 
@@ -213,12 +205,12 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		return layers.size();
 	}
 	
-	public FeedForwardLayer getOuterLayer()
+	public L getOuterLayer()
 	{
 		return layers.get(getNumberOfLayers() -1);
 	}
 	
-	public FeedForwardLayer getFirstLayer()
+	public L getFirstLayer()
 	{
 		return layers.get(0);
 	}
@@ -269,7 +261,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 
 	public Vector<DoubleMatrix> getClonedThetas() {
 		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			allThetasVec.add(layer.getClonedThetas());
 		}
 		return allThetasVec;
@@ -278,7 +270,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 
 	public Vector<DoubleMatrix> getClonedRetrainableThetas() {
 		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable()) {
 				allThetasVec.add(layer.getClonedThetas());
 			}
@@ -288,7 +280,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 	}
 
 	public boolean isContainingRetrainableLayers() {
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable()) {
 				return true;
 			}
@@ -299,7 +291,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 	public void updateThetas(Vector<DoubleMatrix> thetas, boolean permitFurtherRetrains) {
 
 		int i = 0;
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			int layerIndex = i;
 			layer.updateThetas(thetas.get(i++), layerIndex, permitFurtherRetrains);
 			System.out.println("Updated layer:" + layerIndex +  ":" + this.toString());
@@ -310,7 +302,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 
 		int i = 0;
 		int layerIndex = 0;
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable()) {
 				layer.updateThetas(retrainableThetas.get(i), layerIndex, permitFurtherRetrains);
 				i++;
@@ -327,15 +319,15 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 		updateThetasForRetrainableLayers(ts, permitFutherRetrains);
 	}
 
-	private int[][] getRetrainableTopologies() {
+	protected int[][] getRetrainableTopologies() {
 		int count = 0;
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable())
 				count++;
 		}
 		int[][] topologies = new int[count][2];
 		int ind = 0;
-		for (FeedForwardLayer layer : layers) {
+		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable()) {
 				topologies[ind] = new int[] { layer.getOutputNeuronCount(), layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0) };
 				ind++;
@@ -355,7 +347,7 @@ public abstract class BaseFeedForwardNeuralNetwork<N extends BaseFeedForwardNeur
 	
 
 	public CostFunction getDefaultCostFunction() {
-		FeedForwardLayer outerLayer = getOuterLayer();
+		DirectedLayer<?> outerLayer = getOuterLayer();
 		return outerLayer.getActivationFunction().getDefaultCostFunction();
 	}
 

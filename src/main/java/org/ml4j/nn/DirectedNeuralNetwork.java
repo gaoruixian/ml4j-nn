@@ -51,7 +51,7 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 	 * 
 	 * @param layers The layers of this NeuralNetwork
 	 */
-	protected DirectedNeuralNetwork(List<L> layers) {
+	protected DirectedNeuralNetwork(List<? extends L> layers) {
 		super(layers);
 	}
 	
@@ -129,7 +129,7 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 	 */
 	protected ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex) {		
 		DoubleMatrix inputActivations = inputs;
-		List<NeuralNetworkLayerActivation> layerActivations = new ArrayList<NeuralNetworkLayerActivation>();
+		List<NeuralNetworkLayerActivation<?>> layerActivations = new ArrayList<NeuralNetworkLayerActivation<?>>();
 		boolean start = false;
 		boolean end = false;
 		int index =0;
@@ -143,7 +143,7 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 					inputActivations = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(inputActivations.getRows(), 1),
 							inputActivations);
 				}
-			NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputActivations);
+			NeuralNetworkLayerActivation<?> activation = layer.forwardPropagate(inputActivations);
 			layerActivations.add(activation);
 			inputActivations = activation.getOutputActivations();
 			}

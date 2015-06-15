@@ -15,6 +15,7 @@
  */
 package org.ml4j.nn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jblas.DoubleMatrix;
@@ -26,7 +27,7 @@ import org.ml4j.nn.costfunctions.CostFunction;
  * @author Michael Lavelle
  *
  */
-public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedForwardNeuralNetwork> {
+public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedForwardLayer,FeedForwardNeuralNetwork> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,7 +46,7 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 	 * 
 	 * @param network A network to clone
 	 */
-	protected FeedForwardNeuralNetwork(BaseFeedForwardNeuralNetwork<?> network)
+	protected FeedForwardNeuralNetwork(BaseFeedForwardNeuralNetwork<FeedForwardLayer,?> network)
 	{
 		super(network);
 	}
@@ -114,10 +115,16 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 			int max_iter) {
 		super.train(inputs, desiredOutputs, lambdas, costFunction, max_iter);
 	}
-
+	
 	@Override
-	protected FeedForwardNeuralNetwork createFromLayers(FeedForwardLayer[] layers) {
-		return new FeedForwardNeuralNetwork(layers);
+	public FeedForwardNeuralNetwork dup(boolean allLayersRetrainable) {
+		List<FeedForwardLayer> dupLayers = new ArrayList<FeedForwardLayer>();
+		for (int i = 0; i < layers.size(); i++) {
+			FeedForwardLayer layer = layers.get(i);
+			
+			dupLayers.add(layer.dup(allLayersRetrainable || layer.isRetrainable()));
+		}
+		return new FeedForwardNeuralNetwork(dupLayers);
 	}
 	
 

@@ -18,11 +18,11 @@ package org.ml4j.nn;
 import org.jblas.DoubleMatrix;
 import org.jblas.MatrixFunctions;
 
-public class NeuralNetworkLayerActivation {
+public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 
 	private DoubleMatrix inputActivations;
 	private DoubleMatrix outputActivations;
-	private FeedForwardLayer layer;
+	private L layer;
 	private DoubleMatrix Z;
 	private DoubleMatrix thetas;
 
@@ -44,7 +44,7 @@ public class NeuralNetworkLayerActivation {
 
 	}
 
-	protected DoubleMatrix backPropagate(NeuralNetworkLayerActivation outerActivation, DoubleMatrix outerDeltas) {
+	protected DoubleMatrix backPropagate(NeuralNetworkLayerActivation<?> outerActivation, DoubleMatrix outerDeltas) {
 
 		DoubleMatrix sigable = getZ();
 
@@ -81,7 +81,7 @@ public class NeuralNetworkLayerActivation {
 		return grad;
 	}
 
-	public NeuralNetworkLayerActivation(FeedForwardLayer layer, DoubleMatrix inputActivations, DoubleMatrix Z,
+	public NeuralNetworkLayerActivation(L layer, DoubleMatrix inputActivations, DoubleMatrix Z,
 			DoubleMatrix outputActivations) {
 		this.inputActivations = inputActivations;
 		this.Z = Z;
@@ -102,7 +102,7 @@ public class NeuralNetworkLayerActivation {
 		return outputActivations;
 	}
 
-	public FeedForwardLayer getLayer() {
+	public L getLayer() {
 		return layer;
 	}
 

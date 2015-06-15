@@ -61,7 +61,7 @@ public class BackPropagation {
 		List<NeuralNetworkLayerErrorGradient> layerGrads = new ArrayList<NeuralNetworkLayerErrorGradient>();
 		// Calculate the gradients of each retrainable weight matrix
 		int i = 0;
-		for (NeuralNetworkLayerActivation layerActivation : forwardPropagation.getActivations()) {
+		for (NeuralNetworkLayerActivation<?> layerActivation : forwardPropagation.getActivations()) {
 			if (layerActivation.getLayer().isRetrainable()) {
 				DoubleMatrix D = retrainableDeltas.get(i);
 				double lambda = lambdas[i];

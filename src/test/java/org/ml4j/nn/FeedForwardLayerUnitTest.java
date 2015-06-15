@@ -137,7 +137,7 @@ public class FeedForwardLayerUnitTest {
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 101);
-		NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputs);
+		NeuralNetworkLayerActivation<FeedForwardLayer> activation = layer.forwardPropagate(inputs);
 		assertThat(activation.getOutputActivations(),is(activationFunction.activate(inputs.mmul(layer.getClonedThetas().transpose()))));
 		assertThat(activation.getInputActivations(),is(inputs));
 		assertThat(activation.getLayer(),is(layer));
@@ -149,7 +149,7 @@ public class FeedForwardLayerUnitTest {
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,false);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
-		NeuralNetworkLayerActivation activation = layer.forwardPropagate(inputs);
+		NeuralNetworkLayerActivation<FeedForwardLayer> activation = layer.forwardPropagate(inputs);
 		assertThat(activation.getOutputActivations(),is(activationFunction.activate(inputs.mmul(layer.getClonedThetas().transpose()))));
 		assertThat(activation.getInputActivations(),is(inputs));
 		assertThat(activation.getLayer(),is(layer));

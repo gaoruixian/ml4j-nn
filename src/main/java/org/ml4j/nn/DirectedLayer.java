@@ -85,7 +85,7 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	 * @return A NeuralNetworkLayerActivation instance specifying how
 	 * the information propagated through the layer.
 	 */
-	protected abstract NeuralNetworkLayerActivation forwardPropagate(
+	protected abstract NeuralNetworkLayerActivation<L> forwardPropagate(
 			DoubleMatrix inputActivations);
 	
 
@@ -115,7 +115,9 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 		return activationFunction;
 	}
 	
-	
+	public abstract DoubleMatrix getClonedThetas();
+
+	protected abstract void updateThetas(DoubleMatrix doubleMatrix, int layerIndex, boolean permitFurtherRetrains);
 	
 	
 }

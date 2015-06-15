@@ -60,7 +60,7 @@ public abstract class BaseNeuralNetwork<L extends BaseLayer<?>,N extends BaseNeu
 	 * 
 	 * @param layers The layers of this NeuralNetwork
 	 */
-	protected BaseNeuralNetwork(List<L> layers)
+	protected BaseNeuralNetwork(List<? extends L> layers)
 	{
 		this.layers = new ArrayList<L>();
 		this.layers.addAll(layers);

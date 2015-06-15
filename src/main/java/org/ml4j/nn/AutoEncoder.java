@@ -15,6 +15,7 @@
  */
 package org.ml4j.nn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jblas.DoubleMatrix;
@@ -29,7 +30,7 @@ import org.ml4j.nn.costfunctions.CostFunction;
  * @author Michael Lavelle
  *
  */
-public class AutoEncoder extends BaseFeedForwardNeuralNetwork<AutoEncoder> {
+public class AutoEncoder extends BaseFeedForwardNeuralNetwork<FeedForwardLayer,AutoEncoder> {
 
 	/**
 	 * 
@@ -92,9 +93,16 @@ public class AutoEncoder extends BaseFeedForwardNeuralNetwork<AutoEncoder> {
 			int max_iter) {
 		super.train(inputs, inputs, lambdas, costFunction, max_iter);
 	}
+	
 	@Override
-	protected AutoEncoder createFromLayers(FeedForwardLayer[] layers) {
-		return new AutoEncoder(layers);
+	public AutoEncoder dup(boolean allLayersRetrainable) {
+		List<FeedForwardLayer> dupLayers = new ArrayList<FeedForwardLayer>();
+		for (int i = 0; i < layers.size(); i++) {
+			FeedForwardLayer layer = layers.get(i);
+			
+			dupLayers.add(layer.dup(allLayersRetrainable || layer.isRetrainable()));
+		}
+		return new AutoEncoder(dupLayers);
 	}
 	
 	public StackedAutoEncoder stack(AutoEncoder... autoEncoders) {
