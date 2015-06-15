@@ -209,7 +209,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	 * @return An initial set of weights
 	 */
 	private DoubleMatrix generateInitialThetas(int r, int c) {
-		DoubleMatrix initial = DoubleMatrix.randn(r, c);
+		DoubleMatrix initial = DoubleMatrix.randn(r, c).mul(0.05);
 		return initial;
 	}
 	
