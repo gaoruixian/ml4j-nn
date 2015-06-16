@@ -1,12 +1,15 @@
 package org.ml4j.nn;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
 import org.jblas.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 import org.ml4j.nn.costfunctions.CostFunction;
+import org.ml4j.nn.sequences.SupervisedSequence;
+import org.ml4j.nn.sequences.SupervisedSequences;
 import org.ml4j.nn.util.NeuralNetworkUtils;
 
 /**
@@ -63,22 +66,37 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 		return topologies;
 	}
+		
+	public void clearContext()
+	{
+		((RecurrentLayer)this.getFirstLayer()).setContextActivations(null);
+	}
 
-	public void trainOnSequences(DoubleMatrix[] inputSequencesBySequenceLength, DoubleMatrix[] desiredOutputSequencesBySequenceLength, double[] lambdas, int max_iter) {
+	public void trainOnSequences(SupervisedSequences sequences, double[] lambdas, int max_iter) {
 
 		if (!isContainingRetrainableLayers()) {
 			throw new IllegalStateException(
 					"NeuralNetwork must contain at least one (re)trainable layer before calling train method");
 		}
+		
+		if (sequences.getInputElementLength() != getFirstLayer().getInputNeuronCount())
+		{
+			throw new IllegalArgumentException("This neural network expects inputs of length:" + getFirstLayer().getInputNeuronCount() + " but input sequence elements are of length:" + sequences.getInputElementLength());
+		}
+		
+		if (sequences.getOutputElementLength() != getOuterLayer().getOutputNeuronCount())
+		{
+			throw new IllegalArgumentException("This neural network expects outputs of length:" + getOuterLayer().getOutputNeuronCount() + " but output sequence elements are of length:" + sequences.getOutputElementLength());
+		}
 
 		// This clones the NeuralNetwork, minimises the thetas, and returns
 		// optimal thetas
-		DoubleMatrix newThetas = getMinimisingThetasForRetrainableLayers(inputSequencesBySequenceLength, desiredOutputSequencesBySequenceLength,
+		DoubleMatrix newThetas = getMinimisingThetasForRetrainableLayers(sequences,
 				getClonedRetrainableThetas(), lambdas, getDefaultCostFunction(), max_iter);
 		updateThetasForRetrainableLayers(newThetas, false);
 	}
 	
-	private ForwardPropagation createForwardPropagation(FeedForwardNeuralNetwork timeUnfoldedNetwork,int inputCountWithBias,int sequenceLength,DoubleMatrix inputSequence,DoubleMatrix initialHiddenActivations)
+	private ForwardPropagation createForwardPropagation(FeedForwardNeuralNetwork timeUnfoldedNetwork,int inputCountWithBias,int sequenceLength,SupervisedSequence sequence,DoubleMatrix initialHiddenActivations)
 	{
 		List<NeuralNetworkLayerActivation<?>> timeUnfoldedActivations = new ArrayList<NeuralNetworkLayerActivation<?>>();
 
@@ -92,7 +110,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 		for (int h = 0; h < sequenceLength; h++) {
 
 			// Get the sequence element
-			DoubleMatrix sequenceInputs = inputSequence.getColumn(h);
+			DoubleMatrix sequenceInputs = sequence.getInputElement(h);
 
 			// Propagate sequence element through the entire original recurrent network
 			ForwardPropagation sequenceProps = forwardPropagate(sequenceInputs);
@@ -179,8 +197,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 		return unrolled;
 	}
 
-	private Vector<DoubleMatrix> getUpdatedThetasForSequence(int sequenceLength, Vector<DoubleMatrix> initialRetrainableThetas,
-			DoubleMatrix inputSeq, DoubleMatrix outputSeq,double[] regularizationLambdas) {
+	private Vector<DoubleMatrix> getUpdatedThetasForSequence(int sequenceLength, Vector<DoubleMatrix> initialRetrainableThetas,SupervisedSequence inputOutputSequence,double[] regularizationLambdas) {
 		
 		// Setup variables
 		int inputCount = this.getLayers().get(0).getInputNeuronCount();
@@ -195,9 +212,9 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 				hiddenCount, outputCount, initialRetrainableThetas);
 
 		// Forward Propagate the inputSequence 
-		ForwardPropagation fp = createForwardPropagation(unrolled, inputCountWithBias,sequenceLength, inputSeq,initialHidden);
-		
-		DoubleMatrix outputs = outputSeq.getColumn(outputSeq.getColumns() - 1);
+		ForwardPropagation fp = createForwardPropagation(unrolled, inputCountWithBias,sequenceLength, inputOutputSequence,initialHidden);
+		DoubleMatrix outputs = inputOutputSequence.getOutputElement(inputOutputSequence.getSequenceLength() - 1);
+		//DoubleMatrix outputs = outputSeq.getRow(outputSeq.getRows() - 1);
 		double[] lambdas = new double[unrolled.getNumberOfLayers()];
 		for (int l = 0; l < lambdas.length -1; l++)
 		{
@@ -278,8 +295,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 		return recurrentGradientMatrices;
 	}
 
-	protected DoubleMatrix getMinimisingThetasForRetrainableLayers(DoubleMatrix[] allInputs,
-			DoubleMatrix[] allDesiredOutputs, Vector<DoubleMatrix> initialRetrainableThetas,
+	protected DoubleMatrix getMinimisingThetasForRetrainableLayers(SupervisedSequences inputOutputSequences, Vector<DoubleMatrix> initialRetrainableThetas,
 			double[] retrainableLambdas, CostFunction costFunction, int max_iter) {
 		
 		RecurrentNeuralNetwork duplicateNeuralNetwork = this.dup(false);
@@ -289,23 +305,18 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 			
 			
 			for (int i = 1; i <= maxSequenceLength; i++) {
-				DoubleMatrix inputsForSequenceLength = allInputs[i - 1];
+				
+				Collection<SupervisedSequence> sequencesOfSpecifiedLength = inputOutputSequences.filterBySequenceLength(i);
 
-				DoubleMatrix outputsForSequenceLength = allDesiredOutputs[i - 1];
+				for (SupervisedSequence sequence : sequencesOfSpecifiedLength) {
 
-				for (int r = 0; r < inputsForSequenceLength.getRows(); r++) {
-					
-					DoubleMatrix inputSeq = inputsForSequenceLength.getRow(r);
-					DoubleMatrix outputSeq = outputsForSequenceLength.getRow(r);
-
-					newThetas = NeuralNetworkUtils.reshapeToVector(duplicateNeuralNetwork.getUpdatedThetasForSequence(i, duplicateNeuralNetwork.getClonedRetrainableThetas(), inputSeq,
-							outputSeq,retrainableLambdas));
+					newThetas = NeuralNetworkUtils.reshapeToVector(duplicateNeuralNetwork.getUpdatedThetasForSequence(i, duplicateNeuralNetwork.getClonedRetrainableThetas(), sequence,retrainableLambdas));
 					duplicateNeuralNetwork.updateThetasForRetrainableLayers(newThetas, true);
 
 
 				}
 			}
-			double cost = duplicateNeuralNetwork.getCost(maxSequenceLength, allInputs, allDesiredOutputs,retrainableLambdas,costFunction);
+			double cost = duplicateNeuralNetwork.getCost(inputOutputSequences,retrainableLambdas,costFunction);
 			
 			System.out.print("Iteration " + iteration + " | Cost: " + cost + "\r");
 
@@ -317,27 +328,30 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 	}
 
-	private double getCost(int maxSequenceLength, DoubleMatrix[] allInputs, DoubleMatrix[] allOutputs,double[] regularizationLambdas,CostFunction costFunction) {
+	private double getCost(SupervisedSequences sequences,double[] regularizationLambdas,CostFunction costFunction) {
 
 		RecurrentNeuralNetwork testNetwork = (RecurrentNeuralNetwork) this.dup(false);
 
 		double J = 0;
 		int count = 0;
+		
+		
 
 		for (int it = 1; it <= maxSequenceLength; it++) {
-			DoubleMatrix inputsForSequenceLength1 = allInputs[it - 1];
+			
+			Collection<SupervisedSequence> inputOutputSequencesForSequenceLength = sequences.filterBySequenceLength(it);
+			
+			
+			
 
-			DoubleMatrix outputsForSequenceLength1 = allOutputs[it - 1];
 
-			for (int r1 = 0; r1 < inputsForSequenceLength1.getRows(); r1++) {
+			for (SupervisedSequence sequence : inputOutputSequencesForSequenceLength) {
 
-				for (int c = 0; c < inputsForSequenceLength1.getRow(r1).getColumns(); c++) {
+				for (int r = 0; r < sequence.getSequenceLength(); r++){
 
-					ForwardPropagation forwardPropagation1 = testNetwork.forwardPropagate(inputsForSequenceLength1
-							.getRow(r1).getColumn(c));
+					ForwardPropagation forwardPropagation1 = testNetwork.forwardPropagate(sequence.getInputElement(r));
 					J = J
-							+ forwardPropagation1.getCostWithRetrainableLayerRegularisation(outputsForSequenceLength1
-									.getRow(r1).getColumn(c), regularizationLambdas, costFunction);
+							+ forwardPropagation1.getCostWithRetrainableLayerRegularisation(sequence.getOutputElement(r), regularizationLambdas, costFunction);
 					count++;
 
 				}
