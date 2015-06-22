@@ -94,6 +94,12 @@ public class SupervisedSequence  {
 		this.outputSequence = new DoubleMatrix(generateUnsupervisedOutputSequence(sequence.getSequenceData().toArray2())).getColumn(predictionColumn);
 	}
 	
+	public SupervisedSequence(Sequence sequence,int[] predictionColumns)
+	{
+		this.inputSequence = new DoubleMatrix(generateUnsupervisedInputSequence(sequence.getSequenceData().toArray2()));
+		this.outputSequence = new DoubleMatrix(generateUnsupervisedOutputSequence(sequence.getSequenceData().toArray2())).getColumns(predictionColumns);
+	}
+	
 	private double[][] generateUnsupervisedInputSequence(double[][] inputSequence) {
 		double[][] unsupervisedSequence = new double[inputSequence.length - 1][inputSequence[0].length];
 		for (int i = 0; i < unsupervisedSequence.length - 1; i++)
