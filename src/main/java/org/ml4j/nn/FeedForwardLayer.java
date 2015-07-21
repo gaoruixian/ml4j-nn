@@ -267,7 +267,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	 * 
 	 */
 	public double[] getOutputNeuronActivationMaximisingInputFeatures(int outputNeuronIndex) {
-		int jCount = thetas.getColumns() - 1;
+		int jCount = thetas.getColumns() - (hasBiasUnit ? 1 : 0);
 		double[] maximisingInputFeatures = new double[jCount];
 		for (int j = 0; j < jCount; j++) {
 			double wij = getWij(outputNeuronIndex, j);
@@ -284,7 +284,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	
 	private double getWij(int i, int j) {
 		DoubleMatrix weights = thetas;
-		int jInd = j + 1;
+		int jInd = j + (hasBiasUnit ? 1 : 0);
 		return weights.get(i, jInd);
 	}
 	
