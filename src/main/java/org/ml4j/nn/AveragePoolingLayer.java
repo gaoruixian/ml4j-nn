@@ -50,6 +50,20 @@ public class AveragePoolingLayer extends FeedForwardLayer {
 		int inputDim = (int) Math.sqrt(inputNeuronCount / depth);
 
 		int scale = inputDim / outputDim;
+		
+		if (inputDim * inputDim * depth != inputNeuronCount)
+		{
+			throw new IllegalArgumentException("Incorrect dimensions configuration of average pooling layer");
+		}
+		if (outputDim * outputDim * depth != outputNeuronCount)
+		{
+			throw new IllegalArgumentException("Incorrect dimensions configuration of average pooling layer");
+		}
+		if (outputDim * scale * outputDim * scale * depth != inputNeuronCount)
+		{
+			throw new IllegalArgumentException("Incorrect dimensions configuration of average pooling layer");
+		}
+		
 		double scalingFactor = 1d / (scale * scale);
 
 		DoubleMatrix initialThetas = DoubleMatrix.ones(outputNeuronCount,
