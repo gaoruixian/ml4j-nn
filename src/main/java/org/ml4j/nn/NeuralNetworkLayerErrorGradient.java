@@ -25,8 +25,9 @@ public class NeuralNetworkLayerErrorGradient {
 	private double lambda;
 	private DoubleMatrix inputActivations;
 	private DoubleMatrix thetas;
+	private DoubleMatrix thetasMask;
 
-	public NeuralNetworkLayerErrorGradient(DirectedLayer<?> layer, DoubleMatrix thetas, DoubleMatrix delta, int m,
+	public NeuralNetworkLayerErrorGradient(DirectedLayer<?> layer, DoubleMatrix thetas,DoubleMatrix thetasMask, DoubleMatrix delta, int m,
 			double lambda, DoubleMatrix inputActivations) {
 		this.layer = layer;
 		this.m = m;
@@ -34,13 +35,12 @@ public class NeuralNetworkLayerErrorGradient {
 		this.lambda = lambda;
 		this.thetas = thetas;
 		this.inputActivations = inputActivations;
+		this.thetasMask = thetasMask;
 	}
 	
 	public DirectedLayer<?> getLayer() {
 		return layer;
 	}
-
-
 
 	public DoubleMatrix getDELTA() {
 		return delta.mmul(inputActivations);
@@ -53,6 +53,12 @@ public class NeuralNetworkLayerErrorGradient {
 		{
 		modTheta.putColumn(0, DoubleMatrix.zeros(currentTheta.getRows(), 1));
 		}
-		return getDELTA().div(m).add(modTheta.mul(lambda / m));
+		DoubleMatrix grad =  getDELTA().div(m).add(modTheta.mul(lambda / m));
+	
+		grad.muli(thetasMask);
+		
+		layer.applyGradientWeightConstraints(grad);
+		
+		return grad;
 	}
 }

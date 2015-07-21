@@ -119,5 +119,8 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 
 	protected abstract void updateThetas(DoubleMatrix doubleMatrix, int layerIndex, boolean permitFurtherRetrains);
 	
-	
+	public void applyGradientWeightConstraints(DoubleMatrix gradients)
+	{
+		// No-op by default
+	}
 }

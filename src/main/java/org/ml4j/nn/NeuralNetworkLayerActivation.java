@@ -25,6 +25,7 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 	private L layer;
 	private DoubleMatrix Z;
 	private DoubleMatrix thetas;
+	private DoubleMatrix thetasMask;
 
 
 	public double getRegularisationCost(int m, double lambda) {
@@ -76,11 +77,21 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 
 	protected NeuralNetworkLayerErrorGradient getErrorGradient(DoubleMatrix D, double lambda, int m) {
 		DoubleMatrix inputActivations = getInputActivations();
-		NeuralNetworkLayerErrorGradient grad = new NeuralNetworkLayerErrorGradient(getLayer(), thetas, D, m, lambda,
+		NeuralNetworkLayerErrorGradient grad = new NeuralNetworkLayerErrorGradient(getLayer(), thetas,thetasMask, D, m, lambda,
 				inputActivations);
 		return grad;
 	}
 
+	public NeuralNetworkLayerActivation(L layer, DoubleMatrix inputActivations, DoubleMatrix Z,
+			DoubleMatrix outputActivations,DoubleMatrix thetasMask) {
+		this.inputActivations = inputActivations;
+		this.Z = Z;
+		this.outputActivations = outputActivations;
+		this.layer = layer;
+		this.thetas = layer.getClonedThetas();
+		this.thetasMask = thetasMask;
+	}
+	
 	public NeuralNetworkLayerActivation(L layer, DoubleMatrix inputActivations, DoubleMatrix Z,
 			DoubleMatrix outputActivations) {
 		this.inputActivations = inputActivations;
@@ -88,6 +99,7 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 		this.outputActivations = outputActivations;
 		this.layer = layer;
 		this.thetas = layer.getClonedThetas();
+		this.thetasMask = DoubleMatrix.ones(thetas.getRows(),thetas.getColumns());
 	}
 
 	private DoubleMatrix getThetas() {
