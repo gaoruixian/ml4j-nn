@@ -142,19 +142,19 @@ public class AutoEncoder extends BaseFeedForwardNeuralNetwork<FeedForwardLayer,A
 	}
 	
 	public double[][] encodeToLayer(double[][] numericFeaturesMatrix,int toLayerIndex) {
-		return forwardPropagateFromTo(numericFeaturesMatrix, 0, toLayerIndex).getOutputs().toArray2();
+		return forwardPropagateFromTo(numericFeaturesMatrix, 0, toLayerIndex,false).getOutputs().toArray2();
 	}
 	
 	public double[][] decodeFromLayer(double[][] numericFeaturesMatrix,int fromLayerIndex) {
-		return forwardPropagateFromTo(numericFeaturesMatrix, fromLayerIndex, getNumberOfLayers() - 1).getOutputs().toArray2();
+		return forwardPropagateFromTo(numericFeaturesMatrix, fromLayerIndex, getNumberOfLayers() - 1,false).getOutputs().toArray2();
 	}
 	
 	public double[] decodeFromLayer(double[] encodedFeatures,int fromLayerIndex) {
-		return forwardPropagateFromTo(encodedFeatures, fromLayerIndex, getNumberOfLayers() - 1).getOutputs().toArray();
+		return forwardPropagateFromTo(encodedFeatures, fromLayerIndex, getNumberOfLayers() - 1,false).getOutputs().toArray();
 
 	}
 	public double[] encodeToLayer(double[] numericFeatures,int toLayer) {
-		return forwardPropagateFromTo(numericFeatures, 0, toLayer).getOutputs().toArray();
+		return forwardPropagateFromTo(numericFeatures, 0, toLayer,false).getOutputs().toArray();
 	}
 	
 	

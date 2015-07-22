@@ -36,6 +36,16 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	protected final boolean hasBiasUnit;
 	protected int inputNeuronCount;
 	protected int outputNeuronCount;
+	
+	protected double inputDropout = 1;
+	
+	
+	
+	
+	public void setInputDropout(double inputDropout) {
+		this.inputDropout = inputDropout;
+	}
+
 	protected DifferentiableActivationFunction activationFunction;
 
 	/**
@@ -69,6 +79,30 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	public boolean hasBiasUnit() {
 		return hasBiasUnit;
 	}
+	
+	public double createDropoutScaling(boolean training)
+	{
+		return training ? 1 : 1d/inputDropout;
+	}
+	
+	public DoubleMatrix createDropoutMask(DoubleMatrix inputs,boolean training)
+	{
+		DoubleMatrix dropoutMask = DoubleMatrix.ones(inputs.getRows(),inputs.getColumns());
+		if (training && inputDropout != 1)
+		{
+			for (int i = 0; i < dropoutMask.getRows(); i++)
+			{
+				for (int j = 0; i < dropoutMask.getColumns(); i++)
+				{
+					if (Math.random() > inputDropout)
+					{
+						dropoutMask.put(i, j,0);
+					}
+				}
+			}
+		}
+		return dropoutMask;
+	}
 
 
 	/**
@@ -86,7 +120,7 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	 * the information propagated through the layer.
 	 */
 	protected abstract NeuralNetworkLayerActivation<L> forwardPropagate(
-			DoubleMatrix inputActivations);
+			DoubleMatrix inputActivations,boolean training);
 	
 
 	/**

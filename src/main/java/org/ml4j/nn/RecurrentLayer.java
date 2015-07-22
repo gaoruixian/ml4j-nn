@@ -105,7 +105,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	 * @return A NeuralNetworkLayerActivation instance specifying how
 	 * the information propagated through the layer.
 	 */
-	protected NeuralNetworkLayerActivation<RecurrentLayer> forwardPropagate(DoubleMatrix layerInputsWithIntercept) {
+	protected NeuralNetworkLayerActivation<RecurrentLayer> forwardPropagate(DoubleMatrix layerInputsWithIntercept,boolean training) {
 		
 		if (layerInputsWithIntercept.getColumns() != getInputNeuronCount() + (hasBiasUnit() ? 1 : 0))
 		{
@@ -127,6 +127,11 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 		this.contextActivations = activation.getOutputActivations();
 		return activation;
 	}
+	
+	protected NeuralNetworkLayerActivation<RecurrentLayer> forwardPropagate(DoubleMatrix layerInputsWithIntercept) {
+			return forwardPropagate(layerInputsWithIntercept,false);
+	}
+		
 
 	/**
 	 * A clone of the weights matrix

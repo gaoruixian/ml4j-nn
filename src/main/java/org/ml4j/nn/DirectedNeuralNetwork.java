@@ -63,9 +63,11 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 	 * @return The artifacts of ForwardPropagation
 	 * 
 	 */
+
 	public ForwardPropagation forwardPropagate(double[][] inputs) {
-		return forwardPropagate(new DoubleMatrix(inputs));
+		return forwardPropagate(new DoubleMatrix(inputs),false);
 	}
+
 
 	/**
 	 * 
@@ -74,8 +76,12 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 	 * @return The artifacts of ForwardPropagation
 	 * 
 	 */
+	public ForwardPropagation forwardPropagate(double[] inputs,boolean training) {
+		return forwardPropagate(new DoubleMatrix(new double[][] { inputs }),training);
+	}
+	
 	public ForwardPropagation forwardPropagate(double[] inputs) {
-		return forwardPropagate(new DoubleMatrix(new double[][] { inputs }));
+		return forwardPropagate(new DoubleMatrix(new double[][] { inputs }),false);
 	}
 
 	/**
@@ -86,8 +92,12 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 	 * @return The artifacts of ForwardPropagation
 	 * 
 	 */
+	public ForwardPropagation forwardPropagate(DoubleMatrix inputs,boolean training) {
+		return forwardPropagateFromTo(inputs,0,getNumberOfLayers() -1,training);
+	}
+	
 	public ForwardPropagation forwardPropagate(DoubleMatrix inputs) {
-		return forwardPropagateFromTo(inputs,0,getNumberOfLayers() -1);
+		return forwardPropagateFromTo(inputs,0,getNumberOfLayers() -1,false);
 	}
 	
 	/**
@@ -100,8 +110,8 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 	 * @return The artifacts of ForwardPropagation
 	 * 
 	 */
-	public ForwardPropagation forwardPropagateFromTo(double[][] inputs,int fromLayerIndex,int toLayerIndex) {
-		return forwardPropagateFromTo(new DoubleMatrix(inputs),fromLayerIndex,toLayerIndex);
+	public ForwardPropagation forwardPropagateFromTo(double[][] inputs,int fromLayerIndex,int toLayerIndex,boolean training) {
+		return forwardPropagateFromTo(new DoubleMatrix(inputs),fromLayerIndex,toLayerIndex,training);
 	}
 	
 	/**
@@ -113,8 +123,8 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 	 * @return The artifacts of ForwardPropagation
 	 * 
 	 */
-	protected ForwardPropagation forwardPropagateFromTo(double[] inputs,int fromLayerIndex,int toLayerIndex) {
-		return forwardPropagateFromTo(new DoubleMatrix(new double[][] {inputs}),fromLayerIndex,toLayerIndex);
+	protected ForwardPropagation forwardPropagateFromTo(double[] inputs,int fromLayerIndex,int toLayerIndex,boolean training) {
+		return forwardPropagateFromTo(new DoubleMatrix(new double[][] {inputs}),fromLayerIndex,toLayerIndex,training);
 	}
 	
 	/**
@@ -127,7 +137,7 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 	 * @return The artifacts of ForwardPropagation
 	 * 
 	 */
-	protected ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex) {		
+	protected ForwardPropagation forwardPropagateFromTo(DoubleMatrix inputs,int fromLayerIndex,int toLayerIndex,boolean training) {		
 		DoubleMatrix inputActivations = inputs;
 		List<NeuralNetworkLayerActivation<?>> layerActivations = new ArrayList<NeuralNetworkLayerActivation<?>>();
 		boolean start = false;
@@ -143,7 +153,7 @@ public abstract class DirectedNeuralNetwork<L extends DirectedLayer<?>,N extends
 					inputActivations = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(inputActivations.getRows(), 1),
 							inputActivations);
 				}
-			NeuralNetworkLayerActivation<?> activation = layer.forwardPropagate(inputActivations);
+			NeuralNetworkLayerActivation<?> activation = layer.forwardPropagate(inputActivations,training);
 			layerActivations.add(activation);
 			inputActivations = activation.getOutputActivations();
 			}

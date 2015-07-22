@@ -220,7 +220,9 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 
 		// ----------------|START FORWARD PROP AND FIND COST |-------------
 
-		ForwardPropagation forwardPropagation = forwardPropagate(X);
+		
+		
+		ForwardPropagation forwardPropagation = forwardPropagate(X,true);
 
 		BackPropagation backPropagation = backPropagate(forwardPropagation, Y, lambda);
 
@@ -258,6 +260,19 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		DoubleMatrix pInput = NeuralNetworkUtils.reshapeToVector(initialRetrainableThetas);
 		return CostFunctionMinimiser.fmincg(minimisableCostFunction, pInput, max_iter, true);
 	}
+	
+	public double[] createDropoutScaling(boolean training)
+	{
+		double[] dropoutScaling = new double[this.getNumberOfLayers()];
+		int ind = 0;
+		for (L layer : this.getLayers())
+		{
+			dropoutScaling[ind++] = layer.createDropoutScaling(training);
+		}
+		return dropoutScaling;
+	}
+	
+	
 
 	public Vector<DoubleMatrix> getClonedThetas() {
 		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();

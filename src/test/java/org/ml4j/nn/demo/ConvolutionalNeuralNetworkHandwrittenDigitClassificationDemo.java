@@ -18,10 +18,10 @@ package org.ml4j.nn.demo;
 import java.io.IOException;
 
 import org.ml4j.imaging.targets.ImageDisplay;
-import org.ml4j.nn.AveragePoolingLayer;
 import org.ml4j.nn.ConvolutionalLayer;
 import org.ml4j.nn.FeedForwardLayer;
 import org.ml4j.nn.FeedForwardNeuralNetwork;
+import org.ml4j.nn.MaxPoolingLayer;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 import org.ml4j.nn.activationfunctions.SoftmaxActivationFunction;
 import org.ml4j.nn.algorithms.NeuralNetworkAlgorithm;
@@ -59,27 +59,27 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 		// Configure a Neural Network, with configurable hidden neuron topology,
 		// and classification output neurons corresponding to the 10 numbers to
 		// be predicted.
-		
-		
-
+	
 
 		FeedForwardLayer firstLayer = new ConvolutionalLayer(784, 6 * 20 * 20, new SigmoidActivationFunction(),true,6,1);
 		
-		FeedForwardLayer secondLayer = new AveragePoolingLayer(6 * 20 * 20,6 * 10 * 10,6);
+		FeedForwardLayer secondLayer = new MaxPoolingLayer(6 * 20 * 20,6 * 10 * 10,6);
 
 		FeedForwardLayer thirdLayer = new ConvolutionalLayer(6 * 10 * 10, 16 * 5 * 5, new SigmoidActivationFunction(),true,16,6);
-
-		FeedForwardLayer fifthLayer = new FeedForwardLayer(16 * 5 * 5,100, new SigmoidActivationFunction(),true);
-
-		FeedForwardLayer seventhLayer = new FeedForwardLayer(100, 10, new SoftmaxActivationFunction(),true);
-
-		FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(firstLayer,secondLayer,thirdLayer,fifthLayer,seventhLayer);
+		
+		thirdLayer.setInputDropout(0.5);
+		
+		FeedForwardLayer forthLayer = new FeedForwardLayer(16 * 5 * 5,100, new SigmoidActivationFunction(),true);
+		
+		FeedForwardLayer fifthLayer = new FeedForwardLayer(100, 10, new SoftmaxActivationFunction(),true);
+		
+		FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(firstLayer,secondLayer,thirdLayer,forthLayer,fifthLayer);
 
 		NeuralNetworkAlgorithm alg = new NeuralNetworkAlgorithm(neuralNetwork);
 
 		// Training Context
 		NeuralNetworkAlgorithmTrainingContext context = new NeuralNetworkAlgorithmTrainingContext(200);
-		context.setRegularizationLambda(0.05d);
+		//context.setRegularizationLambda(0.05d);
 
 		// Obtain a prediction hypothesis function from the Neural Network, so
 		// we can predict output classes given training examples

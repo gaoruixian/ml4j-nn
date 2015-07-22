@@ -26,7 +26,13 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 	private DoubleMatrix Z;
 	private DoubleMatrix thetas;
 	private DoubleMatrix thetasMask;
+	private DoubleMatrix dropoutMask;
 
+	
+
+	public DoubleMatrix getDropoutMask() {
+		return dropoutMask;
+	}
 
 	public double getRegularisationCost(int m, double lambda) {
 		DoubleMatrix currentTheta = thetas;
@@ -51,9 +57,9 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 
 		if (outerActivation.layer.hasBiasUnit)
 		{
-		sigable = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(sigable.getRows()), sigable);
+			sigable = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(sigable.getRows()), sigable);
 		}
-		DoubleMatrix deltas = outerActivation.getThetas().transpose().mmul(outerDeltas)
+		DoubleMatrix deltas = outerActivation.getThetas().transpose().mmul(outerDeltas).mul(outerActivation.getDropoutMask())
 				.mul(this.getLayer().getActivationFunction().activationGradient(sigable.transpose())).transpose();
 
 		int[] rows = new int[deltas.getRows()];
@@ -83,13 +89,14 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 	}
 
 	public NeuralNetworkLayerActivation(L layer, DoubleMatrix inputActivations, DoubleMatrix Z,
-			DoubleMatrix outputActivations,DoubleMatrix thetasMask) {
+			DoubleMatrix outputActivations,DoubleMatrix thetasMask,DoubleMatrix dropoutMask) {
 		this.inputActivations = inputActivations;
 		this.Z = Z;
 		this.outputActivations = outputActivations;
 		this.layer = layer;
 		this.thetas = layer.getClonedThetas();
 		this.thetasMask = thetasMask;
+		this.dropoutMask = dropoutMask;
 	}
 	
 	public NeuralNetworkLayerActivation(L layer, DoubleMatrix inputActivations, DoubleMatrix Z,
@@ -100,6 +107,7 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 		this.layer = layer;
 		this.thetas = layer.getClonedThetas();
 		this.thetasMask = DoubleMatrix.ones(thetas.getRows(),thetas.getColumns());
+		this.dropoutMask = DoubleMatrix.ones(inputActivations.getRows(),inputActivations.getColumns());
 	}
 
 	private DoubleMatrix getThetas() {

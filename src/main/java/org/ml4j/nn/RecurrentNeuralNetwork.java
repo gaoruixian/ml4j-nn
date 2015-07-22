@@ -113,7 +113,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 			DoubleMatrix sequenceInputs = sequence.getInputElement(h);
 
 			// Propagate sequence element through the entire original recurrent network
-			ForwardPropagation sequenceProps = forwardPropagate(sequenceInputs);
+			ForwardPropagation sequenceProps = forwardPropagate(sequenceInputs,true);
 			
 			// Construct an activation of the relevant hidden layer in our time-unfolded network for this time-step
 			
@@ -349,7 +349,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 				for (int r = 0; r < sequence.getSequenceLength(); r++){
 
-					ForwardPropagation forwardPropagation1 = testNetwork.forwardPropagate(sequence.getInputElement(r));
+					ForwardPropagation forwardPropagation1 = testNetwork.forwardPropagate(sequence.getInputElement(r),true);
 					J = J
 							+ forwardPropagation1.getCostWithRetrainableLayerRegularisation(sequence.getOutputElement(r), regularizationLambdas, costFunction);
 					count++;
