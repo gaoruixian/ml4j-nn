@@ -21,12 +21,14 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 	protected ConvolutionalLayer(int inputNeuronCount, int outputNeuronCount,
 			DoubleMatrix thetas, DoubleMatrix thetasMask,
 			DifferentiableActivationFunction activationFunction,
-			boolean biasUnit, boolean retrainable, int filterCount, int depth) {
+			boolean biasUnit, boolean retrainable, int filterCount, int depth,double inputDropout) {
 		super(inputNeuronCount, outputNeuronCount, thetas, thetasMask,
-				activationFunction, biasUnit, retrainable);
+				activationFunction, biasUnit, retrainable,inputDropout);
 		this.filterCount = filterCount;
 		this.depth = depth;
 	}
+	
+	
 
 	public int getDepth() {
 		return depth;
@@ -38,7 +40,7 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 
 	public ConvolutionalLayer(int inputNeuronCount, int outputNeuronCount,
 			DifferentiableActivationFunction activationFunction,
-			boolean biasUnit, int filterCount, int depth) {
+			boolean biasUnit, int filterCount, int depth,double inputDropout) {
 		super(inputNeuronCount, outputNeuronCount, createThetas(
 				inputNeuronCount,
 				outputNeuronCount,
@@ -48,9 +50,16 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 						outputNeuronCount, biasUnit), biasUnit),
 				createThetasMask(filterCount, depth, inputNeuronCount,
 						outputNeuronCount, biasUnit), activationFunction,
-				biasUnit, true);
+				biasUnit, true,inputDropout);
 		this.filterCount = filterCount;
 		this.depth = depth;
+	}
+	
+	
+	public ConvolutionalLayer(int inputNeuronCount, int outputNeuronCount,
+			DifferentiableActivationFunction activationFunction,
+			boolean biasUnit, int filterCount, int depth) {
+		this(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,filterCount,depth,1);
 	}
 
 	private static DoubleMatrix createThetas(int inputNeuronCount,
@@ -106,7 +115,7 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 		FeedForwardLayer dup = new ConvolutionalLayer(inputNeuronCount,
 				outputNeuronCount, this.getClonedThetas(), thetasMask,
 				activationFunction, hasBiasUnit(), retrainable, filterCount,
-				depth);
+				depth,inputDropout);
 		return dup;
 	}
 

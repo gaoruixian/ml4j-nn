@@ -45,7 +45,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 
 	public RecurrentLayer dup(boolean retrainable) {
 		RecurrentLayer dup = new RecurrentLayer(inputNeuronCount, outputNeuronCount, this.getClonedThetas(),
-				activationFunction, hasBiasUnit(),retrainable);
+				activationFunction, hasBiasUnit(),retrainable,inputDropout);
 		return dup;
 	}
 	
@@ -162,10 +162,14 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	 * @param biasUnit Whether this layer contains an additional inputs bias unit, as well as the input neurons specified by inputNeuronCount
 	 */
 	public RecurrentLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction,boolean biasUnit) {
-		super(inputNeuronCount,outputNeuronCount, activationFunction,biasUnit,true);
+		super(inputNeuronCount,outputNeuronCount, activationFunction,biasUnit,true,1);
 		this.thetas = generateInitialThetas(getOutputNeuronCount(), getOutputNeuronCount()+  getInputNeuronCount() + (biasUnit ? 1 : 0));
 	}
 	
+	public RecurrentLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction,boolean biasUnit,double inputDropout) {
+		super(inputNeuronCount,outputNeuronCount, activationFunction,biasUnit,true,inputDropout);
+		this.thetas = generateInitialThetas(getOutputNeuronCount(), getOutputNeuronCount()+  getInputNeuronCount() + (biasUnit ? 1 : 0));
+	}
 
 	
 	/**
@@ -179,8 +183,16 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	 * to product the output neuron activities
 	 * @param biasUnit Whether this layer contains an additional inputs bias unit, as well as the input neurons specified by inputNeuronCount
 	 */
+	public RecurrentLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable,double inputDropout) {
+		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,retrainable,inputDropout);
+		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
+		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (outputNeuronCount + inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0)));
+		this.thetas = thetas;
+
+	}
+	
 	public RecurrentLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable) {
-		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,retrainable);
+		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,retrainable,1);
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
 		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (outputNeuronCount + inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0)));
 		this.thetas = thetas;

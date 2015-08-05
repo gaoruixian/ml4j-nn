@@ -67,4 +67,42 @@ public class MnistUtils {
 		imageDisplay.onFrameUpdate(new SerializableBufferedImageAdapter(resized), 1000l);
 
 	}
+	
+	
+	public static void draw20(double[] data, ImageDisplay<Long> imageDisplay) {
+		double[] pixelData = new double[data.length];
+
+		// Rearrange ordering of pixels for display purposes ( default image is
+		// flipped),
+		// and scale to greyscale range, and reverse zeros and ones to match
+		// reversed
+		// input data
+		int in = 0;
+		for (int r1 = 0; r1 < 20; r1++) {
+			for (int c = 0; c < 20; c++) {
+				int o = (c) * 20 + (r1);
+				double originalValue = data[o] * 255;
+				double reversedValue = 255 - originalValue;
+				pixelData[in++] = reversedValue;
+			}
+		}
+
+		BufferedImage img = new BufferedImage(20, 20, BufferedImage.TYPE_BYTE_GRAY);
+
+		WritableRaster r = img.getRaster();
+		byte[] equiv = new byte[pixelData.length];
+		for (int i = 0; i < equiv.length; i++) {
+			equiv[i] = new Double(pixelData[i]).byteValue();
+		}
+		r.setDataElements(0, 0, 20, 20, equiv);
+
+		// Resize and display the image
+		BufferedImage resized = new BufferedImage(280, 280, img.getType());
+		Graphics2D g = resized.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.drawImage(img, 0, 0, 280, 280, 0, 0, 20, 20, null);
+		g.dispose();
+		imageDisplay.onFrameUpdate(new SerializableBufferedImageAdapter(resized), 1000l);
+
+	}
 }

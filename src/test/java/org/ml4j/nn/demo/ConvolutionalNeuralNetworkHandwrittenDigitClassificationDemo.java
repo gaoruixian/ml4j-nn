@@ -67,7 +67,6 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 
 		FeedForwardLayer thirdLayer = new ConvolutionalLayer(6 * 10 * 10, 16 * 5 * 5, new SigmoidActivationFunction(),true,16,6);
 		
-		thirdLayer.setInputDropout(0.5);
 		
 		FeedForwardLayer forthLayer = new FeedForwardLayer(16 * 5 * 5,100, new SigmoidActivationFunction(),true);
 		
@@ -95,7 +94,8 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 		ImageDisplay<Long> display = new ImageDisplay<Long>(280, 280);
 
 		 System.out.println("Drawing visualisations of patterns sought by the hidden neurons");
-			for (int j = 0; j < 6 * 20 * 20; j++)
+	
+		 for (int j = 0; j < 6 * 20 * 20; j++)
 			{
 				double[] neuronActivationMaximisingFeatures = firstLayer.getOutputNeuronActivationMaximisingInputFeatures(j);
 				double[] intensities = new double[neuronActivationMaximisingFeatures.length];
@@ -109,7 +109,8 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 				Thread.sleep(10);
 			}
 		
-		
+		 
+
 		for (int i = 0; i < 100; i++) {
 
 			// For each element in our test set, obtain the predicted and actual
@@ -124,6 +125,7 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 
 			// Display the actual input image
 			MnistUtils.draw(testSetDataMatrix[i], display);
+
 			Thread.sleep(1000);
 
 		}

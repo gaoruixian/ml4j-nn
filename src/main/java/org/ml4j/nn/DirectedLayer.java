@@ -37,14 +37,8 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	protected int inputNeuronCount;
 	protected int outputNeuronCount;
 	
-	protected double inputDropout = 1;
-	
-	
-	
-	
-	public void setInputDropout(double inputDropout) {
-		this.inputDropout = inputDropout;
-	}
+	protected final double inputDropout;
+
 
 	protected DifferentiableActivationFunction activationFunction;
 
@@ -59,7 +53,7 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	 * @param biasUnit Whether this layer contains an additional inputs bias unit, as well as the input neurons specified by inputNeuronCount
 	 * @param retrainable Whether this layer can be (re)trained further.
 	 */
-	public DirectedLayer(int inputNeuronCount,int outputNeuronCount,DifferentiableActivationFunction activationFunction,boolean biasUnit,boolean retrainable)
+	public DirectedLayer(int inputNeuronCount,int outputNeuronCount,DifferentiableActivationFunction activationFunction,boolean biasUnit,boolean retrainable,double inputDropout)
 	{
 		super(retrainable);
 		if (activationFunction == null) throw new IllegalArgumentException("Activation function passed to layer cannot be null");
@@ -67,6 +61,7 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 		this.outputNeuronCount = outputNeuronCount;
 		this.activationFunction = activationFunction;
 		this.hasBiasUnit = biasUnit;
+		this.inputDropout  = inputDropout;
 	}
 	
 	/**

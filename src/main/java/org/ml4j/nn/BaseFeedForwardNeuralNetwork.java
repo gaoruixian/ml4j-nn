@@ -123,6 +123,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 
 		// Setup empty delta vector, and outer most deltas
 		Vector<DoubleMatrix> deltasV = new Vector<DoubleMatrix>();
+				
 		DoubleMatrix deltas = forwardPropatation.getOutputs().sub(desiredOutputs).transpose();
 
 		// Iterate thrrough activations in reverse order
