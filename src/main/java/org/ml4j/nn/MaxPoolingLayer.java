@@ -98,10 +98,8 @@ public class MaxPoolingLayer extends FeedForwardLayer {
 			throw new IllegalArgumentException("Incorrect dimensions configuration of average pooling layer");
 		}
 		
-		double scalingFactor = 1d / (scale * scale);
-
 		DoubleMatrix initialThetas = DoubleMatrix.ones(outputNeuronCount,
-				inputNeuronCount).mul(scalingFactor);
+				inputNeuronCount);
 
 		return initialThetas;
 	}

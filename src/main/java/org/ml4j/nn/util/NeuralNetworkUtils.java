@@ -13,7 +13,7 @@ public class NeuralNetworkUtils {
 	 * matrix (possibly generated from reshapeToVector) and organizes them into
 	 * a List (in this case Vector) of weight matrices based on given topology.
 	 */
-	public static Vector<DoubleMatrix> reshapeToList(DoubleMatrix x, int[] topology) {
+	public static Vector<DoubleMatrix> reshapeToList(DoubleMatrix x, int[] topology,boolean[] biasUnits) {
 		Vector<DoubleMatrix> result = new Vector<DoubleMatrix>();
 		int layers = topology.length;
 
@@ -21,7 +21,7 @@ public class NeuralNetworkUtils {
 		int offset = 0;
 		for (int i = 0; i < layers - 1; i++) {
 			rows = topology[i + 1];
-			cols = topology[i] + 1;
+			cols = topology[i] + (biasUnits[i] ? 1 : 0);
 			DoubleMatrix Theta = new DoubleMatrix(rows, cols);
 			for (int j = 0; j < cols; j++) {
 				Theta.putColumn(j, x.getRowRange(offset, offset + rows, 0));

@@ -357,7 +357,12 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 
 	public void updateThetasForAllLayers(DoubleMatrix thetas, boolean permitFutherRetrains) {
 
-		updateThetas(NeuralNetworkUtils.reshapeToList(thetas, topology), permitFutherRetrains);
+		boolean[] biasUnits = new boolean[getNumberOfLayers()];
+		for (int i =0; i < getNumberOfLayers(); i++)
+		{
+			biasUnits[i] = getLayers().get(0).hasBiasUnit;
+		}
+		updateThetas(NeuralNetworkUtils.reshapeToList(thetas, topology,biasUnits), permitFutherRetrains);
 	}
 
 	
