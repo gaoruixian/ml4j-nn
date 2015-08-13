@@ -1,6 +1,7 @@
 package org.ml4j.nn.optimisation;
 
 import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrices;
 
 public class CostFunctionMinimiser {
 
@@ -9,7 +10,7 @@ public class CostFunctionMinimiser {
 	 * https://github.com/thomasjungblut/ A few minor changes were made to make
 	 * the function compatible with jblas library.
 	 */
-	public static DoubleMatrix fmincg(MinimisableCostAndGradientFunction f, DoubleMatrix pInput, int max_iter,
+	public static DoubleMatrices<DoubleMatrix>  fmincg(MinimisableCostAndGradientFunction f, DoubleMatrices<DoubleMatrix> pInput, int max_iter,
 			boolean verbose) {
 
 		/*
@@ -80,17 +81,17 @@ public class CostFunctionMinimiser {
 		final int MAX = 30; // max 20 function evaluations per line
 		// search
 		final int RATIO = 100; // maximum allowed slope ratio
-		DoubleMatrix input = pInput;
+		DoubleMatrices<DoubleMatrix> input = pInput;
 		int M = 0;
 		int i = 0; // zero the run length counter
 		int red = 1; // starting point
 		int ls_failed = 0; // no previous line search has failed
 		// get function value and gradient
-		final Tuple<Double, DoubleMatrix> evaluateCost = f.evaluateCost(input);
+		final Tuple<Double, DoubleMatrices<DoubleMatrix>> evaluateCost = f.evaluateCost(input);
 		double f1 = evaluateCost.getFirst();
-		DoubleMatrix df1 = evaluateCost.getSecond();
+		DoubleMatrices<DoubleMatrix> df1 = evaluateCost.getSecond();
 		i = i + (max_iter < 0 ? 1 : 0);
-		DoubleMatrix s = df1.mul(-1.0d); // search direction is
+		DoubleMatrices<DoubleMatrix> s = df1.mul(-1.0d); // search direction is
 		// steepest
 
 		double d1 = s.mul(-1.0d).dot(s); // this is the slope
@@ -99,14 +100,14 @@ public class CostFunctionMinimiser {
 		while (i < Math.abs(max_iter)) {
 			i = i + (max_iter > 0 ? 1 : 0);// count iterations?!
 			// make a copy of current values
-			DoubleMatrix X0 = new DoubleMatrix().copy(input);
+			DoubleMatrices<DoubleMatrix> X0 = f.getDoubleMatricesFactory().copy(input);
 			double f0 = f1;
-			DoubleMatrix df0 = new DoubleMatrix().copy(df1);
+			DoubleMatrices<DoubleMatrix> df0 = f.getDoubleMatricesFactory().copy(df1);
 			// begin line search
 			input = input.add(s.mul(z1));
-			final Tuple<Double, DoubleMatrix> evaluateCost2 = f.evaluateCost(input);
+			final Tuple<Double, DoubleMatrices<DoubleMatrix> > evaluateCost2 = f.evaluateCost(input);
 			double f2 = evaluateCost2.getFirst();
-			DoubleMatrix df2 = evaluateCost2.getSecond();
+			DoubleMatrices<DoubleMatrix>  df2 = evaluateCost2.getSecond();
 
 			i = i + (max_iter < 0 ? 1 : 0); // count epochs?!
 			double d2 = df2.dot(s);
@@ -146,7 +147,7 @@ public class CostFunctionMinimiser {
 					z2 = Math.max(Math.min(z2, INT * z3), (1 - INT) * z3);
 					z1 = z1 + z2; // update the step
 					input = input.add(s.mul(z2));
-					final Tuple<Double, DoubleMatrix> evaluateCost3 = f.evaluateCost(input);
+					final Tuple<Double, DoubleMatrices<DoubleMatrix> > evaluateCost3 = f.evaluateCost(input);
 					f2 = evaluateCost3.getFirst();
 					df2 = evaluateCost3.getSecond();
 					M = M - 1;
@@ -193,7 +194,7 @@ public class CostFunctionMinimiser {
 				z1 = z1 + z2;
 				// update current estimates
 				input = input.add(s.mul(z2));
-				final Tuple<Double, DoubleMatrix> evaluateCost3 = f.evaluateCost(input);
+				final Tuple<Double, DoubleMatrices<DoubleMatrix> > evaluateCost3 = f.evaluateCost(input);
 				f2 = evaluateCost3.getFirst();
 				df2 = evaluateCost3.getSecond();
 				M = M - 1;
@@ -201,7 +202,7 @@ public class CostFunctionMinimiser {
 				d2 = df2.dot(s);
 			}// end of line search
 
-			DoubleMatrix tmp = null;
+			DoubleMatrices<DoubleMatrix>  tmp = null;
 
 			if (success == 1) { // if line search succeeded
 				f1 = f2;

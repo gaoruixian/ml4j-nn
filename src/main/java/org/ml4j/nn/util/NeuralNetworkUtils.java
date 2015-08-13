@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.jblas.DoubleMatrix;
-import org.jblas.MatrixFunctions;
+import org.ml4j.jblas.MatrixFunctions;
 
 public class NeuralNetworkUtils {
 
@@ -99,6 +99,17 @@ public class NeuralNetworkUtils {
 		result = MatrixFunctions.powi(result, -1);
 		return result;
 	}
+	
+	/*
+	public static org.ml4j.jblas.DoubleMatrix sigmoid(org.ml4j.jblas.DoubleMatrix x) {
+		DoubleMatrix result = new DoubleMatrix();
+		result = x.matrix;
+		result = MatrixFunctions.expi(result.mul(-1));
+		result = result.add(1);
+		result = MatrixFunctions.powi(result, -1);
+		return new org.ml4j.jblas.DoubleMatrix(result);
+	}
+	*/
 
 	/**
 	 * Returns a matrix that has the first derivative of the sigmoid function

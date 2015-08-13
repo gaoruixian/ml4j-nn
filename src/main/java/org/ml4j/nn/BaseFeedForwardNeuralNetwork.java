@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Vector;
 
 import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrices;
+import org.ml4j.DoubleMatricesFactory;
+import org.ml4j.jblas.FlattenedDoubleMatricesFactory;
 import org.ml4j.nn.costfunctions.CostFunction;
 import org.ml4j.nn.optimisation.CostFunctionMinimiser;
 import org.ml4j.nn.optimisation.MinimisableCostAndGradientFunction;
@@ -42,7 +45,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int[] topology;
+	protected int[] topology;
 
 	public BaseFeedForwardNeuralNetwork(L[] layers) {
 		super(layers);
@@ -191,7 +194,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 
 		// This clones the NeuralNetwork, minimises the thetas, and returns
 		// optimal thetas
-		DoubleMatrix newThetas = getMinimisingThetasForRetrainableLayers(inputs, desiredOutputs,
+		DoubleMatrices<DoubleMatrix> newThetas = getMinimisingThetasForRetrainableLayers(inputs, desiredOutputs,
 				getClonedRetrainableThetas(), lambdas, costFunction, max_iter);
 		updateThetasForRetrainableLayers(newThetas, false);
 	}
@@ -216,14 +219,18 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		return layers.get(0);
 	}
 
-	public Tuple<Double, DoubleMatrix> calculateCostAndGradientsForRetrainableLayers(DoubleMatrix X, DoubleMatrix Y,
+
+	
+	public Tuple<Double, DoubleMatrices<DoubleMatrix>> calculateCostAndGradientsForRetrainableLayers(DoubleMatrix X, DoubleMatrix Y,
 			double[] lambda, CostFunction costFunction) {
 
 		// ----------------|START FORWARD PROP AND FIND COST |-------------
-
 		
+	
 		
 		ForwardPropagation forwardPropagation = forwardPropagate(X,true);
+
+
 
 		BackPropagation backPropagation = backPropagate(forwardPropagation, Y, lambda);
 
@@ -234,31 +241,45 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 
 		double J = forwardPropagation.getCostWithRetrainableLayerRegularisation(Y, lambda, costFunction);
 
-		// Get the gradients from back prop
+	
 		List<NeuralNetworkLayerErrorGradient> layerGradients = backPropagation.getGradientsForRetrainableLayers();
 
+	
 		// Convert to deired format
 		Vector<DoubleMatrix> gradList = new Vector<DoubleMatrix>();
 
+		
 		for (NeuralNetworkLayerErrorGradient grad : layerGradients) {
-			gradList.add(grad.getErrorGradient());
-
+			gradList.add(grad.getErrorGradient());	
 		}
-		DoubleMatrix gradients = new DoubleMatrix().copy(NeuralNetworkUtils.reshapeToVector(gradList));
+		
+		DoubleMatrices<DoubleMatrix> gradients = createDoubleMatricesFactory().create(gradList);
 
-		return new Tuple<Double, DoubleMatrix>(new Double(J), gradients);
+		
+		return new Tuple<Double, DoubleMatrices<DoubleMatrix>>(new Double(J), gradients);
+	}
+	
+	protected DoubleMatricesFactory<DoubleMatrix> createDoubleMatricesFactory()
+	{
+		return new FlattenedDoubleMatricesFactory(getRetrainableTopologies());
 	}
 
-	private DoubleMatrix getMinimisingThetasForRetrainableLayers(DoubleMatrix inputs, DoubleMatrix desiredOutputs,
+	
+	private DoubleMatrices<DoubleMatrix> getMinimisingThetasForRetrainableLayers(DoubleMatrix inputs, DoubleMatrix desiredOutputs,
 			Vector<DoubleMatrix> initialRetrainableThetas, double[] retrainableLambdas, CostFunction costFunction,
 			int max_iter) {
 
 		// Duplicate neural network
 		N duplicateNeuralNetwork = dup(false);
+		
 		MinimisableCostAndGradientFunction minimisableCostFunction = new NeuralNetworkUpdatingCostFunction(inputs,
-				desiredOutputs, topology, retrainableLambdas, duplicateNeuralNetwork, costFunction);
+				desiredOutputs, getRetrainableTopologies(), retrainableLambdas, duplicateNeuralNetwork, costFunction,createDoubleMatricesFactory());
 
-		DoubleMatrix pInput = NeuralNetworkUtils.reshapeToVector(initialRetrainableThetas);
+		DoubleMatrices<DoubleMatrix> pInput = createDoubleMatricesFactory().create(initialRetrainableThetas);
+
+		//DoubleMatrices<DoubleMatrix> pInput = new SimpleDoubleMatrices(initialRetrainableThetas);
+		
+		//DoubleMatrix pInput = NeuralNetworkUtils.reshapeToVector(initialRetrainableThetas);
 		return CostFunctionMinimiser.fmincg(minimisableCostFunction, pInput, max_iter, true);
 	}
 	
@@ -314,19 +335,21 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		}
 	}
 
-	public void updateThetasForRetrainableLayers(Vector<DoubleMatrix> retrainableThetas, boolean permitFurtherRetrains) {
+	public void updateThetasForRetrainableLayers(DoubleMatrices<DoubleMatrix> retrainableThetas, boolean permitFurtherRetrains) {
 
 		int i = 0;
 		int layerIndex = 0;
+		DoubleMatrix[] matrices = retrainableThetas.getMatrices();
 		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable()) {
-				layer.updateThetas(retrainableThetas.get(i), layerIndex, permitFurtherRetrains);
+				layer.updateThetas(matrices[i], layerIndex, permitFurtherRetrains);
 				i++;
 			}
 			layerIndex++;
 
 		}
 	}
+	/*
 
 	public void updateThetasForRetrainableLayers(DoubleMatrix retrainableThetas, boolean permitFutherRetrains) {
 
@@ -334,6 +357,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 
 		updateThetasForRetrainableLayers(ts, permitFutherRetrains);
 	}
+	*/
 
 	protected int[][] getRetrainableTopologies() {
 		int count = 0;

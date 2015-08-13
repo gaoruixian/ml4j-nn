@@ -73,7 +73,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		DoubleMatrix layerInputs= new DoubleMatrix(layerInputsArrays);
 		if (hasBiasUnit())
 		{
-			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
+			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.getRows(),1), layerInputs);
 		}
 		return forwardPropagate(layerInputs).getOutputActivations();
 	}
@@ -94,7 +94,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	{
 		if (hasBiasUnit())
 		{
-			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
+			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.getRows(),1), layerInputs);
 		}
 		return forwardPropagate(layerInputs).getOutputActivations();
 	}

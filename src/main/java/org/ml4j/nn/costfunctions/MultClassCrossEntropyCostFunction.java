@@ -21,7 +21,7 @@ public class MultClassCrossEntropyCostFunction implements CostFunction {
 
 	private DoubleMatrix limitLog(DoubleMatrix m) {
 		DoubleMatrix x = m.dup();
-		for (int i = 0; i < x.length; i++)
+		for (int i = 0; i < x.getLength(); i++)
 			x.put(i, (double) Math.log(limit(x.get(i))));
 		return x;
 	}

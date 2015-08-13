@@ -77,7 +77,7 @@ public class AutoEncoderHandwrittenDigitFeatureExtractionDemo {
 		for (int j = 0; j < activations.getColumns(); j++)
 		{
 			DoubleMatrix featureActivations = activations.getColumn(j);
-			double averageFeatureActivation = featureActivations.sum() / activations.rows ;
+			double averageFeatureActivation = featureActivations.sum() / activations.getRows() ;
 			totalFeatureActivation = totalFeatureActivation + averageFeatureActivation;
 			System.out.println("Average activation of hidden neuron for feature:" + j + " on training data is:" + averageFeatureActivation);
 		}

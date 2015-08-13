@@ -32,15 +32,24 @@
 <version>1.9.5</version>
 	<scope>test</scope>
 	</dependency>
+
 				<dependency>
   <groupId>org.jblas</groupId>
   <artifactId>jblas</artifactId>
   <version>1.2.3</version>
 </dependency>
+
 	<dependency>
 	<groupId>org.ml4j</groupId>
 <artifactId>ml4j-core</artifactId>
 <version>1.0.0-SNAPSHOT</version>
+<exclusions>
+<exclusion>
+  <groupId>org.jblas</groupId>
+  <artifactId>jblas</artifactId>
+</exclusion>
+
+</exclusions>
 	</dependency>
 		<dependency>
 			<groupId>junit</groupId>

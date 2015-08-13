@@ -66,7 +66,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 		DoubleMatrix layerInputs= new DoubleMatrix(layerInputsArrays);
 		if (hasBiasUnit())
 		{
-			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
+			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.getRows(),1), layerInputs);
 		}
 		return forwardPropagate(layerInputs).getOutputActivations();
 	}
@@ -87,7 +87,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	{
 		if (hasBiasUnit())
 		{
-			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.rows,1), layerInputs);
+			layerInputs = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(layerInputs.getRows(),1), layerInputs);
 		}
 		return forwardPropagate(layerInputs).getOutputActivations();
 	}
@@ -219,7 +219,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 		{
 			throw new IllegalArgumentException("Neural network layer index must be zero or above");
 		}
-		
+				
 		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0 ))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0 )));
 		this.thetas = thetas;
 		if (!permitFurtherRetrains) {
