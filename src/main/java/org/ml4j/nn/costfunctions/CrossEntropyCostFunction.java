@@ -1,7 +1,7 @@
 package org.ml4j.nn.costfunctions;
 
-import org.jblas.DoubleMatrix;
-import org.ml4j.jblas.MatrixFunctions;
+import org.ml4j.cuda.DoubleMatrix;
+import org.ml4j.cuda.MatrixFunctions;
 
 public class CrossEntropyCostFunction implements CostFunction {
 

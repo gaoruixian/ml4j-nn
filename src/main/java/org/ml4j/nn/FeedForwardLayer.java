@@ -17,7 +17,7 @@ package org.ml4j.nn;
 
 import java.io.Serializable;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 
 /**
@@ -115,7 +115,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		
 		if (layerInputsWithIntercept.getColumns() != getInputNeuronCount() + (hasBiasUnit() ? 1 : 0))
 		{
-			throw new IllegalArgumentException("Layer forward propogation requires inputs matrix with intercepts with number of columns = " + (getInputNeuronCount() + 1));
+			throw new IllegalArgumentException("Layer forward propogation requires inputs matrix with intercepts with number of columns = " + (getInputNeuronCount() + + (hasBiasUnit() ? 1 : 0)));
 		}
 		
 		DoubleMatrix dropoutMask = this.createDropoutMask(layerInputsWithIntercept, training);

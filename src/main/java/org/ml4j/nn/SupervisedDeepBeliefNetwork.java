@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithm;
 import org.ml4j.nn.algorithms.RestrictedBoltzmannMachineAlgorithmTrainingContext;

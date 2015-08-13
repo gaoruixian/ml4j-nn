@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 import org.ml4j.nn.costfunctions.CostFunction;
 import org.ml4j.nn.sequences.SupervisedSequence;
@@ -112,7 +112,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 			// Get the sequence element
 			DoubleMatrix sequenceInputs = sequence.getInputElement(h);
-
+			
 			// Propagate sequence element through the entire original recurrent network
 			ForwardPropagation sequenceProps = forwardPropagate(sequenceInputs,true);
 			

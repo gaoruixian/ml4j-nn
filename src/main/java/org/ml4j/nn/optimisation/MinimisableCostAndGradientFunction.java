@@ -1,8 +1,8 @@
 package org.ml4j.nn.optimisation;
 
-import org.jblas.DoubleMatrix;
 import org.ml4j.DoubleMatrices;
 import org.ml4j.DoubleMatricesFactory;
+import org.ml4j.cuda.DoubleMatrix;
 
 public interface MinimisableCostAndGradientFunction {
 

@@ -17,7 +17,7 @@ package org.ml4j.nn;
 
 import java.util.List;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.costfunctions.CostFunction;
 /**
  * Encapsulates the artifacts of a forward propagation through an entire Neural Network

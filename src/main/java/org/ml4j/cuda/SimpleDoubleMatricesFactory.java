@@ -1,8 +1,7 @@
-package org.ml4j.jblas;
+package org.ml4j.cuda;
 
 import java.util.Vector;
 
-import org.jblas.DoubleMatrix;
 import org.ml4j.DoubleMatrices;
 import org.ml4j.DoubleMatricesFactory;
 

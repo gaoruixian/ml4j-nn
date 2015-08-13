@@ -5,9 +5,9 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.hamcrest.CoreMatchers;
-import org.jblas.DoubleMatrix;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 import org.mockito.runners.MockitoJUnitRunner;

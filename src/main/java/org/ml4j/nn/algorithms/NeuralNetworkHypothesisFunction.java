@@ -1,7 +1,7 @@
 package org.ml4j.nn.algorithms;
 
-import org.jblas.DoubleMatrix;
 import org.ml4j.algorithms.HypothesisFunction;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.FeedForwardNeuralNetwork;
 
 public class NeuralNetworkHypothesisFunction implements HypothesisFunction<double[], double[]> {
@@ -25,6 +25,7 @@ public class NeuralNetworkHypothesisFunction implements HypothesisFunction<doubl
 	public double[] predict(double[] arg0) {
 
 		DoubleMatrix inputs = new DoubleMatrix(arg0).transpose();
+			
 		double[] predictions = neuralNetwork.forwardPropagate(inputs).getOutputs().toArray();
 
 		return predictions;

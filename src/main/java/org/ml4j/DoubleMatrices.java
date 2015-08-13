@@ -2,6 +2,7 @@ package org.ml4j;
 
 
 
+
 public interface DoubleMatrices<M> {
 
 	DoubleMatrices<M> add(DoubleMatrices<M> matrices);
@@ -22,4 +23,5 @@ public interface DoubleMatrices<M> {
 	DoubleMatrices<M> copy(DoubleMatrices<M> matrices);
 
 	DoubleMatrices<M> addi(DoubleMatrices<M> matrices);
+
 }

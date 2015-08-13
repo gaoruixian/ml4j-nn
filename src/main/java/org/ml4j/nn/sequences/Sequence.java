@@ -15,7 +15,7 @@
  */
 package org.ml4j.nn.sequences;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 
 /**
  * Sequential Data for use with Recurrent Neural Networks

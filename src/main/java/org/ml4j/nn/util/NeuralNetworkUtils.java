@@ -3,8 +3,8 @@ package org.ml4j.nn.util;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.jblas.DoubleMatrix;
-import org.ml4j.jblas.MatrixFunctions;
+import org.ml4j.cuda.DoubleMatrix;
+import org.ml4j.cuda.MatrixFunctions;
 
 public class NeuralNetworkUtils {
 
@@ -94,9 +94,9 @@ public class NeuralNetworkUtils {
 	public static DoubleMatrix sigmoid(DoubleMatrix x) {
 		DoubleMatrix result = new DoubleMatrix();
 		result = x;
-		result = MatrixFunctions.expi(result.mul(-1));
+		result = org.ml4j.cuda.MatrixFunctions.expi(result.mul(-1));
 		result = result.add(1);
-		result = MatrixFunctions.powi(result, -1);
+		result = org.ml4j.cuda.MatrixFunctions.powi(result, -1);
 		return result;
 	}
 	

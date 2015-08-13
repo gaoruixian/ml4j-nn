@@ -17,7 +17,7 @@ package org.ml4j.nn;
 
 import java.io.Serializable;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 
 /**

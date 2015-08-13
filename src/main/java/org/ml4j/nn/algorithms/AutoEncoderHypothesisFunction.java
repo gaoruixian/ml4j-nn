@@ -1,7 +1,7 @@
 package org.ml4j.nn.algorithms;
 
-import org.jblas.DoubleMatrix;
 import org.ml4j.algorithms.HypothesisFunction;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.AutoEncoder;
 
 public class AutoEncoderHypothesisFunction implements HypothesisFunction<double[], double[]> {

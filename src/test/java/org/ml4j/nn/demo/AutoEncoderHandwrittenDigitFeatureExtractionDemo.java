@@ -18,7 +18,7 @@ package org.ml4j.nn.demo;
 
 import java.io.IOException;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.imaging.targets.ImageDisplay;
 import org.ml4j.nn.AutoEncoder;
 import org.ml4j.nn.FeedForwardLayer;

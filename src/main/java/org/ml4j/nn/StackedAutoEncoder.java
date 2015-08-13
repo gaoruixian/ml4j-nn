@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 import org.ml4j.nn.algorithms.AutoEncoderAlgorithm;
 import org.ml4j.nn.algorithms.AutoEncoderHypothesisFunction;
 import org.ml4j.nn.algorithms.NeuralNetworkAlgorithmTrainingContext;

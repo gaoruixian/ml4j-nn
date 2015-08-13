@@ -1,6 +1,5 @@
-package org.ml4j.jblas;
+package org.ml4j.cuda;
 
-import org.jblas.DoubleMatrix;
 
 
 public class MatrixFunctions {

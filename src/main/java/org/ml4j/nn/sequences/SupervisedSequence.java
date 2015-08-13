@@ -18,7 +18,7 @@ package org.ml4j.nn.sequences;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 
 /**
  * Maps an input sequence to an output sequence
@@ -39,7 +39,8 @@ public class SupervisedSequence  {
 	 */
 	public SupervisedSequence(Sequence sequence)
 	{
-		this.inputSequence = new DoubleMatrix(generateUnsupervisedInputSequence(sequence.getSequenceData().toArray2()));
+		double[][] s = generateUnsupervisedInputSequence(sequence.getSequenceData().toArray2());
+		this.inputSequence = new DoubleMatrix(s);
 		this.outputSequence = new DoubleMatrix(generateUnsupervisedOutputSequence(sequence.getSequenceData().toArray2()));
 	}
 	

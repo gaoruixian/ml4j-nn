@@ -18,7 +18,7 @@ package org.ml4j.nn;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.cuda.DoubleMatrix;
 
 /**
  * Base class for directed NeuralNetworks. Information propagates through the Network
