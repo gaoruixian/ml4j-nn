@@ -23,8 +23,8 @@ import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 /**
  * A DirectedLayer which composes input neurons and output neurons into a directed graph with cycles
  * 
- * Please note that the DoubleMatrix containing the weights is actually transposed from 
- * the shape that may be naturally assumed  - ie. w(i,j) = thetas.get(j,i);
+ * Please note that the DoubleMatrix containing the weights is now
+ * the shape that may be naturally assumed  - ie. w(i,j) = thetas.get(i,j);
  * 
  * @author Michael Lavelle
  *
@@ -120,7 +120,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 		
 		DoubleMatrix ins = DoubleMatrix.concatHorizontally(layerInputsWithIntercept,contextActivations);
 		
-		DoubleMatrix Z = ins.mmul(thetas.transpose());
+		DoubleMatrix Z = ins.mmul(thetas);
 
 		DoubleMatrix acts = activationFunction.activate(Z);
 		NeuralNetworkLayerActivation<RecurrentLayer> activation = new NeuralNetworkLayerActivation<RecurrentLayer>(this, ins, Z, acts);
@@ -141,8 +141,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	 * 
 	 * @return A duplicated matrix of weights mapping input neurons to output neurons.
 	 * Please note that the weight connecting input/context neuron i to output neuron j,
-	 * w(i,j) = getClonedThetas().get(j,i) - ie the transpose of the shape that
-	 * may be assumed.
+	 * w(i,j) = getClonedThetas().get(i,j) 
 	 * 
 	 */
 	public DoubleMatrix getClonedThetas() {
@@ -186,7 +185,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	public RecurrentLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable,double inputDropout) {
 		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,retrainable,inputDropout);
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (outputNeuronCount + inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0)));
+		if (thetas.getColumns() != outputNeuronCount || thetas.getRows() != (outputNeuronCount + inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0)));
 		this.thetas = thetas;
 
 	}
@@ -194,7 +193,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	public RecurrentLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable) {
 		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,retrainable,1);
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (outputNeuronCount + inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0)));
+		if (thetas.getColumns() != outputNeuronCount || thetas.getRows() != (outputNeuronCount + inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0)));
 		this.thetas = thetas;
 
 	}
@@ -203,8 +202,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	 * Update the weights of this layer
 	 * 
 	 * @param thetas The weights matrix. Please note that the weight connecting input/context neuron i to output neuron j,
-	 * w(i,j) = getClonedThetas().get(j,i) - ie the transpose of the shape that
-	 * may be assumed.
+	 * w(i,j) = getClonedThetas().get(i,j) -
 	 * @param layerIndex The index of the layer in the containing Neural Network
 	 * 
 	 * @param permitFurtherRetrains Whether to permit further retrains (weight updates) after updating the weights.
@@ -220,7 +218,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 			throw new IllegalArgumentException("Neural network layer index must be zero or above");
 		}
 				
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0 ))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0 )));
+		if (thetas.getColumns() != outputNeuronCount || thetas.getRows() != (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0 ))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (outputNeuronCount + inputNeuronCount + (hasBiasUnit ? 1 : 0 )));
 		this.thetas = thetas;
 		if (!permitFurtherRetrains) {
 			this.setRetrainable(false);
@@ -236,7 +234,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	 * @return An initial set of weights
 	 */
 	private DoubleMatrix generateInitialThetas(int r, int c) {
-		DoubleMatrix initial = DoubleMatrix.randn(r, c).mul(0.01);
+		DoubleMatrix initial = DoubleMatrix.randn(c,r).mul(0.01);
 		return initial;
 	}
 	
@@ -248,14 +246,14 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	 * 
 	 */
 	public double[] getOutputNeuronActivationMaximisingInputFeatures(int outputNeuronIndex) {
-		int jCount = thetas.getColumns() - 1;
+		int jCount = thetas.getRows() - (hasBiasUnit ? 1 : 0);
 		double[] maximisingInputFeatures = new double[jCount];
 		for (int j = 0; j < jCount; j++) {
-			double wij = getWij(outputNeuronIndex, j);
+			double wij = getWij(j,outputNeuronIndex );
 			double sum = 0;
 
 			for (int j2 = 0; j2 < jCount; j2++) {
-				sum = sum + Math.pow(getWij(outputNeuronIndex, j2), 2);
+				sum = sum + Math.pow(getWij( j2,outputNeuronIndex), 2);
 			}
 			sum = Math.sqrt(sum);
 			maximisingInputFeatures[j] = wij / sum;
@@ -265,8 +263,8 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	
 	private double getWij(int i, int j) {
 		DoubleMatrix weights = thetas;
-		int jInd = j + 1;
-		return weights.get(i, jInd);
+		int iInd = i + (hasBiasUnit ? 1 : 0);
+		return weights.get(iInd, j);
 	}
 	
 

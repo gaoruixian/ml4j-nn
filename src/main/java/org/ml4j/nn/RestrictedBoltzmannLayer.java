@@ -50,13 +50,13 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 	
 	public FeedForwardLayer createVisibleToHiddenFeedForwardLayer()
 	{
-		return new FeedForwardLayer(this.getVisibleNeuronCount(), this.getHiddenNeuronCount(), NeuralNetworkUtils.removeInterceptColumn(getClonedThetas()).transpose(),(DifferentiableActivationFunction) this.hiddenActivationFunction,true,true);
+		return new FeedForwardLayer(this.getVisibleNeuronCount(), this.getHiddenNeuronCount(), NeuralNetworkUtils.removeInterceptColumn(getClonedThetas()),(DifferentiableActivationFunction) this.hiddenActivationFunction,true,true);
 	}
 	
 	public FeedForwardLayer createHiddenToVisibleFeedForwardLayer()
 	{
-		DoubleMatrix secondThetas = NeuralNetworkUtils.removeInterceptRow(getClonedThetas());
-
+		DoubleMatrix secondThetas = NeuralNetworkUtils.removeInterceptRow(getClonedThetas()).transpose();
+		
 		return new FeedForwardLayer(this.getHiddenNeuronCount(), this.getVisibleNeuronCount(),secondThetas, (DifferentiableActivationFunction) this.visibleActivationFunction,true,true);
 	}
 

@@ -64,22 +64,24 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 		
 		int labelsLength = inputsLength - unsupervisedRbmStack.getFinalLayer().getHiddenNeuronCount() - 1;
 
-		int columns = inputsLength - labelsLength;
-		int[] cols = new int[columns];
-		cols[0] = 0;
-		for (int i = 1; i < columns; i++)
+		int rowCount = inputsLength - labelsLength;
+		int[] rows = new int[rowCount];
+		rows[0] = 0;
+		for (int i = 1; i < rowCount; i++)
 		{
-			cols[i] = i + labelsLength;
+			rows[i] = i + labelsLength;
 		}
-		int[] cols2 = new int[labelsLength];
+		int[] rows2 = new int[labelsLength];
 		for (int i = 0; i < labelsLength; i++)
 		{
-			cols2[i] = i+1;
+			rows2[i] = i+1;
 		}
 		
-		DoubleMatrix thets1 =  finalLayer.getClonedThetas().transpose().getColumns(cols).transpose();
-		DoubleMatrix thets2 =  finalLayer.getClonedThetas().getRows(cols2);
-		FeedForwardLayer ff1 = new FeedForwardLayer(finalLayer.getVisibleNeuronCount() - labelsLength,finalLayer.getHiddenNeuronCount() + 1, thets1.transpose(),(DifferentiableActivationFunction) finalLayer.hiddenActivationFunction,true,true);
+		DoubleMatrix thets1 =  finalLayer.getClonedThetas().getRows(rows);
+		
+		DoubleMatrix thets2 =  finalLayer.getClonedThetas().getRows(rows2).transpose();
+		
+		FeedForwardLayer ff1 = new FeedForwardLayer(finalLayer.getVisibleNeuronCount() - labelsLength,finalLayer.getHiddenNeuronCount() + 1, thets1,(DifferentiableActivationFunction) finalLayer.hiddenActivationFunction,true,true);
 		FeedForwardLayer ff2 = new FeedForwardLayer(finalLayer.getHiddenNeuronCount() + 1,labelsLength,thets2,supervisedActivationFunction,false,true);
 		feedForwardLayers.add(ff1);
 		feedForwardLayers.add(ff2);

@@ -50,12 +50,12 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable()) {
 				if (layer instanceof RecurrentLayer) {
-					topologies[ind] = new int[] { layer.getOutputNeuronCount(),
-							layer.getOutputNeuronCount() + layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0) };
+					topologies[ind] = new int[] { 
+							layer.getOutputNeuronCount() + layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0),layer.getOutputNeuronCount() };
 
 				} else {
-					topologies[ind] = new int[] { layer.getOutputNeuronCount(),
-							layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0) };
+					topologies[ind] = new int[] { 
+							layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0),layer.getOutputNeuronCount() };
 				}
 				ind++;
 
@@ -120,7 +120,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 			
 			DoubleMatrix hinWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(1, 1),
 					DoubleMatrix.concatHorizontally(sequenceInputs, previousHiddenActivations));
-			DoubleMatrix hz = hinWithIntercept.mmul(timeUnfoldedNetwork.getLayers().get(h).getClonedThetas().transpose());
+			DoubleMatrix hz = hinWithIntercept.mmul(timeUnfoldedNetwork.getLayers().get(h).getClonedThetas());
 			DoubleMatrix hiddenActivations = sequenceProps.getActivations().get(0).getOutputActivations();
 			
 			
@@ -143,7 +143,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 				DoubleMatrix.concatHorizontally(DoubleMatrix.ones(1, 1), new DoubleMatrix(1, inputCountWithBias)),
 				previousHiddenActivations);
 
-		DoubleMatrix finalZ = finalIn.mmul(timeUnfoldedNetwork.getOuterLayer().getClonedThetas().transpose());
+		DoubleMatrix finalZ = finalIn.mmul(timeUnfoldedNetwork.getOuterLayer().getClonedThetas());
 		NeuralNetworkLayerActivation<?> finalActivation = new NeuralNetworkLayerActivation<DirectedLayer<?>>(
 				timeUnfoldedNetwork.getOuterLayer(), finalIn, finalZ, finalOut);
 
@@ -161,8 +161,8 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 			DoubleMatrix thetas1 = new DoubleMatrix(inputCountWithBias + hiddenCount, inputCountWithBias + hiddenCount);
 			DoubleMatrix t1 = initialRetrainableThetas.get(0);
-			for (int r1 = 0; r1 < t1.getRows(); r1++) {
-				for (int c1 = 0; c1 < t1.getColumns(); c1++) {
+			for (int c1 = 0; c1 < t1.getColumns(); c1++) {
+				for (int r1 = 0; r1 < t1.getRows(); r1++) {
 					thetas1.put(r1 + inputCountWithBias, c1, t1.get(r1, c1));
 				}
 			}
@@ -175,15 +175,15 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 		}
 
-		DoubleMatrix thetas2 = new DoubleMatrix(outputCount, inputCountWithBias + hiddenCount + 1);
+		DoubleMatrix thetas2 = new DoubleMatrix(inputCountWithBias + hiddenCount + 1,outputCount);
 		DoubleMatrix t2 = initialRetrainableThetas.get(1);
 
-		for (int r1 = 0; r1 < t2.getRows(); r1++) {
-			for (int c1 = 0; c1 < t2.getColumns(); c1++) {
-				if (c1 == 0) {
-					thetas2.put(r1, 0, t2.get(r1, 0));
+		for (int c1 = 0; c1 < t2.getColumns(); c1++) {
+			for (int r1 = 0; r1 < t2.getRows(); r1++) {
+				if (r1 == 0) {
+					thetas2.put(0,c1, t2.get(0,c1));
 				} else {
-					thetas2.put(r1, c1 + inputCountWithBias, t2.get(r1, c1));
+					thetas2.put(r1 + inputCountWithBias,c1, t2.get(r1, c1));
 				}
 			}
 		}
@@ -272,23 +272,23 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 
 
-		int[] inputHiddenGradientRowsForRecurrentHiddenUnits = new int[hiddenCount];
+		int[] inputHiddenGradientColumnsForRecurrentHiddenUnits = new int[hiddenCount];
 		for (int it = 0; it < hiddenCount; it++) {
-			inputHiddenGradientRowsForRecurrentHiddenUnits[it] = it + inputCountWithBias;
+			inputHiddenGradientColumnsForRecurrentHiddenUnits[it] = it + inputCountWithBias;
 		}
 			
-		int[] hiddenOutputGradientColumnsForRecurrentOutputUnits = new int[hiddenCount + 1];
-		hiddenOutputGradientColumnsForRecurrentOutputUnits[0] = 0;
+		int[] hiddenOutputGradientRowsForRecurrentOutputUnits = new int[hiddenCount + 1];
+		hiddenOutputGradientRowsForRecurrentOutputUnits[0] = 0;
 		for (int y = 1; y < hiddenCount + 1; y++) {
-			hiddenOutputGradientColumnsForRecurrentOutputUnits[y] = y + inputCountWithBias;
+			hiddenOutputGradientRowsForRecurrentOutputUnits[y] = y + inputCountWithBias;
 		}
 
 
-		DoubleMatrix recurrentInputHiddenGrad = averageInputHiddenGradient.getRows(inputHiddenGradientRowsForRecurrentHiddenUnits);
+		DoubleMatrix recurrentInputHiddenGrad = averageInputHiddenGradient.getColumns(inputHiddenGradientColumnsForRecurrentHiddenUnits);
 
 		
 
-		DoubleMatrix recurrentOuterGrad = outerGradient.getColumns(hiddenOutputGradientColumnsForRecurrentOutputUnits);
+		DoubleMatrix recurrentOuterGrad = outerGradient.getRows(hiddenOutputGradientRowsForRecurrentOutputUnits);
 
 		recurrentGradientMatrices.add(recurrentInputHiddenGrad);
 		recurrentGradientMatrices.add(recurrentOuterGrad);

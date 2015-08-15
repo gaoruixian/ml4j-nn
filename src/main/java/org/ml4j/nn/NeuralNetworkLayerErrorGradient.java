@@ -43,17 +43,28 @@ public class NeuralNetworkLayerErrorGradient {
 	}
 
 	public DoubleMatrix getDELTA() {
-		return delta.mmul(inputActivations);
+	//	System.out.println(delta.getRows() + ":" + delta.getColumns());
+		//System.out.println(inputActivations.getRows() + ":" + inputActivations.getColumns());
+
+		return delta.mmul(inputActivations).transpose();
 	}
 
 	public DoubleMatrix getErrorGradient() {
 		DoubleMatrix currentTheta = thetas;
-		DoubleMatrix modTheta = new DoubleMatrix().copy(currentTheta);
-		if (layer.hasBiasUnit)
+		
+		DoubleMatrix grad =  getDELTA().div(m);
+		
+		if (lambda != 0)
 		{
-		modTheta.putColumn(0, DoubleMatrix.zeros(currentTheta.getRows(), 1));
+			DoubleMatrix modTheta = new DoubleMatrix().copy(currentTheta);
+			if (layer.hasBiasUnit)
+			{
+			modTheta.putRow(0, DoubleMatrix.zeros( 1,currentTheta.getColumns()));
+			}
+			grad = grad.add(modTheta.mul(lambda / m));
 		}
-		DoubleMatrix grad =  getDELTA().div(m).add(modTheta.mul(lambda / m));
+		
+		
 	
 		grad.muli(thetasMask);
 		

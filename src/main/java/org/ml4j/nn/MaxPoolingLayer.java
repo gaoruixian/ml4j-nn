@@ -98,8 +98,8 @@ public class MaxPoolingLayer extends FeedForwardLayer {
 			throw new IllegalArgumentException("Incorrect dimensions configuration of average pooling layer");
 		}
 		
-		DoubleMatrix initialThetas = DoubleMatrix.ones(outputNeuronCount,
-				inputNeuronCount);
+		DoubleMatrix initialThetas = DoubleMatrix.ones(
+				inputNeuronCount,outputNeuronCount);
 
 		return initialThetas;
 	}
@@ -124,8 +124,8 @@ public class MaxPoolingLayer extends FeedForwardLayer {
 	public static DoubleMatrix createThetasMask(int depth,
 			int inputNeuronCount, int outputNeuronCount) {
 
-		DoubleMatrix thetasMask = new DoubleMatrix(outputNeuronCount,
-				inputNeuronCount);
+		DoubleMatrix thetasMask = new DoubleMatrix(
+				inputNeuronCount,outputNeuronCount);
 		
 		int outputDim = (int) Math.sqrt(outputNeuronCount / depth);
 		int inputDim = (int) Math.sqrt(inputNeuronCount / depth);
@@ -148,7 +148,7 @@ public class MaxPoolingLayer extends FeedForwardLayer {
 							int col = startInputCol + c;
 							int inputInd = grid * gridInputSize + row
 									* inputDim + col;
-							thetasMask.put(outputInd, inputInd, 1);
+							thetasMask.put( inputInd,outputInd, 1);
 
 						}
 					}

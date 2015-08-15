@@ -36,13 +36,13 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 
 	public double getRegularisationCost(int m, double lambda) {
 		DoubleMatrix currentTheta = thetas;
-		int[] rows = new int[currentTheta.getRows()];
-		int[] cols = new int[currentTheta.getColumns() - 1];
-		for (int j = 0; j < currentTheta.getRows(); j++) {
-			rows[j] = j;
+		int[] rows = new int[currentTheta.getRows() - 1];
+		int[] cols = new int[currentTheta.getColumns()];
+		for (int j = 0; j < currentTheta.getColumns(); j++) {
+			cols[j] = j;
 		}
-		for (int j = 1; j < currentTheta.getColumns(); j++) {
-			cols[j - 1] = j;
+		for (int j = 1; j < currentTheta.getRows(); j++) {
+			rows[j - 1] = j;
 		}
 		double ThetaReg = MatrixFunctions.pow(currentTheta.get(rows, cols), 2).sum();
 		return ((lambda) * ThetaReg) / (2 * m); // Add the non regularization
@@ -59,22 +59,30 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 		{
 			sigable = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(sigable.getRows()), sigable);
 		}
-		DoubleMatrix deltas = outerActivation.getThetas().transpose().mmul(outerDeltas).mul(outerActivation.getDropoutMask())
-				.mul(this.getLayer().getActivationFunction().activationGradient(sigable.transpose())).transpose();
-
-		int[] rows = new int[deltas.getRows()];
-		int[] cols = new int[deltas.getColumns() - 1];
-		for (int j = 0; j < deltas.getRows(); j++) {
-			rows[j] = j;
+		DoubleMatrix deltas = outerActivation.getThetas().mmul(outerDeltas);
+		
+		if (outerActivation.getLayer().inputDropout != 1)
+		{
+			deltas = deltas.mul(outerActivation.getDropoutMask());
 		}
-		for (int j = 1; j < deltas.getColumns(); j++) {
-			cols[j - 1] = j;
-		}
+		
+		
+		deltas = deltas.mul(this.getLayer().getActivationFunction().activationGradient(sigable.transpose()));
+	
+		
 		if (outerActivation.layer.hasBiasUnit)
 		{
-		deltas = deltas.get(rows, cols);
+			int[] cols = new int[deltas.getColumns()];
+			int[] rows = new int[deltas.getRows() - 1];
+			for (int j = 0; j < deltas.getColumns(); j++) {
+				cols[j] = j;
+			}
+			for (int j = 1; j < deltas.getRows(); j++) {
+				rows[j - 1] = j;
+			}
+			deltas = deltas.get(rows, cols);
 		}
-		return deltas.transpose();
+		return deltas;
 	}
 
 	public DoubleMatrix getZ() {

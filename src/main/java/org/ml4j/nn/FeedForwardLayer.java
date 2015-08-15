@@ -27,8 +27,8 @@ import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
  * 
  * The connection between input neuron i and output neuron j is represented by an input->output weight, w(i,j).
  * 
- * Please note that the DoubleMatrix containing the weights is actually transposed from 
- * the shape that may be naturally assumed  - ie. w(i,j) = thetas.get(j,i);
+ * Please note that the DoubleMatrix containing the weights is now 
+ * the shape that may be naturally assumed  - ie. w(i,j) = thetas.get(i,j);
  * 
  * @author Michael Lavelle
  *
@@ -115,12 +115,25 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		
 		if (layerInputsWithIntercept.getColumns() != getInputNeuronCount() + (hasBiasUnit() ? 1 : 0))
 		{
-			throw new IllegalArgumentException("Layer forward propogation requires inputs matrix with intercepts with number of columns = " + (getInputNeuronCount() + 1));
+			throw new IllegalArgumentException("Layer forward propogation requires inputs matrix with intercepts with number of rows = " + (getInputNeuronCount() + 1));
 		}
 		
 		DoubleMatrix dropoutMask = this.createDropoutMask(layerInputsWithIntercept, training);
-		DoubleMatrix layerInputsWithInterceptAndDropout = layerInputsWithIntercept.mul(dropoutMask);
-		DoubleMatrix Z = layerInputsWithInterceptAndDropout.mmul(thetas.transpose().mul(createDropoutScaling(training)));
+		DoubleMatrix layerInputsWithInterceptAndDropout = layerInputsWithIntercept;
+		
+		if (training && inputDropout != 1)
+		{
+			layerInputsWithInterceptAndDropout = layerInputsWithInterceptAndDropout.mul(dropoutMask);
+		}
+		
+		double dropoutScaling = createDropoutScaling(training);
+		DoubleMatrix scaledThetas = thetas;
+		if (dropoutScaling != 1)
+		{
+			scaledThetas = thetas.mul(dropoutScaling);
+		}
+		
+		DoubleMatrix Z = layerInputsWithInterceptAndDropout.mmul(scaledThetas);
 
 		DoubleMatrix acts = activationFunction.activate(Z);
 		NeuralNetworkLayerActivation<FeedForwardLayer> activation = new NeuralNetworkLayerActivation<FeedForwardLayer>(this, layerInputsWithInterceptAndDropout, Z, acts,thetasMask,dropoutMask);
@@ -141,8 +154,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	 * 
 	 * @return A duplicated matrix of weights mapping input neurons to output neurons.
 	 * Please note that the weight connecting input neuron i to output neuron j,
-	 * w(i,j) = getClonedThetas().get(j,i) - ie the transpose of the shape that
-	 * may be assumed.
+	 * w(i,j) = getClonedThetas().get(i,j)
 	 * 
 	 */
 	public DoubleMatrix getClonedThetas() {
@@ -215,7 +227,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 			DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable,double inputDropout) {
 		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,retrainable,inputDropout);
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + (hasBiasUnit ? 1 : 0)));
+		if (thetas.getColumns() != outputNeuronCount || thetas.getRows() != (inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + (inputNeuronCount + (hasBiasUnit ? 1 : 0) + ":" +  outputNeuronCount));
 		this.thetas = thetas;
 		this.thetasMask = thetasMask;
 		applyThetasMask();
@@ -227,7 +239,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 			DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable) {
 		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,retrainable,1);
 		if (thetas == null) throw new IllegalArgumentException("Thetas passed to layer cannot be null");
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + (hasBiasUnit ? 1 : 0)));
+		if (thetas.getRows() != outputNeuronCount || thetas.getRows() != (inputNeuronCount + (biasUnit ? 1 : 0))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " +  (inputNeuronCount + (hasBiasUnit ? 1 : 0) + ":" + outputNeuronCount));
 		this.thetas = thetas;
 		this.thetasMask = thetasMask;
 		applyThetasMask();
@@ -260,8 +272,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	 * Update the weights of this layer
 	 * 
 	 * @param thetas The weights matrix. Please note that the weight connecting input neuron i to output neuron j,
-	 * w(i,j) = getClonedThetas().get(j,i) - ie the transpose of the shape that
-	 * may be assumed.
+	 * w(i,j) = getClonedThetas().get(i,j)
 	 * @param layerIndex The index of the layer in the containing Neural Network
 	 * 
 	 * @param permitFurtherRetrains Whether to permit further retrains (weight updates) after updating the weights.
@@ -277,7 +288,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 			throw new IllegalArgumentException("Neural network layer index must be zero or above");
 		}
 		
-		if (thetas.getRows() != outputNeuronCount || thetas.getColumns() != (inputNeuronCount + (hasBiasUnit ? 1 : 0 ))) throw new IllegalArgumentException("Thetas matrix must be of dimensions " + outputNeuronCount +  ":" + (inputNeuronCount + (hasBiasUnit ? 1 : 0 )));
+		if (thetas.getColumns() != outputNeuronCount || thetas.getRows() != (inputNeuronCount + (hasBiasUnit ? 1 : 0 ))) throw new IllegalArgumentException("Thetas matrix must be of dimensions "  + (inputNeuronCount + (hasBiasUnit ? 1 : 0 ) +  ":" + outputNeuronCount ));
 		this.thetas = thetas;
 		if (!permitFurtherRetrains) {
 			this.setRetrainable(false);
@@ -294,7 +305,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	 * @param c The columns count of the target weight matrix : ( inputNeuronCount + hasBiasUnit() ? 1 : 0 )
 	 * @return An initial set of weights
 	 */
-	protected DoubleMatrix generateInitialThetas(int r, int c) {
+	protected DoubleMatrix generateInitialThetas(int c, int r) {
 		DoubleMatrix initial = DoubleMatrix.randn(r, c).mul(0.05);
 		return initial;
 	}
@@ -307,14 +318,14 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	 * 
 	 */
 	public double[] getOutputNeuronActivationMaximisingInputFeatures(int outputNeuronIndex) {
-		int jCount = thetas.getColumns() - (hasBiasUnit ? 1 : 0);
+		int jCount = thetas.getRows() - (hasBiasUnit ? 1 : 0);
 		double[] maximisingInputFeatures = new double[jCount];
 		for (int j = 0; j < jCount; j++) {
-			double wij = getWij(outputNeuronIndex, j);
+			double wij = getWij(j,outputNeuronIndex );
 			double sum = 0;
 
 			for (int j2 = 0; j2 < jCount; j2++) {
-				sum = sum + Math.pow(getWij(outputNeuronIndex, j2), 2);
+				sum = sum + Math.pow(getWij( j2,outputNeuronIndex), 2);
 			}
 			sum = Math.sqrt(sum);
 			maximisingInputFeatures[j] = wij / sum;
@@ -324,8 +335,8 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	
 	private double getWij(int i, int j) {
 		DoubleMatrix weights = thetas;
-		int jInd = j + (hasBiasUnit ? 1 : 0);
-		return weights.get(i, jInd);
+		int iInd = i + (hasBiasUnit ? 1 : 0);
+		return weights.get(iInd, j);
 	}
 	
 

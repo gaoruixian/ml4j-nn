@@ -58,8 +58,8 @@ public class FeedForwardNeuralNetworkHandwrittenDigitClassificationDemo {
 		// and classification output neurons corresponding to the 10 numbers to
 		// be predicted.
 
-		FeedForwardLayer firstLayer = new FeedForwardLayer(784, 10, new SigmoidActivationFunction(),true);
-		FeedForwardLayer secondLayer = new FeedForwardLayer(10, 10, new SoftmaxActivationFunction(),true);
+		FeedForwardLayer firstLayer = new FeedForwardLayer(784, 12, new SigmoidActivationFunction(),true);
+		FeedForwardLayer secondLayer = new FeedForwardLayer(12, 10, new SoftmaxActivationFunction(),true);
 
 		FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(firstLayer, secondLayer);
 
