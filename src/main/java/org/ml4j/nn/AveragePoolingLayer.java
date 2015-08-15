@@ -66,8 +66,8 @@ public class AveragePoolingLayer extends FeedForwardLayer {
 		
 		double scalingFactor = 1d / (scale * scale);
 
-		DoubleMatrix initialThetas = DoubleMatrix.ones(outputNeuronCount,
-				inputNeuronCount).mul(scalingFactor);
+		DoubleMatrix initialThetas = DoubleMatrix.ones(inputNeuronCount,outputNeuronCount
+				).mul(scalingFactor);
 
 		return initialThetas;
 	}
@@ -92,11 +92,11 @@ public class AveragePoolingLayer extends FeedForwardLayer {
 	public static DoubleMatrix createThetasMask(int depth,
 			int inputNeuronCount, int outputNeuronCount, boolean hasBiasUnit) {
 
-		DoubleMatrix thetasMask = new DoubleMatrix(outputNeuronCount,
-				inputNeuronCount);
+		DoubleMatrix thetasMask = new DoubleMatrix(
+				inputNeuronCount,outputNeuronCount);
 		if (hasBiasUnit) {
-			thetasMask = DoubleMatrix.concatHorizontally(
-					DoubleMatrix.ones(thetasMask.getRows()), thetasMask);
+			thetasMask = DoubleMatrix.concatVertically(
+					DoubleMatrix.ones(1,thetasMask.getColumns()), thetasMask);
 		}
 
 		int outputDim = (int) Math.sqrt(outputNeuronCount / depth);
@@ -120,7 +120,7 @@ public class AveragePoolingLayer extends FeedForwardLayer {
 							int col = startInputCol + c;
 							int inputInd = grid * gridInputSize + row
 									* inputDim + col;
-							thetasMask.put(outputInd, inputInd, 1);
+							thetasMask.put( inputInd,outputInd, 1);
 
 						}
 					}

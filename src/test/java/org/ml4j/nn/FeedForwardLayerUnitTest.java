@@ -26,8 +26,8 @@ public class FeedForwardLayerUnitTest {
 		assertThat(layer.getInputNeuronCount(), is(100));
 		assertThat(layer.getOutputNeuronCount(), is(10));
 		DoubleMatrix layerThetas = layer.getClonedThetas();
-		assertThat(layerThetas.getRows(),is(10));
-		assertThat(layerThetas.getColumns(),is(101));
+		assertThat(layerThetas.getColumns(),is(10));
+		assertThat(layerThetas.getRows(),is(101));
 		assertThat(layer.isRetrainable(),is(true));
 		assertThat(layer.hasBiasUnit(),is(true));
 
@@ -44,8 +44,8 @@ public class FeedForwardLayerUnitTest {
 		assertThat(layer.getInputNeuronCount(), is(100));
 		assertThat(layer.getOutputNeuronCount(), is(10));
 		DoubleMatrix layerThetas = layer.getClonedThetas();
-		assertThat(layerThetas.getRows(),is(10));
-		assertThat(layerThetas.getColumns(),is(100));
+		assertThat(layerThetas.getColumns(),is(10));
+		assertThat(layerThetas.getRows(),is(100));
 		assertThat(layer.isRetrainable(),is(true));
 		assertThat(layer.hasBiasUnit(),is(false));
 
@@ -58,7 +58,7 @@ public class FeedForwardLayerUnitTest {
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
-		DoubleMatrix thetas = new DoubleMatrix(10,101);
+		DoubleMatrix thetas = new DoubleMatrix(101,10);
 
 		assertThat(layer.isRetrainable(),is(true));
 		assertThat(layer.getClonedThetas(),CoreMatchers.not(thetas));
@@ -78,7 +78,7 @@ public class FeedForwardLayerUnitTest {
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
-		DoubleMatrix thetas = new DoubleMatrix(10,101);
+		DoubleMatrix thetas = new DoubleMatrix(101,10);
 
 		assertThat(layer.isRetrainable(),is(true));
 		assertThat(layer.getClonedThetas(),CoreMatchers.not(thetas));
@@ -118,7 +118,7 @@ public class FeedForwardLayerUnitTest {
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		DoubleMatrix activations = layer.activate(inputs);
 		DoubleMatrix inputsWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(10),inputs);
-		assertThat(activations,is(activationFunction.activate(inputsWithIntercept.mmul(layer.getClonedThetas().transpose()))));
+		assertThat(activations,is(activationFunction.activate(inputsWithIntercept.mmul(layer.getClonedThetas()))));
 	}
 	
 	@Test
@@ -128,7 +128,7 @@ public class FeedForwardLayerUnitTest {
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,false);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		DoubleMatrix activations = layer.activate(inputs);
-		assertThat(activations,is(activationFunction.activate(inputs.mmul(layer.getClonedThetas().transpose()))));
+		assertThat(activations,is(activationFunction.activate(inputs.mmul(layer.getClonedThetas()))));
 	}
 	
 	@Test
@@ -138,7 +138,7 @@ public class FeedForwardLayerUnitTest {
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 101);
 		NeuralNetworkLayerActivation<FeedForwardLayer> activation = layer.forwardPropagate(inputs);
-		assertThat(activation.getOutputActivations(),is(activationFunction.activate(inputs.mmul(layer.getClonedThetas().transpose()))));
+		assertThat(activation.getOutputActivations(),is(activationFunction.activate(inputs.mmul(layer.getClonedThetas()))));
 		assertThat(activation.getInputActivations(),is(inputs));
 		assertThat(activation.getLayer(),is(layer));
 	}
@@ -150,7 +150,7 @@ public class FeedForwardLayerUnitTest {
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,false);
 		DoubleMatrix inputs = DoubleMatrix.rand(10, 100);
 		NeuralNetworkLayerActivation<FeedForwardLayer> activation = layer.forwardPropagate(inputs);
-		assertThat(activation.getOutputActivations(),is(activationFunction.activate(inputs.mmul(layer.getClonedThetas().transpose()))));
+		assertThat(activation.getOutputActivations(),is(activationFunction.activate(inputs.mmul(layer.getClonedThetas()))));
 		assertThat(activation.getInputActivations(),is(inputs));
 		assertThat(activation.getLayer(),is(layer));
 	}
@@ -203,7 +203,7 @@ public class FeedForwardLayerUnitTest {
 		DoubleMatrix activations = layer.activate(inputArrays);
 		DoubleMatrix inputsWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(10),inputs);
 
-		assertThat(activations,is(activationFunction.activate(inputsWithIntercept.mmul(layer.getClonedThetas().transpose()))));
+		assertThat(activations,is(activationFunction.activate(inputsWithIntercept.mmul(layer.getClonedThetas()))));
 	}
 	
 	@Test
@@ -215,7 +215,7 @@ public class FeedForwardLayerUnitTest {
 		double[][] inputArrays = inputs.toArray2();
 		DoubleMatrix activations = layer.activate(inputArrays);
 
-		assertThat(activations,is(activationFunction.activate(inputs.mmul(layer.getClonedThetas().transpose()))));
+		assertThat(activations,is(activationFunction.activate(inputs.mmul(layer.getClonedThetas()))));
 	}
 	
 	@Test
@@ -223,7 +223,7 @@ public class FeedForwardLayerUnitTest {
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,true);
-		DoubleMatrix thetas = new DoubleMatrix(10,101);
+		DoubleMatrix thetas = new DoubleMatrix(101,10);
 
 		layer.updateThetas(thetas, 0, true);
 		
@@ -239,7 +239,7 @@ public class FeedForwardLayerUnitTest {
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,activationFunction,false);
-		DoubleMatrix thetas = new DoubleMatrix(10,100);
+		DoubleMatrix thetas = new DoubleMatrix(100,10);
 
 		layer.updateThetas(thetas, 0, true);
 		
@@ -366,7 +366,7 @@ public class FeedForwardLayerUnitTest {
 	public void testPretrainedRetrainableLayerConstructorWithBiasUnit_whenValidArguments()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		DoubleMatrix thetas = new DoubleMatrix(10,101);
+		DoubleMatrix thetas = new DoubleMatrix(101,10);
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,thetas,activationFunction,true,true);
 		assertThat(layer, is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(notNullValue()));
@@ -374,8 +374,8 @@ public class FeedForwardLayerUnitTest {
 		assertThat(layer.getInputNeuronCount(), is(100));
 		assertThat(layer.getOutputNeuronCount(), is(10));
 		DoubleMatrix layerThetas = layer.getClonedThetas();
-		assertThat(layerThetas.getRows(),is(10));
-		assertThat(layerThetas.getColumns(),is(101));
+		assertThat(layerThetas.getRows(),is(101));
+		assertThat(layerThetas.getColumns(),is(10));
 		assertThat(layer.isRetrainable(),is(true));
 
 	}
@@ -384,7 +384,7 @@ public class FeedForwardLayerUnitTest {
 	public void testPretrainedRetrainableLayerConstructorWithoutBiasUnit_whenValidArguments()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		DoubleMatrix thetas = new DoubleMatrix(10,100);
+		DoubleMatrix thetas = new DoubleMatrix(100,10);
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,thetas,activationFunction,false,true);
 		assertThat(layer, is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(notNullValue()));
@@ -392,8 +392,8 @@ public class FeedForwardLayerUnitTest {
 		assertThat(layer.getInputNeuronCount(), is(100));
 		assertThat(layer.getOutputNeuronCount(), is(10));
 		DoubleMatrix layerThetas = layer.getClonedThetas();
-		assertThat(layerThetas.getRows(),is(10));
-		assertThat(layerThetas.getColumns(),is(100));
+		assertThat(layerThetas.getRows(),is(100));
+		assertThat(layerThetas.getColumns(),is(10));
 		assertThat(layer.isRetrainable(),is(true));
 
 	}
@@ -445,7 +445,7 @@ public class FeedForwardLayerUnitTest {
 	public void testPretrainedUnretrainableLayerConstructorWithBiasUnit_whenValidArguments()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		DoubleMatrix thetas = new DoubleMatrix(10,101);
+		DoubleMatrix thetas = new DoubleMatrix(101,10);
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,thetas,activationFunction,true,false);
 		assertThat(layer, is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(notNullValue()));
@@ -453,8 +453,8 @@ public class FeedForwardLayerUnitTest {
 		assertThat(layer.getInputNeuronCount(), is(100));
 		assertThat(layer.getOutputNeuronCount(), is(10));
 		DoubleMatrix layerThetas = layer.getClonedThetas();
-		assertThat(layerThetas.getRows(),is(10));
-		assertThat(layerThetas.getColumns(),is(101));
+		assertThat(layerThetas.getRows(),is(101));
+		assertThat(layerThetas.getColumns(),is(10));
 		assertThat(layer.isRetrainable(),is(false));
 	}
 	
@@ -463,7 +463,7 @@ public class FeedForwardLayerUnitTest {
 	public void testPretrainedUnretrainableLayerConstructorWithoutBiasUnit_whenValidArguments()
 	{
 		DifferentiableActivationFunction activationFunction = new SigmoidActivationFunction();
-		DoubleMatrix thetas = new DoubleMatrix(10,100);
+		DoubleMatrix thetas = new DoubleMatrix(100,10);
 		FeedForwardLayer layer = new FeedForwardLayer(100,10,thetas,activationFunction,false,false);
 		assertThat(layer, is(notNullValue()));
 		assertThat(layer.getActivationFunction(), is(notNullValue()));
@@ -471,8 +471,8 @@ public class FeedForwardLayerUnitTest {
 		assertThat(layer.getInputNeuronCount(), is(100));
 		assertThat(layer.getOutputNeuronCount(), is(10));
 		DoubleMatrix layerThetas = layer.getClonedThetas();
-		assertThat(layerThetas.getRows(),is(10));
-		assertThat(layerThetas.getColumns(),is(100));
+		assertThat(layerThetas.getRows(),is(100));
+		assertThat(layerThetas.getColumns(),is(10));
 		assertThat(layer.isRetrainable(),is(false));
 	}
 	

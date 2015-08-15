@@ -95,7 +95,7 @@ public class ForwardPropagation {
 		// Calculate regularization part of cost.
 		int i = 0;
 		for (NeuralNetworkLayerActivation<?> layerActivation : getActivations()) {
-			if (layerActivation.getLayer().isRetrainable()) {
+			if (layerActivation.getLayer().isRetrainable() && lambda[i] != 0) {
 				J = J + layerActivation.getRegularisationCost(m, lambda[i]);
 			}
 			i++;

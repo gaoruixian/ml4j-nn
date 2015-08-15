@@ -26,6 +26,7 @@ import org.jblas.DoubleMatrix;
 import org.ml4j.DoubleMatrices;
 import org.ml4j.DoubleMatricesFactory;
 import org.ml4j.jblas.FlattenedDoubleMatricesFactory;
+import org.ml4j.jblas.SimpleDoubleMatricesFactory;
 import org.ml4j.nn.costfunctions.CostFunction;
 import org.ml4j.nn.optimisation.CostFunctionMinimiser;
 import org.ml4j.nn.optimisation.MinimisableCostAndGradientFunction;
@@ -261,7 +262,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 	
 	protected DoubleMatricesFactory<DoubleMatrix> createDoubleMatricesFactory()
 	{
-		return new FlattenedDoubleMatricesFactory(getRetrainableTopologies());
+		return new SimpleDoubleMatricesFactory(getRetrainableTopologies());
 	}
 
 	

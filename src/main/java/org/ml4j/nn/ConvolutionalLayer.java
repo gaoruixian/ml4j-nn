@@ -65,8 +65,8 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 	private static DoubleMatrix createThetas(int inputNeuronCount,
 			int outputNeuronCount, int filterCount, int depth,
 			DoubleMatrix thetasMask, boolean hasBiasUnit) {
-		DoubleMatrix initialThetas = DoubleMatrix.randn(outputNeuronCount,
-				inputNeuronCount + (hasBiasUnit ? 1 : 0)).mul(0.05);
+		DoubleMatrix initialThetas = DoubleMatrix.randn(
+				inputNeuronCount + (hasBiasUnit ? 1 : 0),outputNeuronCount).mul(0.05);
 
 		int filterOutputSize = outputNeuronCount / filterCount;
 
@@ -84,23 +84,23 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 				double[] sharedValues = new double[sharedValueCount];
 				for (int row = startRowIndex; row < startRowIndex
 						+ filterOutputSize; row++) {
-					int[] inds = thetasMask.getRow(row).findIndices();
+					int[] inds = thetasMask.getColumn(row).findIndices();
 					sharedValueIndexes[row - startRowIndex] = inds;
 
 				}
 
 				for (int i = 0; i < sharedValueCount; i++) {
-					sharedValues[i] = initialThetas.get(startRowIndex,
+					sharedValues[i] = initialThetas.get(
 							sharedValueIndexes[0][i + filterWidth * grid
-									+ (hasBiasUnit ? 1 : 0)]);
+									+ (hasBiasUnit ? 1 : 0)],startRowIndex);
 				}
 
 				for (int row = startRowIndex; row < startRowIndex
 						+ filterOutputSize; row++) {
 					for (int sharedValueIndex = 0; sharedValueIndex < sharedValueCount; sharedValueIndex++) {
-						initialThetas.put(row, sharedValueIndexes[row
+						initialThetas.put(sharedValueIndexes[row
 								- startRowIndex][sharedValueIndex + filterWidth
-								* grid + (hasBiasUnit ? 1 : 0)],
+								* grid + (hasBiasUnit ? 1 : 0)],row, 
 								sharedValues[sharedValueIndex]);
 					}
 				}
@@ -138,13 +138,13 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 				double[] averageValues = new double[sharedValueCount];
 				for (int row = startRowIndex; row < startRowIndex
 						+ filterOutputSize; row++) {
-					int[] inds = thetasMask.getRow(row).findIndices();
+					int[] inds = thetasMask.getColumn(row).findIndices();
 					sharedValueIndexes[row - startRowIndex] = inds;
 					for (int i = 0; i < averageValues.length; i++) {
 
 						averageValues[i] = averageValues[i]
-								+ gradients.get(row, inds[filterWidth * grid
-										+ i + (hasBiasUnit() ? 1 : 0)]);
+								+ gradients.get(inds[filterWidth * grid
+										+ i + (hasBiasUnit() ? 1 : 0)],row);
 					}
 				}
 
@@ -155,9 +155,9 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 				for (int row = startRowIndex; row < startRowIndex
 						+ filterOutputSize; row++) {
 					for (int sharedValueIndex = 0; sharedValueIndex < sharedValueCount; sharedValueIndex++) {
-						gradients.put(row, sharedValueIndexes[row
+						gradients.put(sharedValueIndexes[row
 								- startRowIndex][sharedValueIndex + filterWidth
-								* grid + (hasBiasUnit() ? 1 : 0)],
+								* grid + (hasBiasUnit() ? 1 : 0)],row, 
 								averageValues[sharedValueIndex]);
 					}
 				}
@@ -170,11 +170,11 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 	public static DoubleMatrix createThetasMask(int filterCount, int depth,
 			int inputNeuronCount, int outputNeuronCount, boolean hasBiasUnit) {
 
-		DoubleMatrix thetasMask = new DoubleMatrix(outputNeuronCount,
-				inputNeuronCount);
+		DoubleMatrix thetasMask = new DoubleMatrix(
+				inputNeuronCount,outputNeuronCount);
 		if (hasBiasUnit) {
-			thetasMask = DoubleMatrix.concatHorizontally(
-					DoubleMatrix.ones(thetasMask.getRows()), thetasMask);
+			thetasMask = DoubleMatrix.concatVertically(
+					DoubleMatrix.ones(1,thetasMask.getColumns()), thetasMask);
 		}
 
 		int outputDim = (int) Math.sqrt(outputNeuronCount / filterCount);
@@ -195,7 +195,7 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 								int inputInd = grid * gridInputSize + r
 										* inputDim + c + (hasBiasUnit ? 1 : 0);
 
-								thetasMask.put(outputInd, inputInd, 1);
+								thetasMask.put( inputInd,outputInd, 1);
 							}
 						}
 					}
