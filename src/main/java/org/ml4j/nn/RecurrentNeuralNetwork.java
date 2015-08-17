@@ -54,8 +54,8 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 							layer.getOutputNeuronCount() + layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0),layer.getOutputNeuronCount() };
 
 				} else {
-					topologies[ind] = new int[] { 
-							layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0),layer.getOutputNeuronCount() };
+					topologies[ind] = new int[] {
+							layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0), layer.getOutputNeuronCount() };
 				}
 				ind++;
 
@@ -163,7 +163,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 			DoubleMatrix t1 = initialRetrainableThetas.get(0);
 			for (int c1 = 0; c1 < t1.getColumns(); c1++) {
 				for (int r1 = 0; r1 < t1.getRows(); r1++) {
-					thetas1.put(r1 + inputCountWithBias, c1, t1.get(r1, c1));
+					thetas1.put(r1, c1 + inputCountWithBias, t1.get(r1, c1));
 				}
 			}
 
@@ -175,15 +175,15 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 		}
 
-		DoubleMatrix thetas2 = new DoubleMatrix(inputCountWithBias + hiddenCount + 1,outputCount);
+		DoubleMatrix thetas2 = new DoubleMatrix( inputCountWithBias + hiddenCount + 1,outputCount);
 		DoubleMatrix t2 = initialRetrainableThetas.get(1);
 
 		for (int c1 = 0; c1 < t2.getColumns(); c1++) {
 			for (int r1 = 0; r1 < t2.getRows(); r1++) {
 				if (r1 == 0) {
-					thetas2.put(0,c1, t2.get(0,c1));
+					thetas2.put(0, c1, t2.get(0,c1));
 				} else {
-					thetas2.put(r1 + inputCountWithBias,c1, t2.get(r1, c1));
+					thetas2.put(r1 + inputCountWithBias , c1, t2.get(r1, c1));
 				}
 			}
 		}
