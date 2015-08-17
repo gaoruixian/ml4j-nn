@@ -1,6 +1,7 @@
 package org.ml4j.jblas;
 
 import org.ml4j.MatrixAdapter;
+import org.ml4j.cuda.CudaMatrixAdapter;
 
 
 public class JBlasMatrixAdapter implements MatrixAdapter {
@@ -301,7 +302,7 @@ public class JBlasMatrixAdapter implements MatrixAdapter {
 	
 	public MatrixAdapter asCudaMatrix()
 	{
-		throw new UnsupportedOperationException("Cuda matrices not yet supported");
+		return new CudaMatrixAdapter(matrix.getRows(),matrix.getColumns(),matrix.toArray());
 	}
 
 

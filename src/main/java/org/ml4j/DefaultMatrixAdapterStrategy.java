@@ -1,71 +1,22 @@
 package org.ml4j;
 
-import org.ml4j.jblas.JBlasDoubleMatrix;
-import org.ml4j.jblas.JBlasMatrixAdapter;
+import org.ml4j.jblas.JBlasMatrixAdapterFactory;
+
 
 public class DefaultMatrixAdapterStrategy implements MatrixAdapterStrategy {
 
-	@Override
-	public MatrixAdapter createMatrix(int rows, int cols) {
-		return new JBlasMatrixAdapter(rows,cols);
+	private MatrixAdapterFactory matrixAdapterFactory;
+	
+	public DefaultMatrixAdapterStrategy(MatrixAdapterFactory matrixAdapterFactory)
+	{
+		this.matrixAdapterFactory = matrixAdapterFactory;
 	}
-
-	@Override
-	public MatrixAdapter createMatrix(int rows, int cols, double[] data) {
-		return new JBlasMatrixAdapter(rows,cols,data);
+	
+	public DefaultMatrixAdapterStrategy()
+	{
+		this.matrixAdapterFactory = new JBlasMatrixAdapterFactory();
 	}
-
-	@Override
-	public MatrixAdapter createMatrix() {
-		return new JBlasMatrixAdapter();
-	}
-
-	@Override
-	public MatrixAdapter createMatrix(double[][] data) {
-		return new JBlasMatrixAdapter(data);
-	}
-
-	@Override
-	public MatrixAdapter createMatrix(double[] data) {
-		return new JBlasMatrixAdapter(data);
-	}
-
-	@Override
-	public MatrixAdapter createOnes(int rows) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.ones(rows));
-	}
-
-	@Override
-	public MatrixAdapter concatHorizontally(MatrixAdapter matrix, MatrixAdapter matrix2) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.concatHorizontally(JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix),JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix2)));
-	}
-
-	@Override
-	public MatrixAdapter concatVertically(MatrixAdapter matrix, MatrixAdapter matrix2) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.concatVertically(JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix),JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix2)));
-	}
-
-	@Override
-	public MatrixAdapter createOnes(int rows, int cols) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.ones(rows,cols));
-	}
-
-	@Override
-	public MatrixAdapter createRandn(int r, int c) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.randn(r,c));
-	}
-
-	@Override
-	public MatrixAdapter createZeros(int rows, int cols) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.zeros(rows,cols));
-	}
-
-	@Override
-	public MatrixAdapter createRand(int r, int c) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.rand(r,c));
-	}
-
-
+	
 	@Override
 	public MatrixAdapter pow(MatrixAdapter matrix, int i) {
 		return matrix.pow(i);
@@ -258,6 +209,11 @@ public class DefaultMatrixAdapterStrategy implements MatrixAdapterStrategy {
 	@Override
 	public int argmax(MatrixAdapter matrix) {
 		return matrix.argmax();
+	}
+
+	@Override
+	public MatrixAdapterFactory getMatrixAdapterFactory() {
+		return matrixAdapterFactory;
 	}
 
 	

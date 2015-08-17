@@ -2,6 +2,7 @@ package org.ml4j;
 
 import java.io.Serializable;
 
+import org.ml4j.cuda.CudaMatrixAdapter;
 import org.ml4j.jblas.JBlasMatrixAdapter;
 
 public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix> {
@@ -23,7 +24,13 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public DoubleMatrix asCudaMatrix() {
-		throw new UnsupportedOperationException("Cuda matrices not yet supported");
+
+	
+		if (matrix instanceof CudaMatrixAdapter) {
+			return this;
+		} else {
+			return new DoubleMatrix(CudaMatrixAdapter.createCudaBaseDoubleMatrix(matrix));
+		}
 	}
 
 	public DoubleMatrix(MatrixAdapter matrix) {
@@ -36,25 +43,25 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	private static final long serialVersionUID = 1L;
 
 	public DoubleMatrix(int rows, int cols) {
-		this.matrix = strategy.createMatrix(rows, cols);
+		this.matrix = strategy.getMatrixAdapterFactory().createMatrix(rows, cols);
 	}
 
 	public DoubleMatrix(int rows, int cols, double[] data) {
-		this.matrix = strategy.createMatrix(rows, cols, data);
+		this.matrix = strategy.getMatrixAdapterFactory().createMatrix(rows, cols, data);
 	}
 
 	public DoubleMatrix() {
-		this.matrix = strategy.createMatrix();
+		this.matrix = strategy.getMatrixAdapterFactory().createMatrix();
 
 	}
 
 	public DoubleMatrix(double[][] data) {
-		this.matrix = strategy.createMatrix(data);
+		this.matrix = strategy.getMatrixAdapterFactory().createMatrix(data);
 
 	}
 
 	public DoubleMatrix(double[] data) {
-		this.matrix = strategy.createMatrix(data);
+		this.matrix = strategy.getMatrixAdapterFactory().createMatrix(data);
 
 	}
 
@@ -71,19 +78,19 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public static DoubleMatrix ones(int rows) {
-		return new DoubleMatrix(strategy.createOnes(rows));
+		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createOnes(rows));
 	}
 
 	public static DoubleMatrix concatHorizontally(DoubleMatrix left, DoubleMatrix right) {
-		return new DoubleMatrix(strategy.concatHorizontally(left.matrix, right.matrix));
+		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createHorizontalConcatenation(left.matrix, right.matrix));
 	}
 
 	public static DoubleMatrix concatVertically(DoubleMatrix top, DoubleMatrix bottom) {
-		return new DoubleMatrix(strategy.concatVertically(top.matrix, bottom.matrix));
+		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createVerticalConcatenation(top.matrix, bottom.matrix));
 	}
 
 	public static DoubleMatrix ones(int rows, int cols) {
-		return new DoubleMatrix(strategy.createOnes(rows, cols));
+		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createOnes(rows, cols));
 	}
 
 	public DoubleMatrix mul(double scalingFactor) {
@@ -121,7 +128,7 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public static DoubleMatrix randn(int r, int c) {
-		return new DoubleMatrix(strategy.createRandn(r, c));
+		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createRandn(r, c));
 	}
 
 	public DoubleMatrix getRow(int row) {
@@ -162,7 +169,7 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public static DoubleMatrix zeros(int rows, int cols) {
-		return new DoubleMatrix(strategy.createZeros(rows, cols));
+		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createZeros(rows, cols));
 	}
 
 	public int[] rowArgmaxs() {
@@ -205,7 +212,7 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public static DoubleMatrix rand(int r, int c) {
-		return new DoubleMatrix(strategy.createRand(r, c));
+		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createRand(r, c));
 	}
 
 	public DoubleMatrix addi(DoubleMatrix m) {
