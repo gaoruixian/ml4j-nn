@@ -1,7 +1,5 @@
 package org.ml4j;
 
-
-
 public interface DoubleMatrices<M> {
 
 	DoubleMatrices<M> add(DoubleMatrices<M> matrices);

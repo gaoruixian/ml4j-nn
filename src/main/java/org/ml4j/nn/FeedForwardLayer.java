@@ -17,7 +17,7 @@ package org.ml4j.nn;
 
 import java.io.Serializable;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 
 /**
@@ -133,6 +133,8 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 			scaledThetas = thetas.mul(dropoutScaling);
 		}
 		
+		//scaledThetas = scaledThetas.asCudaMatrix();
+		//layerInputsWithInterceptAndDropout = layerInputsWithInterceptAndDropout.asCudaMatrix();
 		DoubleMatrix Z = layerInputsWithInterceptAndDropout.mmul(scaledThetas);
 
 		DoubleMatrix acts = activationFunction.activate(Z);

@@ -15,7 +15,7 @@
  */
 package org.ml4j.nn.sequences;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 
 public class DoubleArraySequence implements Sequence {
 

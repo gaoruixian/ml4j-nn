@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 /**
  * Encapsulates the logic of creating back propagation artifacts ( ie. error gradients for each layer)
  * from a ForwardPropagation, given the target-output deltas for each layer

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 import org.ml4j.imaging.targets.ImageDisplay;
 import org.ml4j.nn.RestrictedBoltzmannLayer;
 import org.ml4j.nn.RestrictedBoltzmannMachine;

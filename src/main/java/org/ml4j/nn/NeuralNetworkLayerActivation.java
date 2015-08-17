@@ -15,8 +15,8 @@
  */
 package org.ml4j.nn;
 
-import org.jblas.DoubleMatrix;
-import org.ml4j.jblas.MatrixFunctions;
+import org.ml4j.DoubleMatrix;
+import org.ml4j.MatrixFunctions;
 
 public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 

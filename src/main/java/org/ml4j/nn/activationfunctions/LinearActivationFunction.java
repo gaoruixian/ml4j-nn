@@ -1,6 +1,6 @@
 package org.ml4j.nn.activationfunctions;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 import org.ml4j.nn.costfunctions.CostFunction;
 import org.ml4j.nn.costfunctions.SSECostFunction;
 
