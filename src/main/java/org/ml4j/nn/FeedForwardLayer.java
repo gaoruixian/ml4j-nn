@@ -138,7 +138,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		DoubleMatrix Z = layerInputsWithInterceptAndDropout.mmul(scaledThetas);
 
 		DoubleMatrix acts = activationFunction.activate(Z);
-		NeuralNetworkLayerActivation<FeedForwardLayer> activation = new NeuralNetworkLayerActivation<FeedForwardLayer>(this, layerInputsWithInterceptAndDropout, Z, acts,thetasMask,dropoutMask);
+		NeuralNetworkLayerActivation<FeedForwardLayer> activation = new NeuralNetworkLayerActivation<FeedForwardLayer>(this,layerInputsWithInterceptAndDropout, Z, acts,thetasMask,dropoutMask);
 
 		return activation;
 	}

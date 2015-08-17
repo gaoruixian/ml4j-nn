@@ -9,6 +9,9 @@ public interface MatrixAdapter extends Serializable,MatrixOperations<MatrixAdapt
 	MatrixAdapter log();
 
 	MatrixAdapter expi();
+	
+	MatrixAdapter sigmoid();
+
 
 	MatrixAdapter powi(int d);
 

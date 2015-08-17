@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.ml4j.DoubleMatrix;
+import org.ml4j.DoubleMatrixConfig;
 import org.ml4j.MatrixFunctions;
 
 public class NeuralNetworkUtils {
@@ -93,12 +94,15 @@ public class NeuralNetworkUtils {
 	 */
 	
 	public static DoubleMatrix sigmoid(DoubleMatrix x) {
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().sigmoid(x.matrix));
+		/*
 		DoubleMatrix result = new DoubleMatrix();
 		result = x;
 		result = MatrixFunctions.expi(result.mul(-1));
 		result = result.add(1);
 		result = MatrixFunctions.powi(result, -1);
 		return result;
+			*/
 	}
 	
 	/*

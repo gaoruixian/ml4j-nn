@@ -43,18 +43,18 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 	public static void main(String[] args) throws IOException, InterruptedException {
 
 		// Load Mnist data into double[][] matrices
-
+		
 		DoubleArrayMatrixLoader loader = new DoubleArrayMatrixLoader(
 				ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo.class.getClassLoader());
 
 		double[][] trainingDataMatrix = loader.loadDoubleMatrixFromCsv("mnist2500_X_custom.csv",
-				new PixelFeaturesMatrixCsvDataExtractor(), 0, 100);
+				new PixelFeaturesMatrixCsvDataExtractor(), 0, 2000);
 		double[][] testSetDataMatrix = loader.loadDoubleMatrixFromCsv("mnist2500_X_custom.csv",
-				new PixelFeaturesMatrixCsvDataExtractor(), 100, 200);
+				new PixelFeaturesMatrixCsvDataExtractor(), 2000, 2500);
 		double[][] trainingLabelsMatrix = loader.loadDoubleMatrixFromCsv("mnist2500_labels_custom.csv",
-				new SingleDigitLabelsMatrixCsvDataExtractor(), 0, 100);
+				new SingleDigitLabelsMatrixCsvDataExtractor(), 0, 2000);
 		double[][] testSetLabelsMatrix = loader.loadDoubleMatrixFromCsv("mnist2500_labels_custom.csv",
-				new SingleDigitLabelsMatrixCsvDataExtractor(), 100, 200);
+				new SingleDigitLabelsMatrixCsvDataExtractor(), 2000, 2500);
 
 		// Configure a Neural Network, with configurable hidden neuron topology,
 		// and classification output neurons corresponding to the 10 numbers to

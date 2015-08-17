@@ -13,6 +13,9 @@ public interface MatrixAdapterStrategy {
 	MatrixAdapter log(MatrixAdapter matrix);
 
 	void expi(MatrixAdapter matrix);
+	
+	MatrixAdapter sigmoid(MatrixAdapter matrix);
+
 
 	void powi(MatrixAdapter matrix, int d);
 
@@ -82,8 +85,6 @@ public interface MatrixAdapterStrategy {
 	MatrixAdapter getColumn(MatrixAdapter matrix, int j);
 
 	int argmax(MatrixAdapter matrix);
-
-
 	
 
 }

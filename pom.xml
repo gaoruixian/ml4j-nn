@@ -43,6 +43,11 @@
      <artifactId>nd4j-jcublas-7.0</artifactId>
      <version>0.0.3.5.5.5</version>
     </dependency>
+<dependency>
+	<groupId>com.google.guava</groupId>
+	<artifactId>guava</artifactId>
+	<version>10.0</version>
+</dependency>
 	<dependency>
 	<groupId>org.ml4j</groupId>
 <artifactId>ml4j-core</artifactId>

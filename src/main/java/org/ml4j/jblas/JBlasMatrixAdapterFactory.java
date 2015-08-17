@@ -1,7 +1,10 @@
 package org.ml4j.jblas;
 
+import org.ml4j.DoubleMatrix;
 import org.ml4j.MatrixAdapter;
 import org.ml4j.MatrixAdapterFactory;
+
+import com.google.common.base.Stopwatch;
 
 public class JBlasMatrixAdapterFactory implements MatrixAdapterFactory {
 
@@ -37,12 +40,21 @@ public class JBlasMatrixAdapterFactory implements MatrixAdapterFactory {
 
 	@Override
 	public MatrixAdapter createHorizontalConcatenation(MatrixAdapter matrix, MatrixAdapter matrix2) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.concatHorizontally(JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix),JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix2)));
+		Stopwatch timer = createStartedTimer();
+		MatrixAdapter ret =  new JBlasMatrixAdapter(JBlasDoubleMatrix.concatHorizontally(JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix),JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix2)));
+		DoubleMatrix.addTiming("createHorizontalConcatentationJblas",timer.elapsedMillis());
+		return ret;
 	}
+	
 
 	@Override
 	public MatrixAdapter createVerticalConcatenation(MatrixAdapter matrix, MatrixAdapter matrix2) {
-		return new JBlasMatrixAdapter(JBlasDoubleMatrix.concatVertically(JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix),JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix2)));
+		Stopwatch timer = createStartedTimer();
+
+		MatrixAdapter ret =  new JBlasMatrixAdapter(JBlasDoubleMatrix.concatVertically(JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix),JBlasMatrixAdapter.createJBlasDoubleMatrix(matrix2)));
+		DoubleMatrix.addTiming("createVerticalConcatentationJblas",timer.elapsedMillis());
+
+		return ret;
 	}
 
 	@Override
@@ -65,5 +77,12 @@ public class JBlasMatrixAdapterFactory implements MatrixAdapterFactory {
 		return new JBlasMatrixAdapter(JBlasDoubleMatrix.rand(r,c));
 	}
 
+	
+	private Stopwatch createStartedTimer()
+	{
+		Stopwatch timer = new Stopwatch();
+		timer.start();
+		return timer;
+	}
 
 }

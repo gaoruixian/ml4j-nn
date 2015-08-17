@@ -96,7 +96,7 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 		return grad;
 	}
 
-	public NeuralNetworkLayerActivation(L layer, DoubleMatrix inputActivations, DoubleMatrix Z,
+	public NeuralNetworkLayerActivation(L layer,DoubleMatrix inputActivations, DoubleMatrix Z,
 			DoubleMatrix outputActivations,DoubleMatrix thetasMask,DoubleMatrix dropoutMask) {
 		this.inputActivations = inputActivations;
 		this.Z = Z;
@@ -107,7 +107,7 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 		this.dropoutMask = dropoutMask;
 	}
 	
-	public NeuralNetworkLayerActivation(L layer, DoubleMatrix inputActivations, DoubleMatrix Z,
+	public NeuralNetworkLayerActivation(L layer,DoubleMatrix inputActivations, DoubleMatrix Z,
 			DoubleMatrix outputActivations) {
 		this.inputActivations = inputActivations;
 		this.Z = Z;

@@ -216,6 +216,11 @@ public class DefaultMatrixAdapterStrategy implements MatrixAdapterStrategy {
 		return matrixAdapterFactory;
 	}
 
+	@Override
+	public MatrixAdapter sigmoid(MatrixAdapter matrix) {
+		return matrix.sigmoid();
+	}
+
 	
 
 }

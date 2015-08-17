@@ -1,19 +1,18 @@
 package org.ml4j;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.ml4j.cuda.CudaMatrixAdapter;
 import org.ml4j.jblas.JBlasMatrixAdapter;
 
 public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix> {
 
-	protected MatrixAdapter matrix;
+	public MatrixAdapter matrix;
 
-	protected static MatrixAdapterStrategy strategy = new DefaultMatrixAdapterStrategy();
-
-	public static void setDoubleMatrixStrategy(MatrixAdapterStrategy strategy1) {
-		strategy = strategy1;
-	}
+	
 
 	public DoubleMatrix asJBlasMatrix() {
 		if (matrix instanceof JBlasMatrixAdapter) {
@@ -43,25 +42,25 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	private static final long serialVersionUID = 1L;
 
 	public DoubleMatrix(int rows, int cols) {
-		this.matrix = strategy.getMatrixAdapterFactory().createMatrix(rows, cols);
+		this.matrix = DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createMatrix(rows, cols);
 	}
 
 	public DoubleMatrix(int rows, int cols, double[] data) {
-		this.matrix = strategy.getMatrixAdapterFactory().createMatrix(rows, cols, data);
+		this.matrix = DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createMatrix(rows, cols, data);
 	}
 
 	public DoubleMatrix() {
-		this.matrix = strategy.getMatrixAdapterFactory().createMatrix();
+		this.matrix = DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createMatrix();
 
 	}
 
 	public DoubleMatrix(double[][] data) {
-		this.matrix = strategy.getMatrixAdapterFactory().createMatrix(data);
+		this.matrix = DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createMatrix(data);
 
 	}
 
 	public DoubleMatrix(double[] data) {
-		this.matrix = strategy.getMatrixAdapterFactory().createMatrix(data);
+		this.matrix = DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createMatrix(data);
 
 	}
 
@@ -78,41 +77,41 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public static DoubleMatrix ones(int rows) {
-		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createOnes(rows));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createOnes(rows));
 	}
 
 	public static DoubleMatrix concatHorizontally(DoubleMatrix left, DoubleMatrix right) {
-		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createHorizontalConcatenation(left.matrix, right.matrix));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createHorizontalConcatenation(left.matrix, right.matrix));
 	}
 
 	public static DoubleMatrix concatVertically(DoubleMatrix top, DoubleMatrix bottom) {
-		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createVerticalConcatenation(top.matrix, bottom.matrix));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createVerticalConcatenation(top.matrix, bottom.matrix));
 	}
 
 	public static DoubleMatrix ones(int rows, int cols) {
-		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createOnes(rows, cols));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createOnes(rows, cols));
 	}
 
 	public DoubleMatrix mul(double scalingFactor) {
-		return new DoubleMatrix(strategy.mul(this.matrix, scalingFactor));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().mul(this.matrix, scalingFactor));
 	}
 
 	public DoubleMatrix muli(double v) {
-		strategy.muli(this.matrix, v);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().muli(this.matrix, v);
 
 		return this;
 	}
 
 	public void put(int r, int c, int v) {
-		strategy.put(this.matrix, r, c, v);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().put(this.matrix, r, c, v);
 	}
 
 	public DoubleMatrix sub(DoubleMatrix m) {
-		return new DoubleMatrix(strategy.sub(this.matrix, m.matrix));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().sub(this.matrix, m.matrix));
 	}
 
 	public DoubleMatrix transpose() {
-		return new DoubleMatrix(strategy.transpose(this.matrix));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().transpose(this.matrix));
 	}
 
 	public DoubleMatrix copy(DoubleMatrix m) {
@@ -128,15 +127,15 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public static DoubleMatrix randn(int r, int c) {
-		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createRandn(r, c));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createRandn(r, c));
 	}
 
 	public DoubleMatrix getRow(int row) {
-		return new DoubleMatrix(strategy.getRow(matrix, row));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getRow(matrix, row));
 	}
 
 	public int[] findIndices() {
-		return strategy.findIndices(matrix);
+		return DoubleMatrixConfig.getDoubleMatrixStrategy().findIndices(matrix);
 	}
 
 	public double get(int i, int j) {
@@ -144,84 +143,84 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public void put(int r, int c, double v) {
-		strategy.put(matrix, r, c, v);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().put(matrix, r, c, v);
 		;
 	}
 
 	public DoubleMatrix muli(DoubleMatrix m) {
 
-		strategy.muli(matrix, m.matrix);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().muli(matrix, m.matrix);
 		return this;
 	}
 
 	public DoubleMatrix mmul(DoubleMatrix m) {
 
-		return new DoubleMatrix(strategy.mmul(matrix, m.matrix));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().mmul(matrix, m.matrix));
 	}
 
 	public DoubleMatrix mul(DoubleMatrix m) {
 
-		return new DoubleMatrix(strategy.mul(matrix, m.matrix));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().mul(matrix, m.matrix));
 	}
 
 	public double sum() {
-		return strategy.sum(matrix);
+		return DoubleMatrixConfig.getDoubleMatrixStrategy().sum(matrix);
 	}
 
 	public static DoubleMatrix zeros(int rows, int cols) {
-		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createZeros(rows, cols));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createZeros(rows, cols));
 	}
 
 	public int[] rowArgmaxs() {
-		return strategy.rowArgmaxs(matrix);
+		return DoubleMatrixConfig.getDoubleMatrixStrategy().rowArgmaxs(matrix);
 	}
 
 	public DoubleMatrix get(int[] rows, int[] cols) {
-		return new DoubleMatrix(strategy.get(matrix, rows, cols));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().get(matrix, rows, cols));
 	}
 
 	public void putColumn(int i, DoubleMatrix m) {
-		strategy.putColumn(matrix, i, m.matrix);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().putColumn(matrix, i, m.matrix);
 	}
 
 	public DoubleMatrix div(double v) {
-		return new DoubleMatrix(strategy.div(matrix, v));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().div(matrix, v));
 	}
 
 	public DoubleMatrix add(DoubleMatrix m) {
-		return new DoubleMatrix(strategy.add(matrix, m.matrix));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().add(matrix, m.matrix));
 	}
 
 	public DoubleMatrix subi(DoubleMatrix m) {
-		strategy.subi(this.matrix, m.matrix);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().subi(this.matrix, m.matrix);
 		return this;
 	}
 
 	public DoubleMatrix divi(double v) {
-		strategy.divi(this.matrix, v);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().divi(this.matrix, v);
 
 		return this;
 	}
 
 	public DoubleMatrix getColumns(int[] cols) {
-		return new DoubleMatrix(strategy.getColumns(matrix, cols));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getColumns(matrix, cols));
 	}
 
 	public DoubleMatrix getRows(int[] rows) {
-		return new DoubleMatrix(strategy.getRows(matrix, rows));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getRows(matrix, rows));
 	}
 
 	public static DoubleMatrix rand(int r, int c) {
-		return new DoubleMatrix(strategy.getMatrixAdapterFactory().createRand(r, c));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getMatrixAdapterFactory().createRand(r, c));
 	}
 
 	public DoubleMatrix addi(DoubleMatrix m) {
-		strategy.addi(this.matrix, m.matrix);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().addi(this.matrix, m.matrix);
 		return this;
 	}
 
 	public DoubleMatrix getColumn(int j) {
-		return new DoubleMatrix(strategy.getColumn(matrix, j));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getColumn(matrix, j));
 	}
 
 	public double get(int i) {
@@ -229,20 +228,20 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public int argmax() {
-		return strategy.argmax(matrix);
+		return DoubleMatrixConfig.getDoubleMatrixStrategy().argmax(matrix);
 	}
 
 	public DoubleMatrix add(double v) {
-		return new DoubleMatrix(strategy.add(this.matrix, v));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().add(this.matrix, v));
 	}
 
 	public DoubleMatrix addi(double v) {
-		strategy.addi(this.matrix, v);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().addi(this.matrix, v);
 		return this;
 	}
 
 	public DoubleMatrix rowSums() {
-		return new DoubleMatrix(strategy.rowSums(matrix));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().rowSums(matrix));
 	}
 
 	public int getLength() {
@@ -250,35 +249,35 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	}
 
 	public void put(int i, double log) {
-		strategy.put(matrix, i, log);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().put(matrix, i, log);
 	}
 
 	public double dot(DoubleMatrix s) {
-		return strategy.dot(this.matrix, s.matrix);
+		return DoubleMatrixConfig.getDoubleMatrixStrategy().dot(this.matrix, s.matrix);
 	}
 
 	public DoubleMatrix getRowRange(int offset, int i, int j) {
 
-		return new DoubleMatrix(strategy.getRowRange(this.matrix, offset, i, j));
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().getRowRange(this.matrix, offset, i, j));
 	}
 
 	public void reshape(int r, int c) {
-		strategy.reshape(this.matrix, r, c);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().reshape(this.matrix, r, c);
 	}
 
 	public void put(int[] indicies, int inputInd, DoubleMatrix x) {
-		strategy.put(this.matrix, indicies, inputInd, x);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().put(this.matrix, indicies, inputInd, x);
 		// matrix.put(indicies, inputInd,x.matrix);
 	}
 
 	public DoubleMatrix diviColumnVector(DoubleMatrix sums) {
-		strategy.diviColumnVector(this.matrix, sums.matrix);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().diviColumnVector(this.matrix, sums.matrix);
 		// matrix.diviColumnVector(sums.matrix);
 		return this;
 	}
 
 	public void putRow(int i, DoubleMatrix zeros) {
-		strategy.putRow(this.matrix, i, zeros.matrix);
+		DoubleMatrixConfig.getDoubleMatrixStrategy().putRow(this.matrix, i, zeros.matrix);
 		// matrix.putRow(i, zeros.matrix);
 	}
 
@@ -307,6 +306,41 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 		return true;
 	}
 	
+
+	public static void addTiming(String method, long time) {
+		synchronized (methodTimings) {
+			AtomicLong a = methodTimings.get(method);
+			if (a == null) {
+				a = new AtomicLong(0);
+				methodTimings.put(method, a);
+			}
+			a.addAndGet(time);
+		}
+
+	}
 	
+	private static Map<String, AtomicLong> methodTimings = new HashMap<String, AtomicLong>();
+
+	
+	public boolean isCudaMatrix()
+	{
+		return this.matrix instanceof CudaMatrixAdapter;
+	}
+	
+	public static void printTimings() {
+		long t = 0;
+		synchronized (methodTimings) {
+			for (Map.Entry<String, AtomicLong> l : methodTimings.entrySet()) {
+				if (!l.getKey().equals("total")) {
+					long v = l.getValue().get();
+					t = t + v;
+				}
+			}
+
+			methodTimings.put("total", new AtomicLong(t));
+			System.out.println(methodTimings);
+			methodTimings.clear();
+		}
+	}
 
 }

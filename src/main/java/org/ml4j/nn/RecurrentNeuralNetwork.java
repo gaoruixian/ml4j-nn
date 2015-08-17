@@ -120,7 +120,8 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 			
 			DoubleMatrix hinWithIntercept = DoubleMatrix.concatHorizontally(DoubleMatrix.ones(1, 1),
 					DoubleMatrix.concatHorizontally(sequenceInputs, previousHiddenActivations));
-			DoubleMatrix hz = hinWithIntercept.mmul(timeUnfoldedNetwork.getLayers().get(h).getClonedThetas());
+			DoubleMatrix thetas1 = timeUnfoldedNetwork.getLayers().get(h).getClonedThetas();
+			DoubleMatrix hz = hinWithIntercept.mmul(thetas1);
 			DoubleMatrix hiddenActivations = sequenceProps.getActivations().get(0).getOutputActivations();
 			
 			
@@ -143,7 +144,8 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 				DoubleMatrix.concatHorizontally(DoubleMatrix.ones(1, 1), new DoubleMatrix(1, inputCountWithBias)),
 				previousHiddenActivations);
 
-		DoubleMatrix finalZ = finalIn.mmul(timeUnfoldedNetwork.getOuterLayer().getClonedThetas());
+		DoubleMatrix thetas = timeUnfoldedNetwork.getOuterLayer().getClonedThetas();
+		DoubleMatrix finalZ = finalIn.mmul(thetas);
 		NeuralNetworkLayerActivation<?> finalActivation = new NeuralNetworkLayerActivation<DirectedLayer<?>>(
 				timeUnfoldedNetwork.getOuterLayer(), finalIn, finalZ, finalOut);
 

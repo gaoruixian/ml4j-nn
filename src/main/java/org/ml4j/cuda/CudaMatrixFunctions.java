@@ -2,9 +2,6 @@ package org.ml4j.cuda;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-
-
-
 public class CudaMatrixFunctions {
 
 	
@@ -16,7 +13,6 @@ public class CudaMatrixFunctions {
 
 	public static CudaDoubleMatrix log(CudaDoubleMatrix x) {
 		 		return new CudaDoubleMatrix(org.nd4j.linalg.ops.transforms.Transforms.log(x.matrix));
-
 		//return logi(x.dup()); 
 	}
 	
@@ -46,6 +42,8 @@ public class CudaMatrixFunctions {
 		CudaDoubleMatrix result =  new CudaDoubleMatrix(org.nd4j.linalg.ops.transforms.Transforms.sigmoid(x.matrix));
 		return result;
 	}
+	
+	
 	
 	
 	
@@ -86,5 +84,7 @@ public class CudaMatrixFunctions {
 //	   return x;
 ////RJPP-END--------------------------------------------------------------
 //	}
+	
+	
 
 }

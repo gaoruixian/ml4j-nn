@@ -264,7 +264,7 @@ public class CudaDoubleMatrix implements Serializable, MatrixOperations<CudaDoub
 	}
 
 	public CudaDoubleMatrix mul(CudaDoubleMatrix m) {
-		CudaDoubleMatrix r = new CudaDoubleMatrix(matrix.mmul(m.matrix));
+		CudaDoubleMatrix r = new CudaDoubleMatrix(matrix.mul(m.matrix));
 		return r;
 	}
 
