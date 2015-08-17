@@ -1,9 +1,6 @@
-package org.ml4j.jblas;
+package org.ml4j;
 
 import java.util.Vector;
-
-import org.ml4j.DoubleMatrices;
-import org.ml4j.DoubleMatrix;
 
 public class SimpleDoubleMatrices implements DoubleMatrices<DoubleMatrix> {
 

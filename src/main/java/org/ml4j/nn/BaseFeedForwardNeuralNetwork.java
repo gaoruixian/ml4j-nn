@@ -25,7 +25,7 @@ import java.util.Vector;
 import org.ml4j.DoubleMatrices;
 import org.ml4j.DoubleMatricesFactory;
 import org.ml4j.DoubleMatrix;
-import org.ml4j.jblas.SimpleDoubleMatricesFactory;
+import org.ml4j.SimpleDoubleMatricesFactory;
 import org.ml4j.nn.costfunctions.CostFunction;
 import org.ml4j.nn.optimisation.CostFunctionMinimiser;
 import org.ml4j.nn.optimisation.MinimisableCostAndGradientFunction;
