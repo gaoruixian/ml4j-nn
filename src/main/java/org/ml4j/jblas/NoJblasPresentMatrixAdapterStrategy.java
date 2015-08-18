@@ -7,6 +7,11 @@ import Jama.Matrix;
 
 public class NoJblasPresentMatrixAdapterStrategy extends DefaultMatrixAdapterStrategy {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public MatrixAdapter mmul(MatrixAdapter matrix, MatrixAdapter matrix2) {
 		Matrix result = toJAMAMatrix(matrix).times(toJAMAMatrix(matrix2));

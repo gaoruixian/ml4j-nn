@@ -5,6 +5,11 @@ import org.ml4j.MatrixAdapterFactory;
 
 public class JBlasMatrixAdapterFactory implements MatrixAdapterFactory {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public MatrixAdapter createMatrix(int rows, int cols) {
 		return new JBlasMatrixAdapter(rows,cols);
