@@ -1,6 +1,6 @@
 package org.ml4j.nn.algorithms;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 import org.ml4j.nn.RestrictedBoltzmannMachine;
 
 public class RestrictedBoltzmannMachineAlgorithm {

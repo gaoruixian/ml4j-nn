@@ -39,7 +39,7 @@ import org.ml4j.util.DoubleArrayMatrixLoader;
 public class FeedForwardNeuralNetworkHandwrittenDigitClassificationDemo {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-
+		
 		// Load Mnist data into double[][] matrices
 
 		DoubleArrayMatrixLoader loader = new DoubleArrayMatrixLoader(

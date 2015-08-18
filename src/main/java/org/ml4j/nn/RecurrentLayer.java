@@ -17,7 +17,7 @@ package org.ml4j.nn;
 
 import java.io.Serializable;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 
 /**
@@ -123,7 +123,7 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 		DoubleMatrix Z = ins.mmul(thetas);
 
 		DoubleMatrix acts = activationFunction.activate(Z);
-		NeuralNetworkLayerActivation<RecurrentLayer> activation = new NeuralNetworkLayerActivation<RecurrentLayer>(this, ins, Z, acts);
+		NeuralNetworkLayerActivation<RecurrentLayer> activation = new NeuralNetworkLayerActivation<RecurrentLayer>(this,ins, Z, acts);
 		this.contextActivations = activation.getOutputActivations();
 		return activation;
 	}

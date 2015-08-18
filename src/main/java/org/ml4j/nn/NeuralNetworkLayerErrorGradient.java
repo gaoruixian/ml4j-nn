@@ -15,7 +15,7 @@
  */
 package org.ml4j.nn;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 
 public class NeuralNetworkLayerErrorGradient {
 
@@ -52,7 +52,7 @@ public class NeuralNetworkLayerErrorGradient {
 	public DoubleMatrix getErrorGradient() {
 		DoubleMatrix currentTheta = thetas;
 		
-		DoubleMatrix grad =  getDELTA().div(m);
+		DoubleMatrix grad =  getDELTA().asJBlasMatrix().div(m);
 		
 		if (lambda != 0)
 		{

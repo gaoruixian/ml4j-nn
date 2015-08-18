@@ -1,6 +1,6 @@
 package org.ml4j.nn.costfunctions;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 
 public class SSECostFunction implements CostFunction {
 

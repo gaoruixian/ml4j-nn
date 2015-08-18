@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 import org.ml4j.nn.util.NeuralNetworkUtils;
 
 public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetwork<RestrictedBoltzmannLayer,RestrictedBoltzmannMachine> implements Serializable {
@@ -146,7 +146,7 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 			{
 					DoubleMatrix reconstructionWithIntercept = pushData(doubleMatrix);
 					DoubleMatrix positiveStatistics = getAveragePairwiseRowProducts(currentVisibleStates, currentHiddenStates);
-	
+
 					pushReconstruction(reconstructionWithIntercept);
 					DoubleMatrix negativeStatistics = getAveragePairwiseRowProducts(currentVisibleStates, currentHiddenStates);
 	

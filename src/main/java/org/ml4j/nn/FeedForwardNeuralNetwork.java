@@ -18,7 +18,8 @@ package org.ml4j.nn;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
+import org.ml4j.MatrixOptimisationStrategy;
 import org.ml4j.nn.costfunctions.CostFunction;
 
 /**
@@ -39,6 +40,14 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 	public FeedForwardNeuralNetwork(FeedForwardLayer... layers)
 	{
 		super(layers);
+	}
+	
+	public void updateForwardPropagationInputMatrixStrategyForCurrentLayers(MatrixOptimisationStrategy matrixOptimisationStrategy)
+	{
+		for (FeedForwardLayer feedForwardLayer : getLayers())
+		{
+			feedForwardLayer.setForwardPropagationInputMatrixStrategy(matrixOptimisationStrategy);
+		}
 	}
 	
 	/**

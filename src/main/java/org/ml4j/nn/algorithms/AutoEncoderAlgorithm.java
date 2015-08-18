@@ -1,6 +1,6 @@
 package org.ml4j.nn.algorithms;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 import org.ml4j.nn.AutoEncoder;
 import org.ml4j.nn.FeedForwardLayer;
 import org.ml4j.nn.StackedAutoEncoder;

@@ -17,7 +17,9 @@ package org.ml4j.nn;
 
 import java.io.Serializable;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
+import org.ml4j.MatrixOptimisationStrategy;
+import org.ml4j.NoOpMatrixOptimisationStrategy;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 
 /**
@@ -42,6 +44,17 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 
 	private DoubleMatrix thetas;
 	protected DoubleMatrix thetasMask;
+	
+	
+	private MatrixOptimisationStrategy forwardPropagationInputMatrixStrategy
+	 = new NoOpMatrixOptimisationStrategy();
+	
+	
+
+
+	public void setForwardPropagationInputMatrixStrategy(MatrixOptimisationStrategy forwardPropagationInputMatrixStrategy) {
+		this.forwardPropagationInputMatrixStrategy = forwardPropagationInputMatrixStrategy;
+	}
 
 	private void applyThetasMask()
 	{
@@ -133,10 +146,11 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 			scaledThetas = thetas.mul(dropoutScaling);
 		}
 		
+		layerInputsWithInterceptAndDropout = forwardPropagationInputMatrixStrategy.optimise(layerInputsWithInterceptAndDropout);
 		DoubleMatrix Z = layerInputsWithInterceptAndDropout.mmul(scaledThetas);
 
 		DoubleMatrix acts = activationFunction.activate(Z);
-		NeuralNetworkLayerActivation<FeedForwardLayer> activation = new NeuralNetworkLayerActivation<FeedForwardLayer>(this, layerInputsWithInterceptAndDropout, Z, acts,thetasMask,dropoutMask);
+		NeuralNetworkLayerActivation<FeedForwardLayer> activation = new NeuralNetworkLayerActivation<FeedForwardLayer>(this,layerInputsWithInterceptAndDropout, Z, acts,thetasMask,dropoutMask);
 
 		return activation;
 	}

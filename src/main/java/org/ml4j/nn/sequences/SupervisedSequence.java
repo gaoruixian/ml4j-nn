@@ -18,7 +18,7 @@ package org.ml4j.nn.sequences;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 
 /**
  * Maps an input sequence to an output sequence

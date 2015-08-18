@@ -15,7 +15,7 @@
  */
 package org.ml4j.nn;
 
-import org.jblas.DoubleMatrix;
+import org.ml4j.DoubleMatrix;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 
 /**
@@ -124,6 +124,7 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	public int getInputNeuronCount() {
 		return inputNeuronCount;
 	}
+	
 
 	/**
 	 * 

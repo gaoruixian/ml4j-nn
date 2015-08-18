@@ -3,8 +3,9 @@ package org.ml4j.nn.util;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.jblas.DoubleMatrix;
-import org.ml4j.jblas.MatrixFunctions;
+import org.ml4j.DoubleMatrix;
+import org.ml4j.DoubleMatrixConfig;
+import org.ml4j.MatrixFunctions;
 
 public class NeuralNetworkUtils {
 
@@ -91,13 +92,9 @@ public class NeuralNetworkUtils {
 	 * Returns a matrix that has the sigmoid function applied to each element of
 	 * given input matrix http://en.wikipedia.org/wiki/Sigmoid_function
 	 */
+	
 	public static DoubleMatrix sigmoid(DoubleMatrix x) {
-		DoubleMatrix result = new DoubleMatrix();
-		result = x;
-		result = MatrixFunctions.expi(result.mul(-1));
-		result = result.add(1);
-		result = MatrixFunctions.powi(result, -1);
-		return result;
+		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().sigmoid(x.matrix));
 	}
 	
 	/*

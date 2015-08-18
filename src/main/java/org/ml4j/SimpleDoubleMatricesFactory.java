@@ -1,10 +1,6 @@
-package org.ml4j.jblas;
+package org.ml4j;
 
 import java.util.Vector;
-
-import org.jblas.DoubleMatrix;
-import org.ml4j.DoubleMatrices;
-import org.ml4j.DoubleMatricesFactory;
 
 public class SimpleDoubleMatricesFactory implements DoubleMatricesFactory<DoubleMatrix> {
 

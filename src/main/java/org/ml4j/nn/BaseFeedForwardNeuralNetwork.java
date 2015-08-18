@@ -22,11 +22,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import org.jblas.DoubleMatrix;
 import org.ml4j.DoubleMatrices;
 import org.ml4j.DoubleMatricesFactory;
-import org.ml4j.jblas.FlattenedDoubleMatricesFactory;
-import org.ml4j.jblas.SimpleDoubleMatricesFactory;
+import org.ml4j.DoubleMatrix;
+import org.ml4j.SimpleDoubleMatricesFactory;
 import org.ml4j.nn.costfunctions.CostFunction;
 import org.ml4j.nn.optimisation.CostFunctionMinimiser;
 import org.ml4j.nn.optimisation.MinimisableCostAndGradientFunction;
@@ -370,7 +369,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		int ind = 0;
 		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable()) {
-				topologies[ind] = new int[] { layer.getOutputNeuronCount(), layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0) };
+				topologies[ind] = new int[] {  layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0),layer.getOutputNeuronCount() };
 				ind++;
 
 			}

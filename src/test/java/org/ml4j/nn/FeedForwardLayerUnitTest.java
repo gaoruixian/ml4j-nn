@@ -5,15 +5,25 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.hamcrest.CoreMatchers;
-import org.jblas.DoubleMatrix;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ml4j.DoubleMatrix;
+import org.ml4j.DoubleMatrixConfig;
+import org.ml4j.jblas.NoJblasPresentMatrixAdapterStrategy;
 import org.ml4j.nn.activationfunctions.DifferentiableActivationFunction;
 import org.ml4j.nn.activationfunctions.SigmoidActivationFunction;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FeedForwardLayerUnitTest {
+	
+	
+	@Before
+	public void setUp()
+	{
+		DoubleMatrixConfig.setDoubleMatrixStrategy(new NoJblasPresentMatrixAdapterStrategy());
+	}
 	
 	@Test
 	public void testUntrainedLayerConstructor_whenValidArguments()

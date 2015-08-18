@@ -1,7 +1,7 @@
 package org.ml4j.nn.optimisation;
 
-import org.jblas.DoubleMatrix;
 import org.ml4j.DoubleMatrices;
+import org.ml4j.DoubleMatrix;
 
 public class CostFunctionMinimiser {
 

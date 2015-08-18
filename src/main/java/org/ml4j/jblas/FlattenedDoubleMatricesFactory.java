@@ -2,9 +2,9 @@ package org.ml4j.jblas;
 
 import java.util.Vector;
 
-import org.jblas.DoubleMatrix;
 import org.ml4j.DoubleMatrices;
 import org.ml4j.DoubleMatricesFactory;
+import org.ml4j.DoubleMatrix;
 
 public class FlattenedDoubleMatricesFactory implements DoubleMatricesFactory<DoubleMatrix> {
 
