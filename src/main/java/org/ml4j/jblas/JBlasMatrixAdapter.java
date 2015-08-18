@@ -1,5 +1,6 @@
 package org.ml4j.jblas;
 
+import org.jblas.MatrixFunctions;
 import org.ml4j.DoubleMatrix;
 import org.ml4j.MatrixAdapter;
 import org.ml4j.cuda.CudaMatrixAdapter;
@@ -106,14 +107,6 @@ public class JBlasMatrixAdapter implements MatrixAdapter {
 		return this;
 	}
 
-	public void put(int outputInd, int inputInd, int i) {
-		Stopwatch timer = createStartedTimer();
-
-		matrix.put(outputInd, inputInd,i);
-		DoubleMatrix.addTiming("putJblas",timer.elapsedMillis());
-
-	}
-
 	public MatrixAdapter sub(MatrixAdapter desiredOutputs) {
 		Stopwatch timer = createStartedTimer();
 
@@ -179,10 +172,8 @@ public class JBlasMatrixAdapter implements MatrixAdapter {
 	}
 
 	public void put(int row, int inputInd, double d) {
-		Stopwatch timer = createStartedTimer();
 
 		matrix.put(row, inputInd,d);
-		DoubleMatrix.addTiming("putJBlas",timer.elapsedMillis());
 
 	}
 
@@ -359,9 +350,7 @@ public class JBlasMatrixAdapter implements MatrixAdapter {
 	}
 
 	public void put(int i, double log) {
-		Stopwatch timer = createStartedTimer();
 		matrix.put(i, log);
-		DoubleMatrix.addTiming("putDoubleJBlas",timer.elapsedMillis());
 
 	}
 
@@ -521,16 +510,7 @@ public class JBlasMatrixAdapter implements MatrixAdapter {
 
 	@Override
 	public MatrixAdapter sigmoid() {
-		
-		Stopwatch timer = createStartedTimer();
-		JBlasDoubleMatrix result = this.matrix;
-		result = JBlasMatrixFunctions.expi(result.mul(-1));
-		result = result.add(1);
-		result = JBlasMatrixFunctions.powi(result, -1);
-		MatrixAdapter ret = new JBlasMatrixAdapter(result);
-		DoubleMatrix.addTiming("sigmoidJBlas", timer.elapsedMillis());
-
-		return ret;
+		return new JBlasMatrixAdapter(JBlasMatrixFunctions.sigmoid(matrix));
 	}
 	
 	

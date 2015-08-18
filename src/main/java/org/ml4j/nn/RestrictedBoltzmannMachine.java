@@ -146,7 +146,7 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 			{
 					DoubleMatrix reconstructionWithIntercept = pushData(doubleMatrix);
 					DoubleMatrix positiveStatistics = getAveragePairwiseRowProducts(currentVisibleStates, currentHiddenStates);
-	
+
 					pushReconstruction(reconstructionWithIntercept);
 					DoubleMatrix negativeStatistics = getAveragePairwiseRowProducts(currentVisibleStates, currentHiddenStates);
 	

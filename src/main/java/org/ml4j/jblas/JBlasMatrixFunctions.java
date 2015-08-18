@@ -1,5 +1,6 @@
 package org.ml4j.jblas;
 
+import org.jblas.DoubleMatrix;
 import org.jblas.MatrixFunctions;
 
 
@@ -23,12 +24,12 @@ public class JBlasMatrixFunctions {
 	
 	public static JBlasDoubleMatrix sigmoid(JBlasDoubleMatrix x) { 
 
-
-		JBlasDoubleMatrix result = new JBlasDoubleMatrix(org.jblas.MatrixFunctions.exp(x.mul(-1).matrix));
+		DoubleMatrix result = new DoubleMatrix();
+		result = x.matrix;
+		result = MatrixFunctions.expi(result.mul(-1));
 		result = result.add(1);
-		result = new JBlasDoubleMatrix(org.jblas.MatrixFunctions.pow(result.matrix, -1));
-	
-		return result;
+		result = MatrixFunctions.powi(result, -1);
+		return new JBlasDoubleMatrix(result);
 	}
 	
 	/**

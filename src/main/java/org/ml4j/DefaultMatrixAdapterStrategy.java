@@ -24,7 +24,7 @@ public class DefaultMatrixAdapterStrategy implements MatrixAdapterStrategy {
 
 	@Override
 	public MatrixAdapter log(MatrixAdapter matrix) {
-		return matrix.logi();
+		return matrix.log();
 	}
 
 	@Override
