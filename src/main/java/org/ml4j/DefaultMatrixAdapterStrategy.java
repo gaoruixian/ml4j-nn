@@ -1,10 +1,16 @@
 package org.ml4j;
 
+import java.io.Serializable;
+
 import org.ml4j.jblas.JBlasMatrixAdapterFactory;
 
 
-public class DefaultMatrixAdapterStrategy implements MatrixAdapterStrategy {
+public class DefaultMatrixAdapterStrategy implements MatrixAdapterStrategy,Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private MatrixAdapterFactory matrixAdapterFactory;
 	
 	public DefaultMatrixAdapterStrategy(MatrixAdapterFactory matrixAdapterFactory)

@@ -5,6 +5,12 @@ import org.ml4j.jblas.JBlasMatrixAdapterFactory;
 
 public class CustomCudaConcatenationMatrixAdapterFactory extends JBlasMatrixAdapterFactory {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	@Override
 	public MatrixAdapter createHorizontalConcatenation(MatrixAdapter matrix, MatrixAdapter matrix2) {
 		

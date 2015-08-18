@@ -2,6 +2,11 @@ package org.ml4j;
 
 public class CudaForMMulStrategy extends DefaultMatrixAdapterStrategy {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public CudaForMMulStrategy() {
 		super(new CustomCudaConcatenationMatrixAdapterFactory());
 	}

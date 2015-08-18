@@ -1,6 +1,8 @@
 package org.ml4j;
 
-public interface MatrixAdapterFactory {
+import java.io.Serializable;
+
+public interface MatrixAdapterFactory extends Serializable {
 
 	MatrixAdapter createMatrix(int rows, int cols);
 
