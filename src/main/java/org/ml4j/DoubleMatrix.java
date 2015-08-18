@@ -1,9 +1,6 @@
 package org.ml4j;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.ml4j.cuda.CudaMatrixAdapter;
 import org.ml4j.jblas.JBlasMatrixAdapter;
@@ -305,37 +302,6 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 			return false;
 		return true;
 	}
-	
 
-	public static void addTiming(String method, long time) {
-		synchronized (methodTimings) {
-			AtomicLong a = methodTimings.get(method);
-			if (a == null) {
-				a = new AtomicLong(0);
-				methodTimings.put(method, a);
-			}
-			a.addAndGet(time);
-		}
-
-	}
-	
-	private static Map<String, AtomicLong> methodTimings = new HashMap<String, AtomicLong>();
-
-	
-	public static void printTimings() {
-		long t = 0;
-		synchronized (methodTimings) {
-			for (Map.Entry<String, AtomicLong> l : methodTimings.entrySet()) {
-				if (!l.getKey().equals("total")) {
-					long v = l.getValue().get();
-					t = t + v;
-				}
-			}
-
-			methodTimings.put("total", new AtomicLong(t));
-			System.out.println(methodTimings);
-			methodTimings.clear();
-		}
-	}
 
 }
