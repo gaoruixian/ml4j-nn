@@ -75,6 +75,12 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 		
 		FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(firstLayer,secondLayer,thirdLayer,forthLayer,fifthLayer);
 		
+		// Use CUDA for matrix-matrix multiplication, and convert input matrices to cuda for fp activations
+		//DoubleMatrixConfig.setDoubleMatrixStrategy(new CudaForMMulStrategy());
+		//neuralNetwork.updateForwardPropagationInputMatrixStrategyForCurrentLayers(new ConvertToCudaMatrixOptimisationStrategy());
+
+		
+		
 		NeuralNetworkAlgorithm alg = new NeuralNetworkAlgorithm(neuralNetwork);
 
 		// Training Context
