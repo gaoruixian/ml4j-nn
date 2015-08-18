@@ -369,7 +369,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		int ind = 0;
 		for (DirectedLayer<?> layer : layers) {
 			if (layer.isRetrainable()) {
-				topologies[ind] = new int[] { layer.getOutputNeuronCount(), layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0) };
+				topologies[ind] = new int[] {  layer.getInputNeuronCount() + (layer.hasBiasUnit() ? 1 : 0),layer.getOutputNeuronCount() };
 				ind++;
 
 			}
