@@ -95,14 +95,6 @@ public class NeuralNetworkUtils {
 	
 	public static DoubleMatrix sigmoid(DoubleMatrix x) {
 		return new DoubleMatrix(DoubleMatrixConfig.getDoubleMatrixStrategy().sigmoid(x.matrix));
-		/*
-		DoubleMatrix result = new DoubleMatrix();
-		result = x;
-		result = MatrixFunctions.expi(result.mul(-1));
-		result = result.add(1);
-		result = MatrixFunctions.powi(result, -1);
-		return result;
-			*/
 	}
 	
 	/*

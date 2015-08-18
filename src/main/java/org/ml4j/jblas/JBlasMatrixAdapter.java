@@ -1,6 +1,5 @@
 package org.ml4j.jblas;
 
-import org.jblas.MatrixFunctions;
 import org.ml4j.DoubleMatrix;
 import org.ml4j.MatrixAdapter;
 import org.ml4j.cuda.CudaMatrixAdapter;

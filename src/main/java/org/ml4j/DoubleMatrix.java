@@ -322,11 +322,6 @@ public class DoubleMatrix implements Serializable, MatrixOperations<DoubleMatrix
 	private static Map<String, AtomicLong> methodTimings = new HashMap<String, AtomicLong>();
 
 	
-	public boolean isCudaMatrix()
-	{
-		return this.matrix instanceof CudaMatrixAdapter;
-	}
-	
 	public static void printTimings() {
 		long t = 0;
 		synchronized (methodTimings) {

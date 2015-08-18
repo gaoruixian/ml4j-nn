@@ -43,6 +43,7 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 	public static void main(String[] args) throws IOException, InterruptedException {
 
 		// Load Mnist data into double[][] matrices
+
 		
 		DoubleArrayMatrixLoader loader = new DoubleArrayMatrixLoader(
 				ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo.class.getClassLoader());
@@ -73,7 +74,7 @@ public class ConvolutionalNeuralNetworkHandwrittenDigitClassificationDemo {
 		FeedForwardLayer fifthLayer = new FeedForwardLayer(100, 10, new SoftmaxActivationFunction(),true);
 		
 		FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(firstLayer,secondLayer,thirdLayer,forthLayer,fifthLayer);
-
+		
 		NeuralNetworkAlgorithm alg = new NeuralNetworkAlgorithm(neuralNetwork);
 
 		// Training Context

@@ -41,6 +41,7 @@ public abstract class BaseLayer<L extends BaseLayer<?>> implements Serializable 
 	public boolean isRetrainable() {
 		return retrainable;
 	}
+	
 
 	/**
 	 * Set whether the parameters of this layer are able to be updated ( retrained)

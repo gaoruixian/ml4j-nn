@@ -85,6 +85,5 @@ public interface MatrixAdapterStrategy {
 	MatrixAdapter getColumn(MatrixAdapter matrix, int j);
 
 	int argmax(MatrixAdapter matrix);
-	
 
 }

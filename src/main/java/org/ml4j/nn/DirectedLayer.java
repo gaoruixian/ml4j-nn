@@ -124,6 +124,7 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	public int getInputNeuronCount() {
 		return inputNeuronCount;
 	}
+	
 
 	/**
 	 * 
