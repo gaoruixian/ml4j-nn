@@ -50,6 +50,9 @@ public class FeedForwardNeuralNetwork extends BaseFeedForwardNeuralNetwork<FeedF
 		}
 	}
 	
+	
+	
+	
 	/**
 	 * FeedForwardNeuralNetwork constructor
 	 * 

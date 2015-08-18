@@ -28,6 +28,15 @@ public class AveragePoolingLayer extends FeedForwardLayer {
 	public int getDepth() {
 		return depth;
 	}
+	
+	public String toString()
+	{
+		int inputDim = (int) Math.sqrt(inputNeuronCount / depth);
+		int outputDim = (int) Math.sqrt(outputNeuronCount / depth);
+
+		return "MaxPooling Layer mapping " + depth + " input images of dimension ("
+ + inputDim + " * " + inputDim + " to " + depth + " images of dimension (" + outputDim + " * " + outputDim + ")";
+	}
 
 	public AveragePoolingLayer(int inputNeuronCount, int outputNeuronCount,
 			int depth) {

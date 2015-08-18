@@ -66,6 +66,18 @@ public abstract class BaseNeuralNetwork<L extends BaseLayer<?>,N extends BaseNeu
 		this.layers.addAll(layers);
 	}
 	
+	
+	public String toString()
+	{
+		int layerNumber = 1;
+		String s = "";
+		for (L layer : getLayers())
+		{
+			s = s + "Layer " + layerNumber++ + ":" + layer.toString() + "\n";
+		}
+		return s;
+	}
+	
 	/**
 	 * @return The layers of this NeuralNetwork
 	 */

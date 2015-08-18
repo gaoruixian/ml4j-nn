@@ -249,6 +249,13 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 
 	}
 	
+	
+	
+	@Override
+	public String toString() {
+		return "FeedForwardLayer with " + inputNeuronCount + " input neurons " + (hasBiasUnit ? "" : "(+ 1 bias unit)") + " and " + outputNeuronCount + " output neurons";
+	}
+
 	protected FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,DoubleMatrix thetasMask,
 			DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable) {
 		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,retrainable,1);

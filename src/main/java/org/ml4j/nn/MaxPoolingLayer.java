@@ -108,7 +108,7 @@ public class MaxPoolingLayer extends FeedForwardLayer {
 
 		if (retrainable) {
 			throw new IllegalArgumentException(
-					"Max pooling layers are not retriable");
+					"Max pooling layers are not retrainable");
 		}
 
 		FeedForwardLayer dup = new MaxPoolingLayer(inputNeuronCount,
@@ -120,7 +120,16 @@ public class MaxPoolingLayer extends FeedForwardLayer {
 	public void applyGradientWeightConstraints(DoubleMatrix gradients) {
 
 	}
+	
+	public String toString()
+	{
+		int inputDim = (int) Math.sqrt(inputNeuronCount / depth);
+		int outputDim = (int) Math.sqrt(outputNeuronCount / depth);
 
+		return "MaxPooling Layer mapping " + depth + " input images of dimension ("
+ + inputDim + " * " + inputDim + " to " + depth + " images of dimension (" + outputDim + " * " + outputDim + ")";
+	}
+		
 	public static DoubleMatrix createThetasMask(int depth,
 			int inputNeuronCount, int outputNeuronCount) {
 

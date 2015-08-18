@@ -52,7 +52,22 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		this.topology = getCalculatedTopology();
 	}
 	
-	
+
+	public void initialise(N neuralNetwork)
+	{
+		int layerIndex = 0;
+		for (DirectedLayer<?> layer : getLayers())
+		{
+			if (!(layer instanceof AveragePoolingLayer || layer instanceof MaxPoolingLayer))
+			{
+				layer.setRetrainable(true);
+				layer.updateThetas(neuralNetwork.getLayers().get(layerIndex).getClonedThetas(), layerIndex, true);
+				layer.setRetrainable(true);
+			}
+			layerIndex++;
+		}
+
+	}
 	
 	public BaseFeedForwardNeuralNetwork(List<L> layers) {
 		super(layers);

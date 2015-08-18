@@ -28,7 +28,14 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 		this.depth = depth;
 	}
 	
-	
+	@Override
+	public String toString() {
+		int outputDim = (int) Math.sqrt(outputNeuronCount / filterCount);
+		int inputDim = (int) Math.sqrt(inputNeuronCount / depth);
+
+		int filterWidth = inputDim - outputDim + 1;
+		return "Convolutional Layer accepting " + depth + " input images of dimension (" + inputDim + " * " + inputDim + ") and applying " + getFilterCount() + " convolutional (" + filterWidth + " * " + filterWidth + ") filters, producing " + getFilterCount() + " (" + outputDim + " * " + outputDim + ") output image(s)";
+	}
 
 	public int getDepth() {
 		return depth;
