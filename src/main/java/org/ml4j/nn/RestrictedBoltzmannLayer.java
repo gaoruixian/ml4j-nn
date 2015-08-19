@@ -120,6 +120,11 @@ public class RestrictedBoltzmannLayer extends BipartiteUndirectedGraph<Restricte
 		return thetas;
 	}
 	
+	@Override
+	public String toString() {
+		return "RecurrentLayer with " + visibleNeuronCount + " visible neurons (+1 bias unit) and " + hiddenNeuronCount + " (+1 bias unit) hidden neurons";
+	}
+	
 	private static DoubleMatrix generateDefaultThetas(int visibleNeuronCount,int hiddenNeuronCount)
 	{
 		double defaultLearningRate = 0.05;

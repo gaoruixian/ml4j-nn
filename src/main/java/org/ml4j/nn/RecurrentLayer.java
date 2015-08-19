@@ -131,6 +131,11 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 	protected NeuralNetworkLayerActivation<RecurrentLayer> forwardPropagate(DoubleMatrix layerInputsWithIntercept) {
 			return forwardPropagate(layerInputsWithIntercept,false);
 	}
+	
+	@Override
+	public String toString() {
+		return "RecurrentLayer with " + inputNeuronCount + " input neurons " + (hasBiasUnit ? "(+ 1 bias unit)" : "") + " and " + outputNeuronCount + " output neurons";
+	}
 		
 
 	/**
