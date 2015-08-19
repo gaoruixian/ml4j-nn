@@ -52,7 +52,7 @@ public class NeuralNetworkLayerErrorGradient {
 	public DoubleMatrix getErrorGradient() {
 		DoubleMatrix currentTheta = thetas;
 		
-		DoubleMatrix grad =  getDELTA().asJBlasMatrix().div(m);
+		DoubleMatrix grad =  getDELTA().div(m);
 		
 		if (lambda != 0)
 		{
