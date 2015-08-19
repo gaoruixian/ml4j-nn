@@ -62,6 +62,7 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 
 		int inputsLength = supervisedRbm.getLayer().getVisibleNeuronCount() + 1;
 		
+
 		int labelsLength = inputsLength - unsupervisedRbmStack.getFinalLayer().getHiddenNeuronCount() - 1;
 
 		int rowCount = inputsLength - labelsLength;
@@ -79,7 +80,9 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 		
 		DoubleMatrix thets1 =  finalLayer.getClonedThetas().getRows(rows);
 		
-		DoubleMatrix thets2 =  finalLayer.getClonedThetas().getRows(rows2).transpose();
+		DoubleMatrix thets2 =  finalLayer.getClonedThetas().transpose().getColumns(rows2);
+		
+		
 		
 		FeedForwardLayer ff1 = new FeedForwardLayer(finalLayer.getVisibleNeuronCount() - labelsLength,finalLayer.getHiddenNeuronCount() + 1, thets1,(DifferentiableActivationFunction) finalLayer.hiddenActivationFunction,true,true);
 		FeedForwardLayer ff2 = new FeedForwardLayer(finalLayer.getHiddenNeuronCount() + 1,labelsLength,thets2,supervisedActivationFunction,false,true);

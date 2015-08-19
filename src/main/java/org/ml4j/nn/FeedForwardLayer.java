@@ -253,7 +253,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	
 	@Override
 	public String toString() {
-		return "FeedForwardLayer with " + inputNeuronCount + " input neurons " + (hasBiasUnit ? "" : "(+ 1 bias unit)") + " and " + outputNeuronCount + " output neurons";
+		return "FeedForwardLayer with " + inputNeuronCount + " input neurons " + (hasBiasUnit ? "(+ 1 bias unit)" : "") + " and " + outputNeuronCount + " output neurons";
 	}
 
 	protected FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,DoubleMatrix thetasMask,
@@ -308,7 +308,6 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		{
 			throw new IllegalArgumentException("Neural network layer index must be zero or above");
 		}
-		
 		if (thetas.getColumns() != outputNeuronCount || thetas.getRows() != (inputNeuronCount + (hasBiasUnit ? 1 : 0 ))) throw new IllegalArgumentException("Thetas matrix must be of dimensions "  + (inputNeuronCount + (hasBiasUnit ? 1 : 0 ) +  ":" + outputNeuronCount ));
 		this.thetas = thetas;
 		if (!permitFurtherRetrains) {
