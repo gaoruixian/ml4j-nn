@@ -44,13 +44,22 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 
 	private DoubleMatrix thetas;
 	protected DoubleMatrix thetasMask;
+	protected Double initialThetaScaling;
 	
 	
 	private MatrixOptimisationStrategy forwardPropagationInputMatrixStrategy
 	 = new NoOpMatrixOptimisationStrategy();
 	
 	
-
+	public void setInitialThetaScaling(double v)
+	{
+		this.initialThetaScaling = v;
+	}
+	
+	public double getInitialThetaScaling()
+	{
+		return initialThetaScaling != null ? initialThetaScaling : 0.05d;
+	}
 
 	public void setForwardPropagationInputMatrixStrategy(MatrixOptimisationStrategy forwardPropagationInputMatrixStrategy) {
 		this.forwardPropagationInputMatrixStrategy = forwardPropagationInputMatrixStrategy;
@@ -331,7 +340,7 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	 * @return An initial set of weights
 	 */
 	protected DoubleMatrix generateInitialThetas(int c, int r) {
-		DoubleMatrix initial = DoubleMatrix.randn(r, c).mul(0.05);
+		DoubleMatrix initial = DoubleMatrix.randn(r, c).mul(getInitialThetaScaling());
 		return initial;
 	}
 	

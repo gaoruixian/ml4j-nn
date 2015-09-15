@@ -17,15 +17,17 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 
 	private int filterCount;
 	private int depth;
-
+	private Integer stride;
+	
 	protected ConvolutionalLayer(int inputNeuronCount, int outputNeuronCount,
 			DoubleMatrix thetas, DoubleMatrix thetasMask,
 			DifferentiableActivationFunction activationFunction,
-			boolean biasUnit, boolean retrainable, int filterCount, int depth,double inputDropout) {
+			boolean biasUnit, boolean retrainable, int filterCount, int depth,Integer stride,double inputDropout) {
 		super(inputNeuronCount, outputNeuronCount, thetas, thetasMask,
 				activationFunction, biasUnit, retrainable,inputDropout);
 		this.filterCount = filterCount;
 		this.depth = depth;
+		this.stride = stride;
 	}
 	
 	@Override
@@ -33,8 +35,10 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 		int outputDim = (int) Math.sqrt(outputNeuronCount / filterCount);
 		int inputDim = (int) Math.sqrt(inputNeuronCount / depth);
 
-		int filterWidth = inputDim - outputDim + 1;
-		return "Convolutional Layer accepting " + depth + " input images of dimension (" + inputDim + " * " + inputDim + ") and applying " + getFilterCount() + " convolutional (" + filterWidth + " * " + filterWidth + ") filters, producing " + getFilterCount() + " (" + outputDim + " * " + outputDim + ") output image(s)";
+		int filterWidth = inputDim + (1 - outputDim) * (stride == null ? 1 : stride);
+		int strideAmount = stride == null ? 1 : stride;
+
+		return "Convolutional Layer accepting " + depth + " input images of dimension (" + inputDim + " * " + inputDim + ") and applying " + getFilterCount() + " convolutional (" + filterWidth + " * " + filterWidth + ") filters at stride " + strideAmount + ", producing " + getFilterCount() + " (" + outputDim + " * " + outputDim + ") output image(s)";
 	}
 
 	public int getDepth() {
@@ -47,67 +51,78 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 
 	public ConvolutionalLayer(int inputNeuronCount, int outputNeuronCount,
 			DifferentiableActivationFunction activationFunction,
-			boolean biasUnit, int filterCount, int depth,double inputDropout) {
+			boolean biasUnit, int filterCount, int depth,Integer stride,double initialThetaScaling,double inputDropout) {
 		super(inputNeuronCount, outputNeuronCount, createThetas(
 				inputNeuronCount,
 				outputNeuronCount,
 				filterCount,
 				depth,
-				createThetasMask(filterCount, depth, inputNeuronCount,
-						outputNeuronCount, biasUnit), biasUnit),
-				createThetasMask(filterCount, depth, inputNeuronCount,
+				stride,
+				createThetasMask(filterCount, depth,stride, inputNeuronCount,
+						outputNeuronCount, biasUnit), biasUnit,initialThetaScaling),
+				createThetasMask(filterCount, depth,stride, inputNeuronCount,
 						outputNeuronCount, biasUnit), activationFunction,
 				biasUnit, true,inputDropout);
 		this.filterCount = filterCount;
 		this.depth = depth;
+		this.stride = stride;
 	}
 	
 	
 	public ConvolutionalLayer(int inputNeuronCount, int outputNeuronCount,
 			DifferentiableActivationFunction activationFunction,
+			boolean biasUnit, int filterCount, int depth,int stride,double initialThetaScaling) {
+		this(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,filterCount,depth,stride,initialThetaScaling,1);
+	}
+	
+	public ConvolutionalLayer(int inputNeuronCount, int outputNeuronCount,
+			DifferentiableActivationFunction activationFunction,
+			boolean biasUnit, int filterCount, int depth,int stride) {
+		this(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,filterCount,depth,stride,0.05,1);
+	}
+	
+	public ConvolutionalLayer(int inputNeuronCount, int outputNeuronCount,
+			DifferentiableActivationFunction activationFunction,
 			boolean biasUnit, int filterCount, int depth) {
-		this(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,filterCount,depth,1);
+		this(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,filterCount,depth,1,0.05,1);
 	}
 
 	private static DoubleMatrix createThetas(int inputNeuronCount,
-			int outputNeuronCount, int filterCount, int depth,
-			DoubleMatrix thetasMask, boolean hasBiasUnit) {
+			int outputNeuronCount, int filterCount, int depth,Integer stride,
+			DoubleMatrix thetasMask, boolean hasBiasUnit,double initialThetaScaling) {
 		DoubleMatrix initialThetas = DoubleMatrix.randn(
-				inputNeuronCount + (hasBiasUnit ? 1 : 0),outputNeuronCount).mul(0.05);
+				inputNeuronCount + (hasBiasUnit ? 1 : 0),outputNeuronCount).mul(initialThetaScaling);
 
 		int filterOutputSize = outputNeuronCount / filterCount;
 
 		for (int grid = 0; grid < depth; grid++) {
 			for (int f = 0; f < filterCount; f++) {
-				int startRowIndex = f * filterOutputSize;
+				int startColumnIndex = f * filterOutputSize;
 				int inputWidth = (int) Math.sqrt(inputNeuronCount / depth);
 				int outputWidth = (int) Math.sqrt(outputNeuronCount
 						/ filterCount);
-				int filterWidth = inputWidth - outputWidth + 1;
+				int filterWidth = inputWidth - (outputWidth - 1) * (stride == null ? 1 : stride);
 				int sharedValueCount = filterWidth * filterWidth;
 
 				int[][] sharedValueIndexes = new int[filterOutputSize][sharedValueCount
 						* depth + (hasBiasUnit ? 1 : 0)];
 				double[] sharedValues = new double[sharedValueCount];
-				for (int row = startRowIndex; row < startRowIndex
-						+ filterOutputSize; row++) {
-					int[] inds = thetasMask.getColumn(row).findIndices();
-					sharedValueIndexes[row - startRowIndex] = inds;
-
+				for (int column = 0; column < filterOutputSize; column++) {
+					int[] inds = thetasMask.getColumn(column + startColumnIndex).findIndices();
+					sharedValueIndexes[column] = inds;
 				}
 
 				for (int i = 0; i < sharedValueCount; i++) {
 					sharedValues[i] = initialThetas.get(
 							sharedValueIndexes[0][i + filterWidth * grid
-									+ (hasBiasUnit ? 1 : 0)],startRowIndex);
+									+ (hasBiasUnit ? 1 : 0)],startColumnIndex);
 				}
 
-				for (int row = startRowIndex; row < startRowIndex
-						+ filterOutputSize; row++) {
+				for (int column = 0; column < filterOutputSize; column++) {
 					for (int sharedValueIndex = 0; sharedValueIndex < sharedValueCount; sharedValueIndex++) {
-						initialThetas.put(sharedValueIndexes[row
-								- startRowIndex][sharedValueIndex + filterWidth
-								* grid + (hasBiasUnit ? 1 : 0)],row, 
+
+						initialThetas.put(sharedValueIndexes[column][sharedValueIndex + sharedValueCount
+								* grid + (hasBiasUnit ? 1 : 0)],column + startColumnIndex, 
 								sharedValues[sharedValueIndex]);
 					}
 				}
@@ -122,7 +137,7 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 		FeedForwardLayer dup = new ConvolutionalLayer(inputNeuronCount,
 				outputNeuronCount, this.getClonedThetas(), thetasMask,
 				activationFunction, hasBiasUnit(), retrainable, filterCount,
-				depth,inputDropout);
+				depth,stride,inputDropout);
 		return dup;
 	}
 
@@ -133,25 +148,24 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 
 		for (int grid = 0; grid < depth; grid++) {
 			for (int f = 0; f < filterCount; f++) {
-				int startRowIndex = f * filterOutputSize;
+				int startColumnIndex = f * filterOutputSize;
 				int inputWidth = (int) Math.sqrt(getInputNeuronCount() / depth);
 				int outputWidth = (int) Math.sqrt(getOutputNeuronCount()
 						/ filterCount);
-				int filterWidth = inputWidth - outputWidth + 1;
+				int filterWidth = inputWidth + (1 - outputWidth) * (stride == null ? 1 : stride);
 				int sharedValueCount = filterWidth * filterWidth;
 
 				int[][] sharedValueIndexes = new int[filterOutputSize][sharedValueCount
 						+ (hasBiasUnit() ? 1 : 0)];
 				double[] averageValues = new double[sharedValueCount];
-				for (int row = startRowIndex; row < startRowIndex
-						+ filterOutputSize; row++) {
-					int[] inds = thetasMask.getColumn(row).findIndices();
-					sharedValueIndexes[row - startRowIndex] = inds;
+				for (int column = 0; column < filterOutputSize; column++) {
+					int[] inds = thetasMask.getColumn(column + startColumnIndex).findIndices();
+					sharedValueIndexes[column] = inds;
 					for (int i = 0; i < averageValues.length; i++) {
 
 						averageValues[i] = averageValues[i]
 								+ gradients.get(inds[filterWidth * grid
-										+ i + (hasBiasUnit() ? 1 : 0)],row);
+										+ i + (hasBiasUnit() ? 1 : 0)],column  + startColumnIndex);
 					}
 				}
 
@@ -159,12 +173,10 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 					averageValues[i] = averageValues[i] / filterOutputSize;
 				}
 
-				for (int row = startRowIndex; row < startRowIndex
-						+ filterOutputSize; row++) {
+				for (int column = 0; column < filterOutputSize; column++) {
 					for (int sharedValueIndex = 0; sharedValueIndex < sharedValueCount; sharedValueIndex++) {
-						gradients.put(sharedValueIndexes[row
-								- startRowIndex][sharedValueIndex + filterWidth
-								* grid + (hasBiasUnit() ? 1 : 0)],row, 
+						gradients.put(sharedValueIndexes[column][sharedValueIndex + sharedValueCount
+								* grid + (hasBiasUnit() ? 1 : 0)],column + startColumnIndex, 
 								averageValues[sharedValueIndex]);
 					}
 				}
@@ -174,7 +186,7 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 
 	}
 
-	public static DoubleMatrix createThetasMask(int filterCount, int depth,
+	public static DoubleMatrix createThetasMask(int filterCount, int depth,Integer stride,
 			int inputNeuronCount, int outputNeuronCount, boolean hasBiasUnit) {
 
 		DoubleMatrix thetasMask = new DoubleMatrix(
@@ -187,16 +199,18 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 		int outputDim = (int) Math.sqrt(outputNeuronCount / filterCount);
 		int inputDim = (int) Math.sqrt(inputNeuronCount / depth);
 
-		int filterWidth = inputDim - outputDim + 1;
+		int filterWidth = inputDim + (1 - outputDim) * (stride == null ? 1 : stride);
 		int gridInputSize = inputNeuronCount / depth;
 		int filterOutputSize = outputNeuronCount / filterCount;
+		
+		int strideAmount = stride == null ? 1 : stride;
 
 		for (int grid = 0; grid < depth; grid++) {
 			for (int f = 0; f < filterCount; f++) {
 				for (int i = 0; i < outputDim; i++) {
 					for (int j = 0; j < outputDim; j++) {
-						for (int r = i; r < i + filterWidth; r++) {
-							for (int c = j; c < j + filterWidth; c++) {
+						for (int r = i * strideAmount; r < i * strideAmount + filterWidth; r++) {
+							for (int c = j * strideAmount; c < j * strideAmount+ filterWidth; c++) {
 								int outputInd = (filterOutputSize * f)
 										+ (i * outputDim + j);
 								int inputInd = grid * gridInputSize + r
