@@ -23,8 +23,10 @@ public class NeuralNetworkUpdatingCostFunction implements MinimisableCostAndGrad
 	 */
 	public NeuralNetworkUpdatingCostFunction(DoubleMatrix setX, DoubleMatrix setY, int[][] setTopology,
 			double[] setLambda, BaseFeedForwardNeuralNetwork<?,?> neuralNetwork, CostFunction costFunction,DoubleMatricesFactory<DoubleMatrix> doubleMatricesFactory) {
-		X = new DoubleMatrix().copy(setX);
-		Y = new DoubleMatrix().copy(setY);
+		//X = new DoubleMatrix().copy(setX);
+		//Y = new DoubleMatrix().copy(setY);
+		this.X = setX;
+		this.Y = setY;
 		lambda = setLambda;
 		this.neuralNetwork = neuralNetwork;
 		this.costFunction = costFunction;

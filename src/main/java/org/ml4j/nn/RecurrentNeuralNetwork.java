@@ -91,7 +91,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 		// This clones the NeuralNetwork, minimises the thetas, and returns
 		// optimal thetas
 		Vector<DoubleMatrix> newThetas = getMinimisingThetasForRetrainableLayers(sequences,
-				getClonedRetrainableThetas(), lambdas, getDefaultCostFunction(), max_iter);
+				getRetrainableThetas(), lambdas, getDefaultCostFunction(), max_iter);
 		
 
 		updateThetasForRetrainableLayers(createDoubleMatricesFactory().create(newThetas), false);
@@ -313,7 +313,43 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 				for (SupervisedSequence sequence : sequencesOfSpecifiedLength) {
 
-					newThetasVec = duplicateNeuralNetwork.getUpdatedThetasForSequence(i, duplicateNeuralNetwork.getClonedRetrainableThetas(), sequence,retrainableLambdas);
+					newThetasVec = duplicateNeuralNetwork.getUpdatedThetasForSequence(i, duplicateNeuralNetwork.getRetrainableThetas(), sequence,retrainableLambdas);
+					
+	
+					duplicateNeuralNetwork.updateThetasForRetrainableLayers(createDoubleMatricesFactory().create(newThetasVec), true);
+
+
+				}
+			}
+			double cost = duplicateNeuralNetwork.getCost(inputOutputSequences,retrainableLambdas,costFunction);
+			
+			System.out.print("Iteration " + iteration + " | Cost: " + cost + "\r");
+
+			
+
+		}
+
+		return newThetasVec;
+
+	}
+	
+	
+	protected Vector<DoubleMatrix> minimiseThetasForRetrainableLayers(SupervisedSequences inputOutputSequences, Vector<DoubleMatrix> initialRetrainableThetas,
+			double[] retrainableLambdas, CostFunction costFunction, int max_iter) {
+		
+		RecurrentNeuralNetwork duplicateNeuralNetwork = this.dup(false);
+
+		Vector<DoubleMatrix> newThetasVec = null;
+		for (int iteration = 0; iteration < max_iter; iteration++) {
+			
+			
+			for (int i = 1; i <= maxSequenceLength; i++) {
+				
+				Collection<SupervisedSequence> sequencesOfSpecifiedLength = inputOutputSequences.filterBySequenceLength(i);
+
+				for (SupervisedSequence sequence : sequencesOfSpecifiedLength) {
+
+					newThetasVec = duplicateNeuralNetwork.getUpdatedThetasForSequence(i, duplicateNeuralNetwork.getRetrainableThetas(), sequence,retrainableLambdas);
 					
 	
 					duplicateNeuralNetwork.updateThetasForRetrainableLayers(createDoubleMatricesFactory().create(newThetasVec), true);

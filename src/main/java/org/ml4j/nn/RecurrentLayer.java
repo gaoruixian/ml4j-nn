@@ -155,6 +155,11 @@ public class RecurrentLayer extends DirectedLayer<RecurrentLayer> implements Ser
 		DoubleMatrix ret = thetas.dup();
 		return ret;
 	}
+	
+	public DoubleMatrix getThetas() {
+
+		return thetas;
+	}
 
 	/**
 	 * Untrained RecurrentLayer constructor - sets the layer to retrainable=true

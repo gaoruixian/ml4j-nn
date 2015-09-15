@@ -109,7 +109,7 @@ public class RestrictedBoltzmannMachine extends SymmetricallyConnectedNeuralNetw
 	
 	public double getAverageEnergy(DoubleMatrix vs,DoubleMatrix hs)
 	{
-		return -vs.mmul(getLayer().getClonedThetas()).mmul(hs.transpose()).sum()/vs.getRows();
+		return -vs.mmul(getLayer().getThetas()).mmul(hs.transpose()).sum()/vs.getRows();
 
 	}
 	

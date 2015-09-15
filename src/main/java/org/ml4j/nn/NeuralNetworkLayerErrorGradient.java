@@ -56,12 +56,18 @@ public class NeuralNetworkLayerErrorGradient {
 		
 		if (lambda != 0)
 		{
-			DoubleMatrix modTheta = new DoubleMatrix().copy(currentTheta);
+			DoubleMatrix modTheta = currentTheta;
+			
+			//modTheta.putRow(0, DoubleMatrix.zeros( 1,currentTheta.getColumns()));
+			
+			DoubleMatrix firstRow = grad.getRow(0);
+
+			grad = grad.add(currentTheta.mul(lambda / m));
 			if (layer.hasBiasUnit)
 			{
-			modTheta.putRow(0, DoubleMatrix.zeros( 1,currentTheta.getColumns()));
+
+				grad.putRow(0, firstRow);
 			}
-			grad = grad.add(modTheta.mul(lambda / m));
 		}
 		
 		

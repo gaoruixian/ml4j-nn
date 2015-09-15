@@ -64,8 +64,21 @@ public abstract class BipartiteUndirectedGraph<L extends BipartiteUndirectedGrap
 
 	}
 	
-	public void setThetas(DoubleMatrix thetas) {
+
+	protected void setThetas(DoubleMatrix thetas) {
 		this.thetas = thetas;
+	}
+
+	
+	
+	protected DoubleMatrix getThetas()
+	{
+		return thetas;
+	}
+	
+	public DoubleMatrix getClonedThetas()
+	{
+		return thetas.dup();
 	}
 	
 	/**
@@ -89,11 +102,13 @@ public abstract class BipartiteUndirectedGraph<L extends BipartiteUndirectedGrap
 	 * - including bias units.
 	 * 
 	 */
+	/*
 	public DoubleMatrix getClonedThetas() {
 
 		DoubleMatrix ret = thetas.dup();
 		return ret;
 	}
+	*/
 
 	
 

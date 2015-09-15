@@ -61,7 +61,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 			if (!(layer instanceof AveragePoolingLayer || layer instanceof MaxPoolingLayer))
 			{
 				layer.setRetrainable(true);
-				layer.updateThetas(neuralNetwork.getLayers().get(layerIndex).getClonedThetas(), layerIndex, true);
+				layer.updateThetas(neuralNetwork.getLayers().get(layerIndex).getThetas(), layerIndex, true);
 				layer.setRetrainable(true);
 			}
 			layerIndex++;
@@ -209,9 +209,11 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 
 		// This clones the NeuralNetwork, minimises the thetas, and returns
 		// optimal thetas
-		DoubleMatrices<DoubleMatrix> newThetas = getMinimisingThetasForRetrainableLayers(inputs, desiredOutputs,
-				getClonedRetrainableThetas(), lambdas, costFunction, max_iter);
-		updateThetasForRetrainableLayers(newThetas, false);
+		//DoubleMatrices<DoubleMatrix> newThetas = getMinimisingThetasForRetrainableLayers(inputs, desiredOutputs,
+			//	getRetrainableThetas(), lambdas, costFunction, max_iter);
+		minimiseThetasForRetrainableLayers(inputs, desiredOutputs,
+			getRetrainableThetas(), lambdas, costFunction, max_iter);
+		//updateThetasForRetrainableLayers(newThetas, false);
 	}
 
 	public List<L> getLayers() {
@@ -279,6 +281,19 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		return new SimpleDoubleMatricesFactory(getRetrainableTopologies());
 	}
 
+	private void minimiseThetasForRetrainableLayers(DoubleMatrix inputs, DoubleMatrix desiredOutputs,
+			Vector<DoubleMatrix> initialRetrainableThetas, double[] retrainableLambdas, CostFunction costFunction,
+			int max_iter) {
+		MinimisableCostAndGradientFunction minimisableCostFunction = new NeuralNetworkUpdatingCostFunction(inputs,
+				desiredOutputs, getRetrainableTopologies(), retrainableLambdas, this, costFunction,createDoubleMatricesFactory());
+
+		DoubleMatrices<DoubleMatrix> pInput = createDoubleMatricesFactory().create(initialRetrainableThetas);
+
+		//DoubleMatrices<DoubleMatrix> pInput = new SimpleDoubleMatrices(initialRetrainableThetas);
+		
+		//DoubleMatrix pInput = NeuralNetworkUtils.reshapeToVector(initialRetrainableThetas);
+		CostFunctionMinimiser.fmincg(minimisableCostFunction, pInput, max_iter, true);
+	}
 	
 	private DoubleMatrices<DoubleMatrix> getMinimisingThetasForRetrainableLayers(DoubleMatrix inputs, DoubleMatrix desiredOutputs,
 			Vector<DoubleMatrix> initialRetrainableThetas, double[] retrainableLambdas, CostFunction costFunction,
@@ -310,7 +325,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 	}
 	
 	
-
+	/*
 	public Vector<DoubleMatrix> getClonedThetas() {
 		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();
 		for (DirectedLayer<?> layer : layers) {
@@ -319,7 +334,21 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		return allThetasVec;
 
 	}
+	*/
+	
+	
+	public Vector<DoubleMatrix> getRetrainableThetas() {
+		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();
+		for (DirectedLayer<?> layer : layers) {
+			if (layer.isRetrainable()) {
+				allThetasVec.add(layer.getThetas());
+			}
+		}
+		return allThetasVec;
 
+	}
+
+	/*
 	public Vector<DoubleMatrix> getClonedRetrainableThetas() {
 		Vector<DoubleMatrix> allThetasVec = new Vector<DoubleMatrix>();
 		for (DirectedLayer<?> layer : layers) {
@@ -330,6 +359,7 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 		return allThetasVec;
 
 	}
+	*/
 
 	public boolean isContainingRetrainableLayers() {
 		for (DirectedLayer<?> layer : layers) {
