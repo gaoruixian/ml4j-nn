@@ -176,6 +176,11 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		DoubleMatrix ret = thetas.dup();
 		return ret;
 	}
+	
+	public DoubleMatrix getThetas() {
+
+		return thetas;
+	}
 
 	/**
 	 * Untrained FeedForwardLayer constructor - sets the layer to retrainable=true

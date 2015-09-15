@@ -56,7 +56,7 @@ public class NeuralNetworkLayerErrorGradient {
 		
 		if (lambda != 0)
 		{
-			DoubleMatrix modTheta = new DoubleMatrix().copy(currentTheta);
+			DoubleMatrix modTheta = currentTheta.dup();
 			if (layer.hasBiasUnit)
 			{
 			modTheta.putRow(0, DoubleMatrix.zeros( 1,currentTheta.getColumns()));

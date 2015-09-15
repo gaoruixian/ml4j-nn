@@ -100,9 +100,9 @@ public class CostFunctionMinimiser {
 		while (i < Math.abs(max_iter)) {
 			i = i + (max_iter > 0 ? 1 : 0);// count iterations?!
 			// make a copy of current values
-			DoubleMatrices<DoubleMatrix> X0 = f.getDoubleMatricesFactory().copy(input);
+			DoubleMatrices<DoubleMatrix> X0 = input;//f.getDoubleMatricesFactory().copy(input);
 			double f0 = f1;
-			DoubleMatrices<DoubleMatrix> df0 = f.getDoubleMatricesFactory().copy(df1);
+			DoubleMatrices<DoubleMatrix> df0 = df1;//f.getDoubleMatricesFactory().copy(df1);
 			// begin line search
 			input = input.add(s.mul(z1));
 			final Tuple<Double, DoubleMatrices<DoubleMatrix> > evaluateCost2 = f.evaluateCost(input);

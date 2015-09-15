@@ -145,7 +145,12 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 		return activationFunction;
 	}
 	
-	public abstract DoubleMatrix getClonedThetas();
+	public DoubleMatrix getClonedThetas()
+	{
+		return getThetas().dup();
+	}
+	protected abstract DoubleMatrix getThetas();
+
 
 	protected abstract void updateThetas(DoubleMatrix doubleMatrix, int layerIndex, boolean permitFurtherRetrains);
 	

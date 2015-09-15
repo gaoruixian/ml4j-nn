@@ -91,7 +91,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 		// This clones the NeuralNetwork, minimises the thetas, and returns
 		// optimal thetas
 		Vector<DoubleMatrix> newThetas = getMinimisingThetasForRetrainableLayers(sequences,
-				getClonedRetrainableThetas(), lambdas, getDefaultCostFunction(), max_iter);
+				getRetrainableThetas(), lambdas, getDefaultCostFunction(), max_iter);
 		
 
 		updateThetasForRetrainableLayers(createDoubleMatricesFactory().create(newThetas), false);
@@ -313,7 +313,7 @@ public class RecurrentNeuralNetwork extends BaseFeedForwardNeuralNetwork<Directe
 
 				for (SupervisedSequence sequence : sequencesOfSpecifiedLength) {
 
-					newThetasVec = duplicateNeuralNetwork.getUpdatedThetasForSequence(i, duplicateNeuralNetwork.getClonedRetrainableThetas(), sequence,retrainableLambdas);
+					newThetasVec = duplicateNeuralNetwork.getUpdatedThetasForSequence(i, duplicateNeuralNetwork.getRetrainableThetas(), sequence,retrainableLambdas);
 					
 	
 					duplicateNeuralNetwork.updateThetasForRetrainableLayers(createDoubleMatricesFactory().create(newThetasVec), true);

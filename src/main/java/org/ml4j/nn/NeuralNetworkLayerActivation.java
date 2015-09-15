@@ -36,13 +36,13 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 
 	public double getRegularisationCost(int m, double lambda) {
 		DoubleMatrix currentTheta = thetas;
-		int[] rows = new int[currentTheta.getRows() - 1];
+		int[] rows = new int[currentTheta.getRows() - (layer.hasBiasUnit() ? 1 : 0)];
 		int[] cols = new int[currentTheta.getColumns()];
 		for (int j = 0; j < currentTheta.getColumns(); j++) {
 			cols[j] = j;
 		}
 		for (int j = 1; j < currentTheta.getRows(); j++) {
-			rows[j - 1] = j;
+			rows[j - (layer.hasBiasUnit() ? 1 : 0)] = j;
 		}
 		double ThetaReg = MatrixFunctions.pow(currentTheta.get(rows, cols), 2).sum();
 		return ((lambda) * ThetaReg) / (2 * m); // Add the non regularization
@@ -102,7 +102,7 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 		this.Z = Z;
 		this.outputActivations = outputActivations;
 		this.layer = layer;
-		this.thetas = layer.getClonedThetas();
+		this.thetas = layer.getThetas();
 		this.thetasMask = thetasMask;
 		this.dropoutMask = dropoutMask;
 	}
@@ -113,7 +113,7 @@ public class NeuralNetworkLayerActivation<L extends DirectedLayer<?>> {
 		this.Z = Z;
 		this.outputActivations = outputActivations;
 		this.layer = layer;
-		this.thetas = layer.getClonedThetas();
+		this.thetas = layer.getThetas();
 		this.thetasMask = DoubleMatrix.ones(thetas.getRows(),thetas.getColumns());
 		this.dropoutMask = DoubleMatrix.ones(inputActivations.getRows(),inputActivations.getColumns());
 	}

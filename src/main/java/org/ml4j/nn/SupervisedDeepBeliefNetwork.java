@@ -78,9 +78,9 @@ public class SupervisedDeepBeliefNetwork extends DeepBeliefNetwork<SupervisedDee
 			rows2[i] = i+1;
 		}
 		
-		DoubleMatrix thets1 =  finalLayer.getClonedThetas().getRows(rows);
+		DoubleMatrix thets1 =  finalLayer.getThetas().getRows(rows);
 		
-		DoubleMatrix thets2 =  finalLayer.getClonedThetas().transpose().getColumns(rows2);
+		DoubleMatrix thets2 =  finalLayer.getThetas().transpose().getColumns(rows2);
 		
 		
 		
