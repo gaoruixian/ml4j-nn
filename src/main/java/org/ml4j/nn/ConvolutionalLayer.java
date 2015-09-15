@@ -114,7 +114,7 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 
 				for (int i = 0; i < sharedValueCount; i++) {
 					sharedValues[i] = initialThetas.get(
-							sharedValueIndexes[0][i + filterWidth * grid
+							sharedValueIndexes[0][i + sharedValueCount * grid
 									+ (hasBiasUnit ? 1 : 0)],startColumnIndex);
 				}
 
@@ -164,7 +164,7 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 					for (int i = 0; i < averageValues.length; i++) {
 
 						averageValues[i] = averageValues[i]
-								+ gradients.get(inds[filterWidth * grid
+								+ gradients.get(inds[sharedValueCount * grid
 										+ i + (hasBiasUnit() ? 1 : 0)],column  + startColumnIndex);
 					}
 				}
