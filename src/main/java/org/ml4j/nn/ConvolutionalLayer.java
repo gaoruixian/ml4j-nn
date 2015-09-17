@@ -155,7 +155,7 @@ public class ConvolutionalLayer extends FeedForwardLayer {
 				int filterWidth = inputWidth + (1 - outputWidth) * (stride == null ? 1 : stride);
 				int sharedValueCount = filterWidth * filterWidth;
 
-				int[][] sharedValueIndexes = new int[filterOutputSize][sharedValueCount
+				int[][] sharedValueIndexes = new int[filterOutputSize][sharedValueCount * depth
 						+ (hasBiasUnit() ? 1 : 0)];
 				double[] averageValues = new double[sharedValueCount];
 				for (int column = 0; column < filterOutputSize; column++) {
