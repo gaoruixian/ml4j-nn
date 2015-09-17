@@ -83,7 +83,7 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	
 	public double createDropoutScaling(boolean training)
 	{
-		return training ? 1 : 1d/inputDropout;
+		return training ? 1 : inputDropout;
 	}
 	
 	public DoubleMatrix createDropoutMask(DoubleMatrix inputs,boolean training)
