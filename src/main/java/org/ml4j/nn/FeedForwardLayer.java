@@ -152,7 +152,16 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		DoubleMatrix scaledThetas = thetas;
 		if (dropoutScaling != 1)
 		{
+			DoubleMatrix unscaledBiases = null;
+			if (hasBiasUnit)
+			{
+				unscaledBiases = thetas.getRow(0);
+			}
 			scaledThetas = thetas.mul(dropoutScaling);
+			if (unscaledBiases != null)
+			{
+				scaledThetas.putRow(0,unscaledBiases);
+			}
 		}
 		
 		layerInputsWithInterceptAndDropout = forwardPropagationInputMatrixStrategy.optimise(layerInputsWithInterceptAndDropout);

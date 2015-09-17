@@ -65,12 +65,27 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 				double otherDropoutScaling = otherLayer.getInputDropout();
 				double thisDropoutScaling = layer.getInputDropout();
 				double thetaScaling = otherDropoutScaling/thisDropoutScaling;
-				layer.updateThetas(otherLayer.getThetas().mul(thetaScaling), layerIndex, true);
+				layer.updateThetas(scaleThetasForDropout(otherLayer.getThetas(),thetaScaling,layer.hasBiasUnit), layerIndex, true);
 				layer.setRetrainable(true);
 			}
 			layerIndex++;
 		}
 
+	}
+	
+	private DoubleMatrix scaleThetasForDropout(DoubleMatrix thetas,double scaling,boolean biasUnit)
+	{
+		DoubleMatrix biases = null;
+		if (biasUnit)
+		{
+			biases = thetas.getRow(0);
+		}
+		DoubleMatrix scaled = thetas.mul(scaling);
+		if (biases != null)
+		{
+			scaled.putRow(0, biases);
+		}
+		return scaled;
 	}
 	
 	public BaseFeedForwardNeuralNetwork(List<L> layers) {

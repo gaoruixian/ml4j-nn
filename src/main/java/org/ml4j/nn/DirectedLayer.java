@@ -89,9 +89,10 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	public DoubleMatrix createDropoutMask(DoubleMatrix inputs,boolean training)
 	{
 		DoubleMatrix dropoutMask = DoubleMatrix.ones(inputs.getRows(),inputs.getColumns());
+		int dropoutStartRow = hasBiasUnit ? 1 : 0;
 		if (training && inputDropout != 1)
 		{
-			for (int i = 0; i < dropoutMask.getRows(); i++)
+			for (int i = dropoutStartRow; i < dropoutMask.getRows(); i++)
 			{
 				for (int j = 0; i < dropoutMask.getColumns(); i++)
 				{
