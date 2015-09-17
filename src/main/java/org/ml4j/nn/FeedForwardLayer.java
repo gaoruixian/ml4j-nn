@@ -205,7 +205,6 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		super(inputNeuronCount,outputNeuronCount,activationFunction,biasUnit,true,inputDropout);
 		this.thetas = generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + (biasUnit ? 1 : 0));
 		this.thetasMask = DoubleMatrix.ones(thetas.getRows(),thetas.getColumns());
-		if (inputDropout != 1) throw new UnsupportedOperationException("Dropout currently not supported until more testing of implementation is complete");
 	}
 	
 	public FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction,boolean biasUnit) {
@@ -230,7 +229,6 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		this.thetas = generateInitialThetas(getOutputNeuronCount(), getInputNeuronCount() + (biasUnit ? 1 : 0));
 		this.thetasMask = thetasMask;
 		applyThetasMask();
-		if (inputDropout != 1) throw new UnsupportedOperationException("Dropout currently not supported until more testing of implementation is complete");
 	}
 	
 	protected FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DifferentiableActivationFunction activationFunction,boolean biasUnit,DoubleMatrix thetasMask) {
@@ -259,7 +257,6 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 		this.thetas = thetas;
 		this.thetasMask = thetasMask;
 		applyThetasMask();
-		if (inputDropout != 1) throw new UnsupportedOperationException("Dropout currently not supported until more testing of implementation is complete");
 
 	}
 	
@@ -295,7 +292,6 @@ public class FeedForwardLayer extends DirectedLayer<FeedForwardLayer> implements
 	public FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,
 			DifferentiableActivationFunction activationFunction, boolean biasUnit,boolean retrainable,double inputDropout) {
 		this(inputNeuronCount,outputNeuronCount,thetas,DoubleMatrix.ones(outputNeuronCount,inputNeuronCount + (biasUnit ?  1 : 0)),activationFunction,biasUnit,retrainable,inputDropout);
-		if (inputDropout != 1) throw new UnsupportedOperationException("Dropout currently not supported until more testing of implementation is complete");
 	}
 	
 	public FeedForwardLayer(int inputNeuronCount, int outputNeuronCount, DoubleMatrix thetas,

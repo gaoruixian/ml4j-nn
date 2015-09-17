@@ -39,6 +39,12 @@ public abstract class DirectedLayer<L extends DirectedLayer<?>> extends BaseLaye
 	
 	protected final double inputDropout;
 
+	
+
+	
+	public double getInputDropout() {
+		return inputDropout;
+	}
 
 	protected DifferentiableActivationFunction activationFunction;
 
