@@ -61,7 +61,11 @@ public abstract class BaseFeedForwardNeuralNetwork<L extends DirectedLayer<?>,N 
 			if (!(layer instanceof AveragePoolingLayer || layer instanceof MaxPoolingLayer))
 			{
 				layer.setRetrainable(true);
-				layer.updateThetas(neuralNetwork.getLayers().get(layerIndex).getThetas(), layerIndex, true);
+				L otherLayer = neuralNetwork.getLayers().get(layerIndex);
+				double otherDropoutScaling = otherLayer.getInputDropout();
+				double thisDropoutScaling = layer.getInputDropout();
+				double thetaScaling = otherDropoutScaling/thisDropoutScaling;
+				layer.updateThetas(otherLayer.getThetas().mul(thetaScaling), layerIndex, true);
 				layer.setRetrainable(true);
 			}
 			layerIndex++;
